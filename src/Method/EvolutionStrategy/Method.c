@@ -8,8 +8,8 @@
 
 struct MethodParams
 {
-  int  ExplorationFactor;
-  int  ProblemStatesCnt;
+  int  Miu;
+  int  Lambda;
 };
 
 MethodParams*
@@ -19,8 +19,8 @@ MethodParamsAlloc()
 
   methodParams = malloc(sizeof(MethodParams));
 
-  methodParams->ExplorationFactor = 4;
-  methodParams->ProblemStatesCnt = 2;
+  methodParams->Miu = 2;
+  methodParams->Lambda = 4;
 
   return methodParams;
 }
@@ -31,8 +31,8 @@ MethodParamsFree(MethodParams** methodParams)
   assert(methodParams != NULL);
   assert(MethodParamsIsValid(*methodParams));
 
-  (*methodParams)->ExplorationFactor = 0;
-  (*methodParams)->ProblemStatesCnt = 0;
+  (*methodParams)->Miu = 0;
+  (*methodParams)->Lambda = 0;
 
   free(*methodParams);
   *methodParams = NULL;
@@ -51,9 +51,9 @@ MethodParamsPrint(const MethodParams* methodParams, int indentLevel)
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sHillClimbing Params:\n",indent);
-  printf("%s  ExplorationFactor: %d\n",indent,methodParams->ExplorationFactor);
-  printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
+  printf("%sEvolutionStrategy (μ,λ) Params:\n",indent);
+  printf("%s  Miu: %d\n",indent,methodParams->Miu);
+  printf("%s  Lambda: %d\n",indent,methodParams->Lambda);
 
   free(indent);
 }
@@ -65,11 +65,15 @@ MethodParamsIsValid(const MethodParams* methodParams)
     return 0;
   }
 
-  if (methodParams->ExplorationFactor < 1) {
+  if (methodParams->Miu < 1) {
     return 0;
   }
 
-  if (methodParams->ProblemStatesCnt < 1) {
+  if (methodParams->Lambda < 1) {
+    return 0;
+  }
+
+  if (methodParams->Lambda % methodParams->Miu != 0) {
     return 0;
   }
 
@@ -83,6 +87,7 @@ struct MethodState
   ProblemVector*  ProblemStates;
 };
 
+
 MethodState*
 MethodStateAlloc(const MethodParams* methodParams, const ProblemParams* problemParams)
 {
@@ -94,7 +99,7 @@ MethodStateAlloc(const MethodParams* methodParams, const ProblemParams* problemP
   methodState = malloc(sizeof(MethodState));
 
   methodState->Iteration = 0;
-  methodState->ProblemStates = ProblemVectorAlloc(methodParams->ProblemStatesCnt,problemParams);
+  methodState->ProblemStates = ProblemVectorAlloc(methodParams->Lambda,problemParams);
 
   return methodState;
 }
@@ -105,22 +110,38 @@ MethodStateGenNext(const MethodState* previousState, const MethodParams* methodP
   assert(MethodStateIsValid(previousState));
   assert(MethodParamsIsValid(methodParams));
   assert(ProblemParamsIsValid(problemParams));
-  assert(ProblemVectorCnt(previousState->ProblemStates) == methodParams->ProblemStatesCnt);
+  assert(ProblemVectorCnt(previousState->ProblemStates) == methodParams->Lambda);
 
-  MethodState*    methodState;
-  ProblemVector*  nextStates;
-  int             i;
-  
+  MethodState*          methodState;
+  int                   sortedStatesCnt;
+  const ProblemState**  sortedStates;
+  int                   bestOffspringCnt;
+  ProblemState*         newOffspring;
+  int                   i;
+  int                   j;
+
+  sortedStatesCnt = ProblemVectorCnt(previousState->ProblemStates);
+  sortedStates = malloc(sizeof(const ProblemState*) * sortedStatesCnt);
+
+  memcpy(sortedStates,ProblemVectorTempView(previousState->ProblemStates),sizeof(const ProblemState*) * sortedStatesCnt);
+  qsort(sortedStates,sortedStatesCnt,sizeof(const ProblemState*),(__compar_fn_t)ProblemStateCompare);
+
   methodState = malloc(sizeof(MethodState));
-
+  
   methodState->Iteration = iteration;
   methodState->ProblemStates = ProblemVectorCopy(previousState->ProblemStates);
 
-  for (i = 0; i < ProblemVectorCnt(methodState->ProblemStates); i++) {
-    nextStates = ProblemVectorGenNext(methodParams->ExplorationFactor,ProblemVectorGet(methodState->ProblemStates,i),problemParams);
-    ProblemVectorSet(methodState->ProblemStates,i,ProblemVectorSelectBest(nextStates));
-    ProblemVectorFree(&nextStates);
+  bestOffspringCnt = methodParams->Lambda / methodParams->Miu;
+
+  for (i = 0; i < methodParams->Miu; i++) {
+    for (j = 0; j < bestOffspringCnt; j++) {
+      newOffspring = ProblemStateGenNext(sortedStates[i],problemParams);
+      ProblemVectorSet(methodState->ProblemStates,i * bestOffspringCnt + j,newOffspring);
+      ProblemStateFree(&newOffspring);
+    }
   }
+
+  free(sortedStates);
 
   return methodState;
 }

@@ -198,3 +198,11 @@ ProblemVectorSet(ProblemVector* problemVector, int index, const ProblemState* pr
   ProblemStateFree(&(problemVector->ProblemStates[index]));
   problemVector->ProblemStates[index] = ProblemStateCopy(problemState);
 }
+
+ProblemState**
+ProblemVectorTempView(const ProblemVector* problemVector)
+{
+  assert(ProblemVectorIsValid(problemVector));
+
+  return problemVector->ProblemStates;
+}

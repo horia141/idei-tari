@@ -16,5 +16,6 @@ int                  ProblemVectorCnt(const ProblemVector* problemVector);
 const ProblemState*  ProblemVectorSelectBest(const ProblemVector* problemVector);
 const ProblemState*  ProblemVectorGet(const ProblemVector* problemVector, int index);
 void                 ProblemVectorSet(ProblemVector* problemVector, int index, const ProblemState* problemState);
+ProblemState**       ProblemVectorTempView(const ProblemVector* problemVector);
 
 #endif
