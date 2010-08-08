@@ -8,6 +8,7 @@
 
 struct MethodParams
 {
+  int  ExplorationFactor;
   int  ProblemStatesCnt;
 };
 
@@ -18,6 +19,7 @@ MethodParamsAlloc()
 
   methodParams = malloc(sizeof(MethodParams));
 
+  methodParams->ExplorationFactor = 4;
   methodParams->ProblemStatesCnt = 2;
 
   return methodParams;
@@ -29,6 +31,7 @@ MethodParamsFree(MethodParams** methodParams)
   assert(methodParams != NULL);
   assert(MethodParamsIsValid(*methodParams));
 
+  (*methodParams)->ExplorationFactor = 0;
   (*methodParams)->ProblemStatesCnt = 0;
 
   free(*methodParams);
@@ -48,7 +51,8 @@ MethodParamsPrint(const MethodParams* methodParams, int indentLevel)
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearch Params:\n",indent);
+  printf("%sHillClimbing Params:\n",indent);
+  printf("%s  ExplorationFactor: %d\n",indent,methodParams->ExplorationFactor);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
 
   free(indent);
@@ -58,6 +62,10 @@ int
 MethodParamsIsValid(const MethodParams* methodParams)
 {
   if (methodParams == NULL) {
+    return 0;
+  }
+
+  if (methodParams->ExplorationFactor < 1) {
     return 0;
   }
 
@@ -99,11 +107,20 @@ MethodStateGenNext(const MethodState* previousState, const MethodParams* methodP
   assert(ProblemParamsIsValid(problemParams));
   assert(ProblemVectorCnt(previousState->ProblemStates) == methodParams->ProblemStatesCnt);
 
-  MethodState*  methodState;
-
-  methodState = MethodStateAlloc(methodParams,problemParams);
+  MethodState*    methodState;
+  ProblemVector*  nextStates;
+  int             i;
+  
+  methodState = malloc(sizeof(MethodState));
 
   methodState->Iteration = iteration;
+  methodState->ProblemStates = ProblemVectorCopy(previousState->ProblemStates);
+
+  for (i = 0; i < ProblemVectorCnt(methodState->ProblemStates); i++) {
+    nextStates = ProblemVectorGenNext(ProblemVectorCnt(methodState->ProblemStates),ProblemVectorGet(methodState->ProblemStates,i),problemParams);
+    ProblemVectorSet(methodState->ProblemStates,i,ProblemVectorSelectBest(nextStates));
+    ProblemVectorFree(&nextStates);
+  }
 
   return methodState;
 }
@@ -134,9 +151,9 @@ MethodStatePrint(const MethodState* methodState, int indentLevel)
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearch State:\n",indent);
+  printf("%sHillClimbing State:\n",indent);
   printf("%s  Iteration: %d\n",indent,methodState->Iteration);
-  
+
   ProblemVectorPrint(methodState->ProblemStates,indentLevel + 1);
 
   free(indent);

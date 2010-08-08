@@ -34,6 +34,26 @@ ProblemVectorAlloc(int problemStatesCnt, const ProblemParams* problemParams)
 }
 
 ProblemVector*
+ProblemVectorCopy(const ProblemVector* sourceVector)
+{
+  assert(ProblemVectorIsValid(sourceVector));
+
+  ProblemVector*  problemVector;
+  int             i;
+
+  problemVector = malloc(sizeof(ProblemVector));
+
+  problemVector->ProblemStatesCnt = sourceVector->ProblemStatesCnt;
+  problemVector->ProblemStates = malloc(sizeof(ProblemState*) * problemVector->ProblemStatesCnt);
+
+  for (i = 0; i < problemVector->ProblemStatesCnt; i++) {
+    problemVector->ProblemStates[i] = ProblemStateCopy(sourceVector->ProblemStates[i]);
+  }
+
+  return problemVector;
+}
+
+ProblemVector*
 ProblemVectorGenNext(int problemStatesCnt, const ProblemState* problemState, const ProblemParams* problemParams)
 {
   assert(problemStatesCnt > 0);
@@ -163,8 +183,18 @@ const ProblemState*
 ProblemVectorGet(const ProblemVector* problemVector, int index)
 {
   assert(ProblemVectorIsValid(problemVector));
-  assert(index >= 0);
-  assert(index < ProblemVectorCnt(problemVector));
+  assert(index >= 0 && index < ProblemVectorCnt(problemVector));
 
   return problemVector->ProblemStates[index];
+}
+
+void
+ProblemVectorSet(ProblemVector* problemVector, int index, const ProblemState* problemState)
+{
+  assert(ProblemVectorIsValid(problemVector));
+  assert(index >= 0 && index < ProblemVectorCnt(problemVector));
+  assert(ProblemStateIsValid(problemState));
+
+  ProblemStateFree(&(problemVector->ProblemStates[index]));
+  problemVector->ProblemStates[index] = ProblemStateCopy(problemState);
 }
