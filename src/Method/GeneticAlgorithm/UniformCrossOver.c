@@ -17,7 +17,7 @@ CrossOverParamsAlloc()
 
   crossOverParams = malloc(sizeof(CrossOverParams));
 
-  crossOverParams->Name = strdup("TwoPointCrossOver");
+  crossOverParams->Name = strdup("UniformCrossOver");
 
   return crossOverParams;
 }
@@ -48,7 +48,7 @@ CrossOverParamsPrint(const CrossOverParams* crossOverParams, int indentLevel)
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sTwoPointCrossOver Params:\n",indent);
+  printf("%sUniformCrossOver Params:\n",indent);
 
   free(indent);
 }
@@ -86,26 +86,10 @@ GenerateCrossOverMask(int crossOverMaskCnt, int* crossOverMask, const CrossOverP
   assert(crossOverMaskCnt > 0);
   assert(crossOverMask != NULL);
   assert(CrossOverParamsIsValid(crossOverParams));
-  assert(crossOverMaskCnt > 1);
 
-  int  crossOverPoint0;
-  int  crossOverPoint1;
   int  i;
 
-  crossOverPoint0 = rand() % (crossOverMaskCnt - 2) + 1;
-  crossOverPoint1 = rand() % (crossOverMaskCnt - crossOverPoint0) + crossOverPoint0;
-
-  printf("TPC: %d - %d\n",crossOverPoint0,crossOverPoint1);
-
-  for (i = 0; i < crossOverPoint0; i++) {
-    crossOverMask[i] = 0;
-  }
-
-  for (i = crossOverPoint0; i < crossOverPoint1; i++) {
-    crossOverMask[i] = 1;
-  }
-
-  for (i = crossOverPoint1; i < crossOverMaskCnt; i++) {
-    crossOverMask[i] = 0;
+  for (i = 0; i < crossOverMaskCnt; i++) {
+    crossOverMask[i] = rand() % 2;
   }
 }

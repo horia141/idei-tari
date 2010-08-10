@@ -7,96 +7,96 @@
 
 struct CrossOverParams
 {
-    char*  Name;
+  char*  Name;
 };
 
 CrossOverParams*
 CrossOverParamsAlloc()
 {
-    CrossOverParams*  crossOverParams;
+  CrossOverParams*  crossOverParams;
 
-    crossOverParams = malloc(sizeof(CrossOverParams));
+  crossOverParams = malloc(sizeof(CrossOverParams));
 
-    crossOverParams->Name = strdup("OnePointCrossOver");
+  crossOverParams->Name = strdup("OnePointCrossOver");
 
-    return crossOverParams;
+  return crossOverParams;
 }
 
 void
 CrossOverParamsFree(CrossOverParams** crossOverParams)
 {
-    assert(crossOverParams != NULL);
-    assert(CrossOverParamsIsValid(*crossOverParams));
+  assert(crossOverParams != NULL);
+  assert(CrossOverParamsIsValid(*crossOverParams));
 
-    free((*crossOverParams)->Name);
-    (*crossOverParams)->Name = NULL;
+  free((*crossOverParams)->Name);
+  (*crossOverParams)->Name = NULL;
 
-    free(*crossOverParams);
-    *crossOverParams = NULL;
+  free(*crossOverParams);
+  *crossOverParams = NULL;
 }
 
 void
 CrossOverParamsPrint(const CrossOverParams* crossOverParams, int indentLevel)
 {
-    assert(CrossOverParamsIsValid(crossOverParams));
-    assert(indentLevel >= 0);
+  assert(CrossOverParamsIsValid(crossOverParams));
+  assert(indentLevel >= 0);
 
-    char*  indent;
+  char*  indent;
 
-    indent = malloc(sizeof(char) * (2 * indentLevel + 1));
+  indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
-    memset(indent,' ',2 * indentLevel);
-    indent[2 * indentLevel] = '\0';
+  memset(indent,' ',2 * indentLevel);
+  indent[2 * indentLevel] = '\0';
 
-    printf("%sOnePointCrossOver Params:\n",indent);
+  printf("%sOnePointCrossOver Params:\n",indent);
 
-    free(indent);
+  free(indent);
 }
 
 int
 CrossOverParamsIsValid(const CrossOverParams* crossOverParams)
 {
-    if (crossOverParams == NULL) {
-        return 0;
-    }
+  if (crossOverParams == NULL) {
+    return 0;
+  }
 
-    if (crossOverParams->Name == NULL) {
-        return 0;
-    }
+  if (crossOverParams->Name == NULL) {
+    return 0;
+  }
 
-    if (strlen(crossOverParams->Name) == 0) {
-        return 0;
-    }
+  if (strlen(crossOverParams->Name) == 0) {
+    return 0;
+  }
 
-    return 1;
+  return 1;
 }
 
 const char*
 CrossOverParamsName(const CrossOverParams* crossOverParams)
 {
-    assert(CrossOverParamsIsValid(crossOverParams));
+  assert(CrossOverParamsIsValid(crossOverParams));
     
-    return crossOverParams->Name;
+  return crossOverParams->Name;
 }
 
 
 void
 GenerateCrossOverMask(int crossOverMaskCnt, int* crossOverMask, const CrossOverParams* crossOverParams)
 {
-    assert(crossOverMaskCnt > 0);
-    assert(crossOverMask != NULL);
-    assert(CrossOverParamsIsValid(crossOverParams));
+  assert(crossOverMaskCnt > 0);
+  assert(crossOverMask != NULL);
+  assert(CrossOverParamsIsValid(crossOverParams));
 
-    int  crossOverPoint;
-    int  i;
+  int  crossOverPoint;
+  int  i;
 
-    crossOverPoint = rand() % (crossOverMaskCnt - 1) + 1;
+  crossOverPoint = rand() % (crossOverMaskCnt - 1) + 1;
 
-    for (i = 0; i < crossOverPoint; i++) {
-        crossOverMask[i] = 0;
-    }
+  for (i = 0; i < crossOverPoint; i++) {
+    crossOverMask[i] = 0;
+  }
 
-    for (i = crossOverPoint; i < crossOverMaskCnt; i++) {
-        crossOverMask[i] = 1;
-    }
+  for (i = crossOverPoint; i < crossOverMaskCnt; i++) {
+    crossOverMask[i] = 1;
+  }
 }
