@@ -153,6 +153,11 @@ ProblemStateCrossOver(const ProblemState* parentState0, const ProblemState* pare
 
   ProblemState*  problemState;
   double         newPosition;
+  uint64_t       value0;
+  uint64_t       value0Masked;
+  uint64_t       value1;
+  uint64_t       value1Masked;
+  uint64_t       valueFinal;
   uint64_t       bitFlipMask;
   int            i;
 
@@ -161,7 +166,15 @@ ProblemStateCrossOver(const ProblemState* parentState0, const ProblemState* pare
 
   for (i = crossOverMaskCnt - 1; i >= 0; i--) {
     if (crossOverMask[i] == 1) {
-      newPosition = (double)(((uint64_t)newPosition & (~bitFlipMask)) | ((uint64_t)parentState1->Position & bitFlipMask));
+      value0 = *((uint64_t*)&newPosition);
+      value1 = *((uint64_t*)&parentState1->Position);
+
+      value0Masked = value0 & ~bitFlipMask;
+      value1Masked = value1 & bitFlipMask;
+
+      valueFinal = value0Masked | value1Masked;
+
+      newPosition = *((double*)&valueFinal);
     }
 
     bitFlipMask <<= 1;
