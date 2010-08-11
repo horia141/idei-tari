@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <float.h>
 
 #include "Method.h"
-#include "ProblemVector.h"
 
 struct MethodParams
 {
@@ -88,7 +88,8 @@ MethodParamsIsValid(
 struct MethodState
 {
   int             Iteration;
-  ProblemVector*  ProblemStates;
+  int             ProblemStatesCnt;
+  ProblemState**  ProblemStates;
 };
 
 MethodState*
@@ -100,11 +101,17 @@ MethodStateAlloc(
   assert(ProblemParamsIsValid(problemParams));
 
   MethodState*  methodState;
+  int           i;
 
   methodState = malloc(sizeof(MethodState));
 
   methodState->Iteration = 0;
-  methodState->ProblemStates = ProblemVectorAlloc(methodParams->Lambda,problemParams);
+  methodState->ProblemStatesCnt = methodParams->Lambda;
+  methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
+
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    methodState->ProblemStates[i] = ProblemStateAlloc(problemParams);
+  }
 
   return methodState;
 }
@@ -119,7 +126,7 @@ MethodStateGenNext(
   assert(MethodStateIsValid(previousState));
   assert(MethodParamsIsValid(methodParams));
   assert(ProblemParamsIsValid(problemParams));
-  assert(ProblemVectorCnt(previousState->ProblemStates) == methodParams->Lambda);
+  assert(previousState->ProblemStatesCnt == methodParams->Lambda);
 
   MethodState*          methodState;
   int                   sortedStatesCnt;
@@ -129,24 +136,23 @@ MethodStateGenNext(
   int                   i;
   int                   j;
 
-  sortedStatesCnt = ProblemVectorCnt(previousState->ProblemStates);
+  sortedStatesCnt = previousState->ProblemStatesCnt;
   sortedStates = malloc(sizeof(const ProblemState*) * sortedStatesCnt);
 
-  memcpy(sortedStates,ProblemVectorTempView(previousState->ProblemStates),sizeof(const ProblemState*) * sortedStatesCnt);
+  memcpy(sortedStates,previousState->ProblemStates,sizeof(const ProblemState*) * sortedStatesCnt);
   qsort(sortedStates,sortedStatesCnt,sizeof(const ProblemState*),(__compar_fn_t)ProblemStateCompare);
 
   methodState = malloc(sizeof(MethodState));
   
   methodState->Iteration = iteration;
-  methodState->ProblemStates = ProblemVectorCopy(previousState->ProblemStates);
+  methodState->ProblemStatesCnt = previousState->ProblemStatesCnt;
+  methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
 
   bestOffspringCnt = methodParams->Lambda / methodParams->Miu;
 
   for (i = 0; i < methodParams->Miu; i++) {
     for (j = 0; j < bestOffspringCnt; j++) {
-      newOffspring = ProblemStateGenNext(sortedStates[i],problemParams);
-      ProblemVectorSet(methodState->ProblemStates,i * bestOffspringCnt + j,newOffspring);
-      ProblemStateFree(&newOffspring);
+      methodState->ProblemStates[i * bestOffspringCnt + j] = ProblemStateGenNext(sortedStates[i],problemParams);
     }
   }
 
@@ -162,8 +168,17 @@ MethodStateFree(
   assert(methodState != NULL);
   assert(MethodStateIsValid(*methodState));
 
+  int  i;
+
+  for (i = 0; i < (*methodState)->ProblemStatesCnt; i++) {
+    ProblemStateFree(&(*methodState)->ProblemStates[i]);
+  }
+
+  free((*methodState)->ProblemStates);
+
   (*methodState)->Iteration = -1;
-  ProblemVectorFree(&(*methodState)->ProblemStates);
+  (*methodState)->ProblemStatesCnt = 0;
+  (*methodState)->ProblemStates = NULL;
 
   free(*methodState);
   *methodState = NULL;
@@ -178,6 +193,7 @@ MethodStatePrint(
   assert(indentLevel >= 0);
 
   char*  indent;
+  int    i;
 
   indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
@@ -186,8 +202,12 @@ MethodStatePrint(
 
   printf("%sHillClimbing State:\n",indent);
   printf("%s  Iteration: %d\n",indent,methodState->Iteration);
+  printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
+  printf("%s  ProblemStates:\n",indent);
 
-  ProblemVectorPrint(methodState->ProblemStates,indentLevel + 1);
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    ProblemStatePrint(methodState->ProblemStates[i],indentLevel + 2);
+  }
 
   free(indent);
 }
@@ -196,6 +216,8 @@ int
 MethodStateIsValid(
   const MethodState* methodState)
 {
+  int  i;
+
   if (methodState == NULL) {
     return 0;
   }
@@ -204,8 +226,18 @@ MethodStateIsValid(
     return 0;
   }
 
-  if (!ProblemVectorIsValid(methodState->ProblemStates)) {
+  if (methodState->ProblemStatesCnt < 1) {
     return 0;
+  }
+
+  if (methodState->ProblemStates == NULL) {
+    return 0;
+  }
+
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    if (!ProblemStateIsValid(methodState->ProblemStates[i])) {
+      return 0;
+    }
   }
 
   return 1;
@@ -220,10 +252,25 @@ MethodStateGetBest(
   assert(currBest == NULL || ProblemStateIsValid(currBest));
 
   const ProblemState*  best;
+  double               bestCost;
+  double               currCost;
+  int                  i;
 
-  best = ProblemVectorSelectBest(methodState->ProblemStates);
+  best = NULL;
+  bestCost = DBL_MAX;
 
-  if (currBest != NULL && ProblemStateCost(currBest) < ProblemStateCost(best)) {
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    currCost = ProblemStateCost(methodState->ProblemStates[i]);
+
+    if (currCost < bestCost) {
+      best = methodState->ProblemStates[i];
+      bestCost = currCost;
+    }
+  }
+
+  assert (best != NULL);
+
+  if (currBest != NULL && ProblemStateCost(currBest) < bestCost) {
     return ProblemStateCopy(currBest);
   } else {
     return ProblemStateCopy(best);

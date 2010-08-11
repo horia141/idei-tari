@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <float.h>
 
 #include "Method.h"
-#include "ProblemVector.h"
 
 struct MethodParams
 {
@@ -76,7 +76,8 @@ MethodParamsIsValid(
 struct MethodState
 {
   int             Iteration;
-  ProblemVector*  ProblemStates;
+  int             ProblemStatesCnt;
+  ProblemState**  ProblemStates;
 };
 
 MethodState*
@@ -88,11 +89,17 @@ MethodStateAlloc(
   assert(ProblemParamsIsValid(problemParams));
 
   MethodState*  methodState;
+  int           i;
 
   methodState = malloc(sizeof(MethodState));
 
   methodState->Iteration = 0;
-  methodState->ProblemStates = ProblemVectorAlloc(methodParams->ProblemStatesCnt,problemParams);
+  methodState->ProblemStatesCnt = methodParams->ProblemStatesCnt;
+  methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
+
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    methodState->ProblemStates[i] = ProblemStateAlloc(problemParams);
+  }
 
   return methodState;
 }
@@ -107,7 +114,7 @@ MethodStateGenNext(
   assert(MethodStateIsValid(previousState));
   assert(MethodParamsIsValid(methodParams));
   assert(ProblemParamsIsValid(problemParams));
-  assert(ProblemVectorCnt(previousState->ProblemStates) == methodParams->ProblemStatesCnt);
+  assert(previousState->ProblemStatesCnt == methodParams->ProblemStatesCnt);
 
   MethodState*  methodState;
 
@@ -125,8 +132,17 @@ MethodStateFree(
   assert(methodState != NULL);
   assert(MethodStateIsValid(*methodState));
 
+  int  i;
+
+  for (i = 0; i < (*methodState)->ProblemStatesCnt; i++) {
+    ProblemStateFree(&(*methodState)->ProblemStates[i]);
+  }
+
+  free((*methodState)->ProblemStates);
+
   (*methodState)->Iteration = -1;
-  ProblemVectorFree(&(*methodState)->ProblemStates);
+  (*methodState)->ProblemStatesCnt = 0;
+  (*methodState)->ProblemStates = NULL;
 
   free(*methodState);
   *methodState = NULL;
@@ -141,6 +157,7 @@ MethodStatePrint(
   assert(indentLevel >= 0);
 
   char*  indent;
+  int    i;
 
   indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
@@ -149,8 +166,12 @@ MethodStatePrint(
 
   printf("%sRandomSearch State:\n",indent);
   printf("%s  Iteration: %d\n",indent,methodState->Iteration);
-  
-  ProblemVectorPrint(methodState->ProblemStates,indentLevel + 1);
+  printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
+  printf("%s  ProblemStates:\n",indent);
+
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    ProblemStatePrint(methodState->ProblemStates[i],indentLevel + 2);
+  }
 
   free(indent);
 }
@@ -159,6 +180,8 @@ int
 MethodStateIsValid(
   const MethodState* methodState)
 {
+  int  i;
+
   if (methodState == NULL) {
     return 0;
   }
@@ -167,8 +190,18 @@ MethodStateIsValid(
     return 0;
   }
 
-  if (!ProblemVectorIsValid(methodState->ProblemStates)) {
+  if (methodState->ProblemStatesCnt < 1) {
     return 0;
+  }
+
+  if (methodState->ProblemStates == NULL) {
+    return 0;
+  }
+
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    if (!ProblemStateIsValid(methodState->ProblemStates[i])) {
+      return 0;
+    }
   }
 
   return 1;
@@ -183,10 +216,25 @@ MethodStateGetBest(
   assert(currBest == NULL || ProblemStateIsValid(currBest));
 
   const ProblemState*  best;
+  double               bestCost;
+  double               currCost;
+  int                  i;
 
-  best = ProblemVectorSelectBest(methodState->ProblemStates);
+  best = NULL;
+  bestCost = DBL_MAX;
 
-  if (currBest != NULL && ProblemStateCost(currBest) < ProblemStateCost(best)) {
+  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
+    currCost = ProblemStateCost(methodState->ProblemStates[i]);
+
+    if (currCost < bestCost) {
+      best = methodState->ProblemStates[i];
+      bestCost = currCost;
+    }
+  }
+
+  assert (best != NULL);
+
+  if (currBest != NULL && ProblemStateCost(currBest) < bestCost) {
     return ProblemStateCopy(currBest);
   } else {
     return ProblemStateCopy(best);
