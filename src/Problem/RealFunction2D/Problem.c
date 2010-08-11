@@ -59,7 +59,7 @@ ProblemParamsPrint(const ProblemParams* problemParams, int indentLevel)
     memset(indent,' ',2 * indentLevel);
     indent[2 * indentLevel] = '\0';
 
-    printf("%sRealFunction1D Params\n",indent);
+    printf("%sRealFunction2D Params\n",indent);
     printf("%s  IntervalStart: (%f,%f)\n",indent,problemParams->IntervalStartX,problemParams->IntervalStartY);
     printf("%s  IntervalEnd: (%f,%f)\n",indent,problemParams->IntervalEndX,problemParams->IntervalEndY);
 
@@ -280,7 +280,7 @@ ProblemStatePrint(const ProblemState* problemState, int indentLevel)
     memset(indent,' ',2 * indentLevel);
     indent[2 * indentLevel] = '\0';
 
-    printf("%sRealFunction1D State:\n",indent);
+    printf("%sRealFunction2D State:\n",indent);
     printf("%s  Position: (%f,%f)\n",indent,problemState->PositionX,problemState->PositionY);
     printf("%s  Cost: %f\n",indent,problemState->Cost);
 
