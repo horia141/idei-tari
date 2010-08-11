@@ -23,7 +23,8 @@ CrossOverParamsAlloc()
 }
 
 void
-CrossOverParamsFree(CrossOverParams** crossOverParams)
+CrossOverParamsFree(
+  CrossOverParams** crossOverParams)
 {
   assert(crossOverParams != NULL);
   assert(CrossOverParamsIsValid(*crossOverParams));
@@ -36,7 +37,9 @@ CrossOverParamsFree(CrossOverParams** crossOverParams)
 }
 
 void
-CrossOverParamsPrint(const CrossOverParams* crossOverParams, int indentLevel)
+CrossOverParamsPrint(
+  const CrossOverParams* crossOverParams,
+  int indentLevel)
 {
   assert(CrossOverParamsIsValid(crossOverParams));
   assert(indentLevel >= 0);
@@ -54,7 +57,8 @@ CrossOverParamsPrint(const CrossOverParams* crossOverParams, int indentLevel)
 }
 
 int
-CrossOverParamsIsValid(const CrossOverParams* crossOverParams)
+CrossOverParamsIsValid(
+  const CrossOverParams* crossOverParams)
 {
   if (crossOverParams == NULL) {
     return 0;
@@ -72,7 +76,8 @@ CrossOverParamsIsValid(const CrossOverParams* crossOverParams)
 }
 
 const char*
-CrossOverParamsName(const CrossOverParams* crossOverParams)
+CrossOverParamsName(
+  const CrossOverParams* crossOverParams)
 {
   assert(CrossOverParamsIsValid(crossOverParams));
     
@@ -81,7 +86,10 @@ CrossOverParamsName(const CrossOverParams* crossOverParams)
 
 
 void
-GenerateCrossOverMask(int crossOverMaskCnt, int* crossOverMask, const CrossOverParams* crossOverParams)
+GenerateCrossOverMask(
+  int crossOverMaskCnt,
+  int* crossOverMask,
+  const CrossOverParams* crossOverParams)
 {
   assert(crossOverMaskCnt > 0);
   assert(crossOverMask != NULL);

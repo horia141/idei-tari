@@ -6,8 +6,6 @@
 
 #include "Problem.h"
 
-static double  _ProblemFunction(double x, double y);
-
 struct ProblemParams
 {
     double  IntervalStartX;
@@ -15,6 +13,10 @@ struct ProblemParams
     double  IntervalEndX;
     double  IntervalEndY;
 };
+
+static double  _ProblemFunction(
+                 double x, 
+                 double y);
 
 ProblemParams*
 ProblemParamsAlloc()
@@ -32,7 +34,8 @@ ProblemParamsAlloc()
 }
 
 void
-ProblemParamsFree(ProblemParams** problemParams)
+ProblemParamsFree(
+  ProblemParams** problemParams)
 {
     assert(problemParams != NULL);
     assert(ProblemParamsIsValid(*problemParams));
@@ -47,7 +50,9 @@ ProblemParamsFree(ProblemParams** problemParams)
 }
 
 void
-ProblemParamsPrint(const ProblemParams* problemParams, int indentLevel)
+ProblemParamsPrint(
+  const ProblemParams* problemParams,
+  int indentLevel)
 {
     assert(ProblemParamsIsValid(problemParams));
     assert(indentLevel >= 0);
@@ -67,7 +72,8 @@ ProblemParamsPrint(const ProblemParams* problemParams, int indentLevel)
 }
 
 int
-ProblemParamsIsValid(const ProblemParams* problemParams)
+ProblemParamsIsValid(
+  const ProblemParams* problemParams)
 {
     if (problemParams == NULL) {
         return 0;
@@ -84,6 +90,14 @@ ProblemParamsIsValid(const ProblemParams* problemParams)
     return 1;
 }
 
+static double
+_ProblemFunction(
+  double x,
+  double y)
+{
+    return x * x + y * y;
+}
+
 
 struct ProblemState
 {
@@ -93,7 +107,8 @@ struct ProblemState
 };
 
 ProblemState*
-ProblemStateAlloc(const ProblemParams* problemParams)
+ProblemStateAlloc(
+  const ProblemParams* problemParams)
 {
     assert(ProblemParamsIsValid(problemParams));
 
@@ -109,7 +124,8 @@ ProblemStateAlloc(const ProblemParams* problemParams)
 }
 
 ProblemState*
-ProblemStateCopy(const ProblemState* sourceState)
+ProblemStateCopy(
+  const ProblemState* sourceState)
 {
     assert(ProblemStateIsValid(sourceState));
 
@@ -125,7 +141,9 @@ ProblemStateCopy(const ProblemState* sourceState)
 }
 
 ProblemState*
-ProblemStateGenNext(const ProblemState* previousState, const ProblemParams* problemParams)
+ProblemStateGenNext(
+  const ProblemState* previousState,
+  const ProblemParams* problemParams)
 {
     assert(ProblemStateIsValid(previousState));
     assert(ProblemParamsIsValid(problemParams));
@@ -167,7 +185,12 @@ ProblemStateGenNext(const ProblemState* previousState, const ProblemParams* prob
 }
 
 ProblemState*
-ProblemStateCrossOver(const ProblemState* parentState0, const ProblemState* parentState1, const ProblemParams* problemParams, int crossOverMaskCnt, const int* crossOverMask)
+ProblemStateCrossOver(
+  const ProblemState* parentState0,
+  const ProblemState* parentState1,
+  const ProblemParams* problemParams,
+  int crossOverMaskCnt,
+  const int* crossOverMask)
 {
     assert(ProblemStateIsValid(parentState0));
     assert(ProblemStateIsValid(parentState1));
@@ -254,7 +277,8 @@ ProblemStateCrossOver(const ProblemState* parentState0, const ProblemState* pare
 }
 
 void
-ProblemStateFree(ProblemState** problemState)
+ProblemStateFree(
+  ProblemState** problemState)
 {
     assert(problemState != NULL);
     assert(ProblemStateIsValid(*problemState));
@@ -268,7 +292,9 @@ ProblemStateFree(ProblemState** problemState)
 }
 
 void
-ProblemStatePrint(const ProblemState* problemState, int indentLevel)
+ProblemStatePrint(
+  const ProblemState* problemState,
+  int indentLevel)
 {
     assert(ProblemStateIsValid(problemState));
     assert(indentLevel >= 0);
@@ -288,7 +314,8 @@ ProblemStatePrint(const ProblemState* problemState, int indentLevel)
 }
 
 int
-ProblemStateIsValid(const ProblemState* problemState)
+ProblemStateIsValid(
+  const ProblemState* problemState)
 {
     if (problemState == NULL) {
         return 0;
@@ -298,7 +325,9 @@ ProblemStateIsValid(const ProblemState* problemState)
 }
 
 int
-ProblemStateCompare(const ProblemState** problemState0, const ProblemState** problemState1)
+ProblemStateCompare(
+  const ProblemState** problemState0,
+  const ProblemState** problemState1)
 {
     assert(problemState0 != NULL);
     assert(problemState1 != NULL);
@@ -315,7 +344,8 @@ ProblemStateCompare(const ProblemState** problemState0, const ProblemState** pro
 }
 
 double
-ProblemStateCost(const ProblemState* problemState)
+ProblemStateCost(
+  const ProblemState* problemState)
 {
     assert(ProblemStateIsValid(problemState));
 
@@ -323,15 +353,10 @@ ProblemStateCost(const ProblemState* problemState)
 }
 
 int
-ProblemStateGenomeSize(const ProblemState* problemState)
+ProblemStateGenomeSize(
+  const ProblemState* problemState)
 {
     assert(ProblemStateIsValid(problemState));
 
     return sizeof(problemState->PositionX) * 8 + sizeof(problemState->PositionY) * 8;
-}
-
-static double
-_ProblemFunction(double x, double y)
-{
-    return x * x + y * y;
 }

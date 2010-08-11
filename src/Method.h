@@ -10,7 +10,7 @@ MethodParams*  MethodParamsAlloc();
 void           MethodParamsFree(
                  MethodParams** methodParams);
 void           MethodParamsPrint(
-                 const MethodParams* methodParams, 
+                 const MethodParams* methodParams,
                  int indentLevel);
 int            MethodParamsIsValid(
                  const MethodParams* methodParams);
@@ -19,7 +19,7 @@ struct MethodState;
 typedef struct MethodState MethodState;
 
 MethodState*   MethodStateAlloc(
-                 const MethodParams* methodParams, 
+                 const MethodParams* methodParams,
                  const ProblemParams* problemParams);
 MethodState*   MethodStateGenNext(
                  const MethodState* previousState,

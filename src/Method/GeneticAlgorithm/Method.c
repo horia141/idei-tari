@@ -32,7 +32,8 @@ MethodParamsAlloc()
 }
 
 void
-MethodParamsFree(MethodParams** methodParams)
+MethodParamsFree(
+  MethodParams** methodParams)
 {
     assert(methodParams != NULL);
     assert(MethodParamsIsValid(*methodParams));
@@ -47,7 +48,9 @@ MethodParamsFree(MethodParams** methodParams)
 }
 
 void
-MethodParamsPrint(const MethodParams* methodParams, int indentLevel)
+MethodParamsPrint(
+  const MethodParams* methodParams,
+  int indentLevel)
 {
     assert(MethodParamsIsValid(methodParams));
     assert(indentLevel >= 0);
@@ -69,7 +72,8 @@ MethodParamsPrint(const MethodParams* methodParams, int indentLevel)
 }
 
 int
-MethodParamsIsValid(const MethodParams* methodParams)
+MethodParamsIsValid(
+  const MethodParams* methodParams)
 {
     if (methodParams == NULL) {
         return 0;
@@ -103,7 +107,9 @@ struct MethodState
 };
 
 MethodState*
-MethodStateAlloc(const MethodParams* methodParams, const ProblemParams* problemParams)
+MethodStateAlloc(
+  const MethodParams* methodParams,
+  const ProblemParams* problemParams)
 {
     assert(MethodParamsIsValid(methodParams));
     assert(ProblemParamsIsValid(problemParams));
@@ -125,7 +131,11 @@ MethodStateAlloc(const MethodParams* methodParams, const ProblemParams* problemP
 }
 
 MethodState*
-MethodStateGenNext(const MethodState* previousState, const MethodParams* methodParams, const ProblemParams* problemParams, int iteration)
+MethodStateGenNext(
+  const MethodState* previousState,
+  const MethodParams* methodParams,
+  const ProblemParams* problemParams,
+  int iteration)
 {
     assert(MethodStateIsValid(previousState));
     assert(MethodParamsIsValid(methodParams));
@@ -192,7 +202,8 @@ MethodStateGenNext(const MethodState* previousState, const MethodParams* methodP
 }
 
 void
-MethodStateFree(MethodState** methodState)
+MethodStateFree(
+  MethodState** methodState)
 {
     assert(methodState != NULL);
     assert(MethodStateIsValid(*methodState));
@@ -214,7 +225,9 @@ MethodStateFree(MethodState** methodState)
 }
 
 void
-MethodStatePrint(const MethodState* methodState, int indentLevel)
+MethodStatePrint(
+  const MethodState* methodState,
+  int indentLevel)
 {
     assert(MethodStateIsValid(methodState));
     assert(indentLevel >= 0);
@@ -240,7 +253,8 @@ MethodStatePrint(const MethodState* methodState, int indentLevel)
 }
 
 int
-MethodStateIsValid(const MethodState* methodState)
+MethodStateIsValid(
+  const MethodState* methodState)
 {
     int  i;
 
@@ -270,7 +284,9 @@ MethodStateIsValid(const MethodState* methodState)
 }
 
 ProblemState*
-MethodStateGetBest(const MethodState* methodState, const ProblemState* currBest)
+MethodStateGetBest(
+  const MethodState* methodState,
+  const ProblemState* currBest)
 {
     assert(MethodStateIsValid(methodState));
     assert(currBest == NULL || ProblemStateIsValid(currBest));

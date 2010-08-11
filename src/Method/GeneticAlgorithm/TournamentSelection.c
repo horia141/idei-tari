@@ -26,7 +26,8 @@ SelectionParamsAlloc()
 }
 
 void
-SelectionParamsFree(SelectionParams** selectionParams)
+SelectionParamsFree(
+  SelectionParams** selectionParams)
 {
     assert(selectionParams != NULL);
     assert(SelectionParamsIsValid(*selectionParams));
@@ -40,7 +41,9 @@ SelectionParamsFree(SelectionParams** selectionParams)
 }
 
 void
-SelectionParamsPrint(const SelectionParams* selectionParams, int indentLevel)
+SelectionParamsPrint(
+  const SelectionParams* selectionParams,
+  int indentLevel)
 {
     assert(SelectionParamsIsValid(selectionParams));
     assert(indentLevel >= 0);
@@ -59,7 +62,8 @@ SelectionParamsPrint(const SelectionParams* selectionParams, int indentLevel)
 }
 
 int
-SelectionParamsIsValid(const SelectionParams* selectionParams)
+SelectionParamsIsValid(
+  const SelectionParams* selectionParams)
 {
     if (selectionParams == NULL) {
         return 0;
@@ -81,7 +85,8 @@ SelectionParamsIsValid(const SelectionParams* selectionParams)
 }
 
 const char*
-SelectionParamsName(const SelectionParams* selectionParams)
+SelectionParamsName(
+  const SelectionParams* selectionParams)
 {
     assert(SelectionParamsIsValid(selectionParams));
 
@@ -90,7 +95,12 @@ SelectionParamsName(const SelectionParams* selectionParams)
 
 
 void
-GenerateSelectedStates(int selectedStatesCnt, const ProblemState** selectedStates, int previousStatesCnt,  ProblemState** previousStates, const SelectionParams* selectionParams)
+GenerateSelectedStates(
+  int selectedStatesCnt,
+  const ProblemState** selectedStates,
+  int previousStatesCnt,
+  ProblemState** previousStates,
+  const SelectionParams* selectionParams)
 {
     assert(selectedStatesCnt > 0);
     assert(selectedStates != NULL);

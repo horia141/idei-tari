@@ -23,20 +23,20 @@ ProblemState*   ProblemStateGenNext(
                   const ProblemState* previousState,
                   const ProblemParams* problemParams);
 ProblemState*   ProblemStateCrossOver(
-                  const ProblemState* parentState0, 
-                  const ProblemState* parentState1, 
-                  const ProblemParams* problemParams, 
-                  int crossOverMaskCnt, 
+                  const ProblemState* parentState0,
+                  const ProblemState* parentState1,
+                  const ProblemParams* problemParams,
+                  int crossOverMaskCnt,
                   const int* crossOverMask);
 void            ProblemStateFree(
                   ProblemState** problemState);
 void            ProblemStatePrint(
-                  const ProblemState* problemState, 
+                  const ProblemState* problemState,
                   int indentLevel);
 int             ProblemStateIsValid(
                   const ProblemState* problemState);
 int             ProblemStateCompare(
-                  const ProblemState** problemState0, 
+                  const ProblemState** problemState0,
                   const ProblemState** problemState1);
 double          ProblemStateCost(
                   const ProblemState* problemState);

@@ -41,8 +41,10 @@ struct ProblemParams
   int    MaxNetworkLevels;
 };
 
-static int _ProblemParamsMaxNetworkNodes(const ProblemParams* problemParams);
-static int _ProblemParamsMaxNetworkLevels(const ProblemParams* problemParams);
+static int  _ProblemParamsMaxNetworkNodes(
+              const ProblemParams* problemParams);
+static int  _ProblemParamsMaxNetworkLevels(
+              const ProblemParams* problemParams);
 
 ProblemParams*
 ProblemParamsAlloc()
@@ -131,7 +133,8 @@ ProblemParamsAlloc()
 }
 
 void
-ProblemParamsFree(ProblemParams** problemParams)
+ProblemParamsFree(
+  ProblemParams** problemParams)
 {
   assert(problemParams != NULL);
   assert(ProblemParamsIsValid(*problemParams));
@@ -176,7 +179,9 @@ ProblemParamsFree(ProblemParams** problemParams)
 }
 
 void
-ProblemParamsPrint(const ProblemParams* problemParams, int indentLevel)
+ProblemParamsPrint(
+  const ProblemParams* problemParams,
+  int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
   assert(indentLevel >= 0);
@@ -216,7 +221,8 @@ ProblemParamsPrint(const ProblemParams* problemParams, int indentLevel)
 }
 
 int
-ProblemParamsIsValid(const ProblemParams* problemParams)
+ProblemParamsIsValid(
+  const ProblemParams* problemParams)
 {
   int  i;
 
@@ -316,13 +322,15 @@ ProblemParamsIsValid(const ProblemParams* problemParams)
 }
 
 int
-_ProblemParamsMaxNetworkNodes(const ProblemParams* problemParams)
+_ProblemParamsMaxNetworkNodes(
+  const ProblemParams* problemParams)
 {
   return 6 + 3 + 2 + 1;
 }
 
 int
-_ProblemParamsMaxNetworkLevels(const ProblemParams* problemParams)
+_ProblemParamsMaxNetworkLevels(
+  const ProblemParams* problemParams)
 {
   return 4;
 }
@@ -337,11 +345,22 @@ struct ProblemState
   char*  TextDiff;
 };
 
-static void  _ProblemStateFix(ProblemState* problemState, const ProblemParams* problemParams);
-static int   _IndividualFindFit(const ProblemState* problemState, const ProblemParams* problemParams, int portAllocationMatrixCnt, const Speed** portAllocationMatrix, int currLevel, int currLevelUser, int currLevelUserCnt, Speed* nodeSpeed);
+static void  _ProblemStateFix(
+               ProblemState* problemState,
+               const ProblemParams* problemParams);
+static int   _IndividualFindFit(
+               const ProblemState* problemState,
+               const ProblemParams* problemParams,
+               int portAllocationMatrixCnt,
+               const Speed** portAllocationMatrix,
+               int currLevel,
+               int currLevelUser,
+               int currLevelUserCnt,
+               Speed* nodeSpeed);
 
 ProblemState*
-ProblemStateAlloc(const ProblemParams* problemParams)
+ProblemStateAlloc(
+  const ProblemParams* problemParams)
 {
   assert(ProblemParamsIsValid(problemParams));
 
@@ -363,7 +382,8 @@ ProblemStateAlloc(const ProblemParams* problemParams)
 }
 
 ProblemState*
-ProblemStateCopy(const ProblemState* sourceState)
+ProblemStateCopy(
+  const ProblemState* sourceState)
 {
   assert(ProblemStateIsValid(sourceState));
 
@@ -385,7 +405,9 @@ ProblemStateCopy(const ProblemState* sourceState)
 }
 
 ProblemState*
-ProblemStateGenNext(const ProblemState* previousState, const ProblemParams* problemParams)
+ProblemStateGenNext(
+  const ProblemState* previousState,
+  const ProblemParams* problemParams)
 {
   assert(PreviousStateIsValid(previousState));
   assert(ProblemParamsIsValid(problemParams));
@@ -464,7 +486,12 @@ ProblemStateGenNext(const ProblemState* previousState, const ProblemParams* prob
 }
 
 ProblemState*
-ProblemStateCrossOver(const ProblemState* parentState0, const ProblemState* parentState1, const ProblemParams* problemParams, int crossOverMaskCnt, const int* crossOverMask)
+ProblemStateCrossOver(
+  const ProblemState* parentState0,
+  const ProblemState* parentState1,
+  const ProblemParams* problemParams,
+  int crossOverMaskCnt,
+  const int* crossOverMask)
 {
   assert(ProblemStateIsValid(parentState0));
   assert(ProblemStateIsValid(parentState1));
@@ -594,7 +621,8 @@ ProblemStateCrossOver(const ProblemState* parentState0, const ProblemState* pare
 }
 
 void
-ProblemStateFree(ProblemState** problemState)
+ProblemStateFree(
+  ProblemState** problemState)
 {
   assert(problemState != NULL);
   assert(ProblemStateIsValid(*problemState));
@@ -613,7 +641,9 @@ ProblemStateFree(ProblemState** problemState)
 }
 
 void
-ProblemStatePrint(const ProblemState* problemState, int indentLevel)
+ProblemStatePrint(
+  const ProblemState* problemState,
+  int indentLevel)
 {
   assert(ProblemStateIsValid(problemState));
   assert(indentLevel >= 0);
@@ -641,7 +671,8 @@ ProblemStatePrint(const ProblemState* problemState, int indentLevel)
 }
 
 int
-ProblemStateIsValid(const ProblemState* problemState)
+ProblemStateIsValid(
+  const ProblemState* problemState)
 {
   int  i;
 
@@ -689,7 +720,9 @@ ProblemStateIsValid(const ProblemState* problemState)
 }
 
 int
-ProblemStateCompare(const ProblemState** problemState0, const ProblemState** problemState1)
+ProblemStateCompare(
+  const ProblemState** problemState0,
+  const ProblemState** problemState1)
 {
   assert(problemState0 != NULL);
   assert(problemState1 != NULL);
@@ -706,7 +739,8 @@ ProblemStateCompare(const ProblemState** problemState0, const ProblemState** pro
 }
 
 double
-ProblemStateCost(const ProblemState* problemState)
+ProblemStateCost(
+  const ProblemState* problemState)
 {
   assert(ProblemStateIsValid(problemState));
 
@@ -714,7 +748,8 @@ ProblemStateCost(const ProblemState* problemState)
 }
 
 int
-ProblemStateGenomeSize(const ProblemState* problemState)
+ProblemStateGenomeSize(
+  const ProblemState* problemState)
 {
   assert(ProblemStateIsValid(problemState));
 
@@ -722,7 +757,9 @@ ProblemStateGenomeSize(const ProblemState* problemState)
 }
 
 void
-_IndividualFix(Individual* individual, const Problem* problem)
+_IndividualFix(
+  Individual* individual,
+  const Problem* problem)
 {
   Speed**  portAllocationMatrix;
   int      currLevel;
@@ -890,7 +927,15 @@ _IndividualFix(Individual* individual, const Problem* problem)
 }
 
 int
-_IndividualFindFit(const Individual* individual, const Problem* problem, int portAllocationMatrixCnt, const Speed** portAllocationMatrix, int currLevel, int currLevelUser, int currLevelUsersCnt, Speed* nodeSpeed)
+_IndividualFindFit(
+  const Individual* individual,
+  const Problem* problem,
+  int portAllocationMatrixCnt,
+  const Speed** portAllocationMatrix,
+  int currLevel,
+  int currLevelUser,
+  int currLevelUsersCnt,
+  Speed* nodeSpeed)
 {
   int     validNodeIdsCnt;
   int*    validNodeIds;
