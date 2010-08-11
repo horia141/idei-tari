@@ -95,8 +95,6 @@ GenerateCrossOverMask(int crossOverMaskCnt, int* crossOverMask, const CrossOverP
   crossOverPoint0 = rand() % (crossOverMaskCnt - 2) + 1;
   crossOverPoint1 = rand() % (crossOverMaskCnt - crossOverPoint0) + crossOverPoint0;
 
-  printf("TPC: %d - %d\n",crossOverPoint0,crossOverPoint1);
-
   for (i = 0; i < crossOverPoint0; i++) {
     crossOverMask[i] = 0;
   }

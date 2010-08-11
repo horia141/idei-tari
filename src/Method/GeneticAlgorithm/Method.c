@@ -24,7 +24,7 @@ MethodParamsAlloc()
     methodParams = malloc(sizeof(MethodParams));
 
     methodParams->MutationChance = 10;
-    methodParams->ProblemStatesCnt = 4;
+    methodParams->ProblemStatesCnt = 8;
     methodParams->SelectionParams = SelectionParamsAlloc();
     methodParams->CrossOverParams = CrossOverParamsAlloc();
 
@@ -294,7 +294,7 @@ MethodStateGetBest(const MethodState* methodState, const ProblemState* currBest)
 
     assert (best != NULL);
 
-    if (currBest != NULL && ProblemStateCost(currBest) < currCost) {
+    if (currBest != NULL && ProblemStateCost(currBest) < bestCost) {
         return ProblemStateCopy(currBest);
     } else {
         return ProblemStateCopy(best);
