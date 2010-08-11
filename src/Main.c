@@ -24,7 +24,7 @@ main()
   MethodStatePrint(currMethodState,0);
   ProblemStatePrint(currBest,0);
 
-  for (i = 0; i < 40; i++) {
+  for (i = 0; i < 4; i++) {
     nextMethodState = MethodStateGenNext(currMethodState,methodParams,problemParams,i + 1);
     nextBest = MethodStateGetBest(nextMethodState,currBest);
 

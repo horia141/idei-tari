@@ -24,7 +24,7 @@ MethodParamsAlloc()
     methodParams = malloc(sizeof(MethodParams));
 
     methodParams->MutationChance = 10;
-    methodParams->ProblemStatesCnt = 8;
+    methodParams->ProblemStatesCnt = 4;
     methodParams->SelectionParams = SelectionParamsAlloc();
     methodParams->CrossOverParams = CrossOverParamsAlloc();
 
