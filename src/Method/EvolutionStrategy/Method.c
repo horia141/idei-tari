@@ -132,7 +132,6 @@ MethodStateGenNext(
   int                   sortedStatesCnt;
   const ProblemState**  sortedStates;
   int                   bestOffspringCnt;
-  ProblemState*         newOffspring;
   int                   i;
   int                   j;
 
