@@ -15,8 +15,6 @@ void              CrossOverParamsPrint(
                     int indentLevel);
 int               CrossOverParamsIsValid(
                     const CrossOverParams* crossOverParams);
-const char*       CrossOverParamsName(
-                    const CrossOverParams* crossOverParams);
 
 void              GenerateCrossOverMask(
                     int crossOverMaskCnt,

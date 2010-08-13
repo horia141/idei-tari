@@ -7,7 +7,6 @@
 
 struct CrossOverParams
 {
-  char*  Name;
 };
 
 CrossOverParams*
@@ -19,7 +18,6 @@ CrossOverParamsAlloc(
   crossOverParams = malloc(sizeof(CrossOverParams));
 
   fscanf(fin," UniformCrossOverParams :");
-  crossOverParams->Name = strdup("UniformCrossOver");
 
   return crossOverParams;
 }
@@ -30,9 +28,6 @@ CrossOverParamsFree(
 {
   assert(crossOverParams != NULL);
   assert(CrossOverParamsIsValid(*crossOverParams));
-
-  free((*crossOverParams)->Name);
-  (*crossOverParams)->Name = NULL;
 
   free(*crossOverParams);
   *crossOverParams = NULL;
@@ -53,7 +48,7 @@ CrossOverParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sUniformCrossOver Params:\n",indent);
+  printf("%sUniformCrossOverParams:\n",indent);
 
   free(indent);
 }
@@ -66,24 +61,7 @@ CrossOverParamsIsValid(
     return 0;
   }
 
-  if (crossOverParams->Name == NULL) {
-    return 0;
-  }
-
-  if (strlen(crossOverParams->Name) == 0) {
-    return 0;
-  }
-
   return 1;
-}
-
-const char*
-CrossOverParamsName(
-  const CrossOverParams* crossOverParams)
-{
-  assert(CrossOverParamsIsValid(crossOverParams));
-    
-  return crossOverParams->Name;
 }
 
 

@@ -56,7 +56,7 @@ MethodParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sEvolutionStrategy (μ,λ) Params:\n",indent);
+  printf("%sEvolutionStrategyParams:\n",indent);
   printf("%s  Miu: %d\n",indent,methodParams->Miu);
   printf("%s  Lambda: %d\n",indent,methodParams->Lambda);
 
@@ -201,7 +201,7 @@ MethodStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sHillClimbing State:\n",indent);
+  printf("%sHillClimbingState:\n",indent);
   printf("%s  Iteration: %d\n",indent,methodState->Iteration);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
   printf("%s  ProblemStates:\n",indent);

@@ -17,8 +17,6 @@ void              SelectionParamsPrint(
                     int indentLevel);
 int               SelectionParamsIsValid(
                     const SelectionParams* selectionParams);
-const char*       SelectionParamsName(
-                    const SelectionParams* selectionParams);
 
 void              GenerateSelectedStates(
                     int selectedStatesCnt,

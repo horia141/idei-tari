@@ -7,7 +7,6 @@
 
 struct SelectionParams
 {
-  char*  Name;
 };
 
 SelectionParams*
@@ -19,7 +18,6 @@ SelectionParamsAlloc(
   selectionParams = malloc(sizeof(SelectionParams));
 
   fscanf(fin," RandomSelectionParams :");
-  selectionParams->Name = strdup("RandomSelection");
 
   return selectionParams;
 }
@@ -30,9 +28,6 @@ SelectionParamsFree(
 {
   assert(selectionParams != NULL);
   assert(SelectionParamsIsValid(*selectionParams));
-
-  free((*selectionParams)->Name);
-  (*selectionParams)->Name = NULL;
 
   free(*selectionParams);
   *selectionParams = NULL;
@@ -53,7 +48,7 @@ SelectionParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSelection Params:\n",indent);
+  printf("%sRandomSelectionParams:\n",indent);
 
   free(indent);
 }
@@ -66,24 +61,7 @@ SelectionParamsIsValid(
     return 0;
   }
 
-  if (selectionParams->Name == NULL) {
-    return 0;
-  }
-
-  if (strlen(selectionParams->Name) == 0) {
-    return 0;
-  }
-
   return 1;
-}
-
-const char*
-SelectionParamsName(
-  const SelectionParams* selectionParams)
-{
-  assert(SelectionParamsIsValid(selectionParams));
-
-  return selectionParams->Name;
 }
 
 

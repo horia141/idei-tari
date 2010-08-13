@@ -64,7 +64,7 @@ MethodParamsPrint(
     memset(indent,' ',2 * indentLevel);
     indent[2 * indentLevel] = '\0';
 
-    printf("%sGeneticAlgorithm %s %s Params:\n",indent,SelectionParamsName(methodParams->SelectionParams),CrossOverParamsName(methodParams->CrossOverParams));
+    printf("%sGeneticAlgorithmParams:\n",indent);
     printf("%s  MutationChance: %d\n",indent,methodParams->MutationChance);
     printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
     SelectionParamsPrint(methodParams->SelectionParams,indentLevel + 1);
@@ -242,7 +242,7 @@ MethodStatePrint(
     memset(indent,' ',2 * indentLevel);
     indent[2 * indentLevel] = '\0';
 
-    printf("%sGeneticAlgorithm State:\n",indent);
+    printf("%sGeneticAlgorithmState:\n",indent);
     printf("%s  Iteration: %d\n",indent,methodState->Iteration);
     printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
     printf("%s  ProblemStates:\n",indent);

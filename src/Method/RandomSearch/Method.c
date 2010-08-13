@@ -53,7 +53,7 @@ MethodParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearch Params:\n",indent);
+  printf("%sRandomSearchParams:\n",indent);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
 
   free(indent);
@@ -166,7 +166,7 @@ MethodStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearch State:\n",indent);
+  printf("%sRandomSearchState:\n",indent);
   printf("%s  Iteration: %d\n",indent,methodState->Iteration);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
   printf("%s  ProblemStates:\n",indent);

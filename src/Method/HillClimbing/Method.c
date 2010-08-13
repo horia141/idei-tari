@@ -56,7 +56,7 @@ MethodParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sHillClimbing Params:\n",indent);
+  printf("%sHillClimbingParams:\n",indent);
   printf("%s  ExplorationFactor: %d\n",indent,methodParams->ExplorationFactor);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
 
@@ -203,7 +203,7 @@ MethodStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sHillClimbing State:\n",indent);
+  printf("%sHillClimbingState:\n",indent);
   printf("%s  Iteration: %d\n",indent,methodState->Iteration);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
   printf("%s  ProblemStates:\n",indent);

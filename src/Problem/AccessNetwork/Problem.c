@@ -155,24 +155,28 @@ ProblemParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sAccessNetwork Params:\n",indent);
+  printf("%sAccessNetworkParams:\n",indent);
   printf("%s  Name: %s\n",indent,problemParams->Name);
+  printf("%s  NodesCnt: %d\n",indent,problemParams->NodesCnt);
   printf("%s  Nodes:\n",indent);
   
   for (i = 0; i < problemParams->NodesCnt; i++) {
-    printf("%s    %s:\n",indent,problemParams->Nodes[i].Name);
-    printf("%s      Cost: %f\n",indent,problemParams->Nodes[i].Cost);
+    printf("%s    Node:\n",indent);
+    printf("%s      Name: %s\n",indent,problemParams->Nodes[i].Name);
+    printf("%s      Cost: %.3lf\n",indent,problemParams->Nodes[i].Cost);
     printf("%s      DownPortsNr: %d\n",indent,problemParams->Nodes[i].DownPortsNr);
-    printf("%s      DownPort: %.3f %.3f\n",indent,problemParams->Nodes[i].DownPort.Download,problemParams->Nodes[i].DownPort.Upload);
+    printf("%s      DownPort: %.3lf %.3lf\n",indent,problemParams->Nodes[i].DownPort.Download,problemParams->Nodes[i].DownPort.Upload);
     printf("%s      UpPortsNr: %d\n",indent,problemParams->Nodes[i].UpPortsNr);
-    printf("%s      UpPort: %.3f %.3f\n",indent,problemParams->Nodes[i].UpPort.Download,problemParams->Nodes[i].UpPort.Upload);
+    printf("%s      UpPort: %.3lf %.3lf\n",indent,problemParams->Nodes[i].UpPort.Download,problemParams->Nodes[i].UpPort.Upload);
   }
-  
+
+  printf("%s  UsersCnt: %d\n",indent,problemParams->UsersCnt);
   printf("%s  Users:\n",indent);
 
   for (i = 0; i < problemParams->UsersCnt; i++) {
-    printf("%s    %s:\n",indent,problemParams->Users[i].Name);
-    printf("%s      Speed: %.3f %.3f\n",indent,problemParams->Users[i].Speed.Download,problemParams->Users[i].Speed.Upload);
+    printf("%s    User:\n",indent);
+    printf("%s      Name: %s\n",indent,problemParams->Users[i].Name);
+    printf("%s      Speed: %.3lf %.3lf\n",indent,problemParams->Users[i].Speed.Download,problemParams->Users[i].Speed.Upload);
   }
 
   printf("%s  MaxNetworkNodes: %d\n",indent,problemParams->MaxNetworkNodes);
@@ -571,15 +575,17 @@ ProblemStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sAccessNetwork State:\n",indent);
-  printf("%s  Nodes: ",indent);
+  printf("%sAccessNetworkState:\n",indent);
+  printf("%s  NodeIdsUsedCnt: %d\n",indent,problemState->NodeIdsUsedCnt);
+  printf("%s  NodeIdsCnt: %d\n",indent,problemState->NodeIdsCnt);
+  printf("%s  NodesIds: ",indent);
 
   for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
     printf("%d ", problemState->NodeIds[i]);
   }
 
   printf("\n");
-  printf("%s  Cost: %.3f\n",indent,problemState->Cost);
+  printf("%s  Cost: %.3lf\n",indent,problemState->Cost);
   printf("%s  TextDiff: ",indent);
 
   diffText = problemState->TextDiff;
