@@ -11,12 +11,14 @@ struct CrossOverParams
 };
 
 CrossOverParams*
-CrossOverParamsAlloc()
+CrossOverParamsAlloc(
+  FILE* fin)
 {
   CrossOverParams*  crossOverParams;
 
   crossOverParams = malloc(sizeof(CrossOverParams));
 
+  fscanf(fin," OnePointCrossOverParams :");
   crossOverParams->Name = strdup("OnePointCrossOver");
 
   return crossOverParams;

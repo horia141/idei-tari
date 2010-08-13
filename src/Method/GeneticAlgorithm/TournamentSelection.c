@@ -13,13 +13,15 @@ struct SelectionParams
 };
 
 SelectionParams*
-SelectionParamsAlloc()
+SelectionParamsAlloc(
+  FILE* fin)
 {
     SelectionParams*  selectionParams;
 
     selectionParams = malloc(sizeof(SelectionParams));
 
-    selectionParams->TournamentSize = 2;
+    fscanf(fin," TournamentSelectionParams :");
+    fscanf(fin," TournamentSize : %d",&selectionParams->TournamentSize);
     selectionParams->Name = strdup("TournamentSelection");
 
     return selectionParams;

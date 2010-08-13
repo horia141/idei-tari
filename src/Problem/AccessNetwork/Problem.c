@@ -53,85 +53,40 @@ static int  _ProblemParamsMaxNetworkLevels(
               const ProblemParams* problemParams);
 
 ProblemParams*
-ProblemParamsAlloc()
+ProblemParamsAlloc(
+  FILE* fin)
 {
   ProblemParams*  problemParams;
+  int             i;
     
   problemParams = malloc(sizeof(ProblemParams));
 
-  problemParams->Name = strdup("Test Problem");
-  problemParams->NodesCnt = 4;
-  problemParams->Nodes = malloc(sizeof(Node)*problemParams->NodesCnt);
-  problemParams->Nodes[0].Name = strdup("SW 01");
-  problemParams->Nodes[0].Cost = 100.0;
-  problemParams->Nodes[0].DownPortsNr = 4;
-  problemParams->Nodes[0].DownPort.Download = 10.0;
-  problemParams->Nodes[0].DownPort.Upload = 2.0;
-  problemParams->Nodes[0].UpPortsNr = 1;
-  problemParams->Nodes[0].UpPort.Download = 20.0;
-  problemParams->Nodes[0].UpPort.Upload = 2.0;
-  problemParams->Nodes[1].Name = strdup("SW 02");
-  problemParams->Nodes[1].Cost = 40.0;
-  problemParams->Nodes[1].DownPortsNr = 2;
-  problemParams->Nodes[1].DownPort.Download = 10.0;
-  problemParams->Nodes[1].DownPort.Upload = 4.0;
-  problemParams->Nodes[1].UpPortsNr = 1;
-  problemParams->Nodes[1].UpPort.Download = 20.0;
-  problemParams->Nodes[1].UpPort.Upload = 2.0;
-  problemParams->Nodes[2].Name = strdup("SW 03");
-  problemParams->Nodes[2].Cost = 150.0;
-  problemParams->Nodes[2].DownPortsNr = 8;
-  problemParams->Nodes[2].DownPort.Download = 10.0;
-  problemParams->Nodes[2].DownPort.Upload = 1.0;
-  problemParams->Nodes[2].UpPortsNr = 2;
-  problemParams->Nodes[2].UpPort.Download = 100.0;
-  problemParams->Nodes[2].UpPort.Upload = 10.0;
-  problemParams->Nodes[3].Name = strdup("SW 04");
-  problemParams->Nodes[3].Cost = 180.0;
-  problemParams->Nodes[3].DownPortsNr = 4;
-  problemParams->Nodes[3].DownPort.Download = 12.0;
-  problemParams->Nodes[3].DownPort.Upload = 4.0;
-  problemParams->Nodes[3].UpPortsNr = 1;
-  problemParams->Nodes[3].UpPort.Download = 40.0;
-  problemParams->Nodes[3].UpPort.Upload = 10.0;
-  problemParams->UsersCnt = 12;
-  problemParams->Users = malloc(sizeof(User)*problemParams->UsersCnt);
-  problemParams->Users[0].Name = strdup("User 00");
-  problemParams->Users[0].Speed.Download = 1.024;
-  problemParams->Users[0].Speed.Upload = 0.128;
-  problemParams->Users[1].Name = strdup("User 01");
-  problemParams->Users[1].Speed.Download = 0.512;
-  problemParams->Users[1].Speed.Upload = 0.128;
-  problemParams->Users[2].Name = strdup("User 02");
-  problemParams->Users[2].Speed.Download = 0.512;
-  problemParams->Users[2].Speed.Upload = 0.064;
-  problemParams->Users[3].Name = strdup("User 03");
-  problemParams->Users[3].Speed.Download = 1.024;
-  problemParams->Users[3].Speed.Upload = 0.256;
-  problemParams->Users[4].Name = strdup("User 04");
-  problemParams->Users[4].Speed.Download = 2.048;
-  problemParams->Users[4].Speed.Upload = 1.024;
-  problemParams->Users[5].Name = strdup("User 05");
-  problemParams->Users[5].Speed.Download = 0.512;
-  problemParams->Users[5].Speed.Upload = 0.128;
-  problemParams->Users[6].Name = strdup("User 06");
-  problemParams->Users[6].Speed.Download = 0.512;
-  problemParams->Users[6].Speed.Upload = 0.256;
-  problemParams->Users[7].Name = strdup("User 07");
-  problemParams->Users[7].Speed.Download = 1.024;
-  problemParams->Users[7].Speed.Upload = 0.256;
-  problemParams->Users[8].Name = strdup("User 08");
-  problemParams->Users[8].Speed.Download = 1.024;
-  problemParams->Users[8].Speed.Upload = 0.128;
-  problemParams->Users[9].Name = strdup("User 09");
-  problemParams->Users[9].Speed.Download = 0.512;
-  problemParams->Users[9].Speed.Upload = 0.512;
-  problemParams->Users[10].Name = strdup("User 10");
-  problemParams->Users[10].Speed.Download = 0.128;
-  problemParams->Users[10].Speed.Upload = 0.064;
-  problemParams->Users[11].Name = strdup("User 11");
-  problemParams->Users[11].Speed.Download = 0.256;
-  problemParams->Users[11].Speed.Upload = 0.128;
+  fscanf(fin," AccessNetworkParams :");
+  fscanf(fin," Name : %as",&problemParams->Name);
+  fscanf(fin," NodesCnt : %d",&problemParams->NodesCnt);
+  fscanf(fin," Nodes :");
+  problemParams->Nodes = malloc(sizeof(Node) * problemParams->NodesCnt);
+
+  for (i = 0; i < problemParams->NodesCnt; i++) {
+    fscanf(fin," Node :");
+    fscanf(fin," Name : %as",&problemParams->Nodes[i].Name);
+    fscanf(fin," Cost : %lf",&problemParams->Nodes[i].Cost);
+    fscanf(fin," DownPortsNr : %d",&problemParams->Nodes[i].DownPortsNr);
+    fscanf(fin," DownPort : %lf %lf",&problemParams->Nodes[i].DownPort.Download,&problemParams->Nodes[i].DownPort.Upload);
+    fscanf(fin," UpPortsNr : %d",&problemParams->Nodes[i].UpPortsNr);
+    fscanf(fin," UpPort : %lf %lf",&problemParams->Nodes[i].UpPort.Download,&problemParams->Nodes[i].UpPort.Upload);
+  }
+
+  fscanf(fin," UsersCnt : %d",&problemParams->UsersCnt);
+  fscanf(fin," Users:");
+  problemParams->Users = malloc(sizeof(User) * problemParams->UsersCnt);
+
+  for (i = 0; i < problemParams->UsersCnt; i++) {
+    fscanf(fin," User :");
+    fscanf(fin," Name : %as",&problemParams->Users[i].Name);
+    fscanf(fin," Speed : %lf %lf",&problemParams->Users[i].Speed.Download,&problemParams->Users[i].Speed.Upload);
+  }
+    
   problemParams->MaxNetworkNodes = _ProblemParamsMaxNetworkNodes(problemParams);
   problemParams->MaxNetworkLevels = _ProblemParamsMaxNetworkLevels(problemParams);
 

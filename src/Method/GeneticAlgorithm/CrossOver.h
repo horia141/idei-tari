@@ -1,10 +1,13 @@
 #ifndef _CROSSOVER_H
 #define _CROSSOVER_H
 
+#include <stdio.h>
+
 struct CrossOverParams;
 typedef struct CrossOverParams CrossOverParams;
 
-CrossOverParams*  CrossOverParamsAlloc();
+CrossOverParams*  CrossOverParamsAlloc(
+                    FILE* fin);
 void              CrossOverParamsFree(
                     CrossOverParams** crossOverParams);
 void              CrossOverParamsPrint(

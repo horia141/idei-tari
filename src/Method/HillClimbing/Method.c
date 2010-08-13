@@ -13,14 +13,16 @@ struct MethodParams
 };
 
 MethodParams*
-MethodParamsAlloc()
+MethodParamsAlloc(
+  FILE* fin)
 {
   MethodParams*  methodParams;
 
   methodParams = malloc(sizeof(MethodParams));
 
-  methodParams->ExplorationFactor = 4;
-  methodParams->ProblemStatesCnt = 2;
+  fscanf(fin," HillClimbingParams :");
+  fscanf(fin," ExplorationFactor : %d",&methodParams->ExplorationFactor);
+  fscanf(fin," ProblemStatesCnt : %d",&methodParams->ProblemStatesCnt);
 
   return methodParams;
 }

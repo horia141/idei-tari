@@ -16,14 +16,16 @@ static double  _ProblemFunction(
                  double x);
 
 ProblemParams*
-ProblemParamsAlloc()
+ProblemParamsAlloc(
+  FILE* fin)
 {
   ProblemParams*  problemParams;
 
   problemParams = malloc(sizeof(ProblemParams));
 
-  problemParams->IntervalStart = -1.0;
-  problemParams->IntervalEnd = 1.0;
+  fscanf(fin," RealFunction1DParams :");
+  fscanf(fin," IntervalStart : %lf",&problemParams->IntervalStart);
+  fscanf(fin," IntervalEnd : %lf",&problemParams->IntervalEnd);
 
   return problemParams;
 }

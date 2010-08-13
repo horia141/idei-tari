@@ -14,8 +14,8 @@ main()
   ProblemState*   nextBest;
   int             i;
 
-  methodParams = MethodParamsAlloc();
-  problemParams = ProblemParamsAlloc();
+  methodParams = MethodParamsAlloc(stdin);
+  problemParams = ProblemParamsAlloc(stdin);
   currMethodState = MethodStateAlloc(methodParams,problemParams);
   currBest = MethodStateGetBest(currMethodState,NULL);
 

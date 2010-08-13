@@ -17,16 +17,18 @@ struct MethodParams
 };
 
 MethodParams*
-MethodParamsAlloc()
+MethodParamsAlloc(
+  FILE* fin)
 {
     MethodParams*  methodParams;
 
     methodParams = malloc(sizeof(MethodParams));
 
-    methodParams->MutationChance = 10;
-    methodParams->ProblemStatesCnt = 4;
-    methodParams->SelectionParams = SelectionParamsAlloc();
-    methodParams->CrossOverParams = CrossOverParamsAlloc();
+    fscanf(fin," GeneticAlgorithmParams :");
+    fscanf(fin," MutationChance: %d",&methodParams->MutationChance);
+    fscanf(fin," ProblemStatesCnt: %d",&methodParams->ProblemStatesCnt);
+    methodParams->SelectionParams = SelectionParamsAlloc(fin);
+    methodParams->CrossOverParams = CrossOverParamsAlloc(fin);
 
     return methodParams;
 }

@@ -13,14 +13,16 @@ struct MethodParams
 };
 
 MethodParams*
-MethodParamsAlloc()
+MethodParamsAlloc(
+  FILE* fin)
 {
   MethodParams*  methodParams;
 
   methodParams = malloc(sizeof(MethodParams));
 
-  methodParams->Miu = 2;
-  methodParams->Lambda = 4;
+  fscanf(fin," EvolutionStrategyParams :");
+  fscanf(fin," Miu : %d",&methodParams->Miu);
+  fscanf(fin," Lambda : %d",&methodParams->Lambda);
 
   return methodParams;
 }

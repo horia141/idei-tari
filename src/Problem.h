@@ -1,10 +1,13 @@
 #ifndef _PROBLEM_H
 #define _PROBLEM_H
 
+#include <stdio.h>
+
 struct ProblemParams;
 typedef struct ProblemParams ProblemParams;
 
-ProblemParams*  ProblemParamsAlloc();
+ProblemParams*  ProblemParamsAlloc(
+                  FILE* fin);
 void            ProblemParamsFree(
                   ProblemParams** problemParams);
 void            ProblemParamsPrint(

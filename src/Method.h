@@ -1,12 +1,14 @@
 #ifndef _METHOD_H
 #define _METHOD_H
 
+#include <stdio.h>
+
 #include "Problem.h"
 
 struct MethodParams;
 typedef struct MethodParams MethodParams;
 
-MethodParams*  MethodParamsAlloc();
+MethodParams*  MethodParamsAlloc(FILE* fin);
 void           MethodParamsFree(
                  MethodParams** methodParams);
 void           MethodParamsPrint(

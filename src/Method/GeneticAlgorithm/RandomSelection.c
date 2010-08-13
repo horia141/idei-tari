@@ -11,12 +11,14 @@ struct SelectionParams
 };
 
 SelectionParams*
-SelectionParamsAlloc()
+SelectionParamsAlloc(
+  FILE* fin)
 {
   SelectionParams*  selectionParams;
 
   selectionParams = malloc(sizeof(SelectionParams));
 
+  fscanf(fin," RandomSelectionParams :");
   selectionParams->Name = strdup("RandomSelection");
 
   return selectionParams;

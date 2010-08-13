@@ -1,0 +1,6 @@
+GeneticAlgorithmParams:
+  MutationChance: 20
+  ProblemStatesCnt: 10
+  TournamentSelectionParams:
+    TournamentSize: 4
+  UniformCrossOverParams:

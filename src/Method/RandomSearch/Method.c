@@ -12,13 +12,15 @@ struct MethodParams
 };
 
 MethodParams*
-MethodParamsAlloc()
+MethodParamsAlloc(
+  FILE* fin)
 {
   MethodParams*  methodParams;
 
   methodParams = malloc(sizeof(MethodParams));
 
-  methodParams->ProblemStatesCnt = 2;
+  fscanf(fin," RandomSearchParams :");
+  fscanf(fin," ProblemStatesCnt : %d",&methodParams->ProblemStatesCnt);
 
   return methodParams;
 }
