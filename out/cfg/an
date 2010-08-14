@@ -1,6 +1,6 @@
 AccessNetworkParams:
   Name: Test_Problem
-  NodesCnt: 4
+  NodesCnt: 6
   Nodes:
     Node:
       Name: SW_01
@@ -30,7 +30,21 @@ AccessNetworkParams:
       DownPort: 12 4
       UpPortsNr: 1
       UpPort: 40 10
-  UsersCnt: 16
+    Node:
+      Name: SW_05
+      Cost: 250
+      DownPortsNr: 4
+      DownPort: 20 10
+      UpPortsNr: 1
+      UpPort: 100 30
+    Node:
+      Name: SW_06
+      Cost: 500
+      DownPortsNr: 4
+      DownPort: 100 100
+      UpPortsNr: 1
+      UpPort: 1000 1000
+  UsersCnt: 64
   Users:
     User:
       Name: User_01
@@ -79,4 +93,148 @@ AccessNetworkParams:
       Speed: 1.024 0.256
     User:
       Name: User_16
+      Speed: 0.512 0.512
+    User:
+      Name: User_17
+      Speed: 1.024 0.128
+    User:
+      Name: User_18
+      Speed: 0.512 0.128
+    User:
+      Name: User_19
+      Speed: 0.512 0.064
+    User:
+      Name: User_20
+      Speed: 1.024 0.256
+    User:
+      Name: User_21
+      Speed: 2.048 1.024
+    User:
+      Name: User_22
+      Speed: 0.512 0.128
+    User:
+      Name: User_23
+      Speed: 0.512 0.256
+    User:
+      Name: User_24
+      Speed: 1.024 0.256
+    User:
+      Name: User_25
+      Speed: 1.024 0.128
+    User:
+      Name: User_26
+      Speed: 0.512 0.512
+    User:
+      Name: User_27
+      Speed: 0.128 0.064
+    User:
+      Name: User_28
+      Speed: 0.256 0.128
+    User:
+      Name: User_29
+      Speed: 0.128 0.128
+    User:
+      Name: User_30
+      Speed: 0.512 0.256
+    User:
+      Name: User_31
+      Speed: 1.024 0.256
+    User:
+      Name: User_32
+      Speed: 0.512 0.512
+    User:
+      Name: User_33
+      Speed: 1.024 0.128
+    User:
+      Name: User_34
+      Speed: 0.512 0.128
+    User:
+      Name: User_35
+      Speed: 0.512 0.064
+    User:
+      Name: User_36
+      Speed: 1.024 0.256
+    User:
+      Name: User_37
+      Speed: 2.048 1.024
+    User:
+      Name: User_38
+      Speed: 0.512 0.128
+    User:
+      Name: User_39
+      Speed: 0.512 0.256
+    User:
+      Name: User_40
+      Speed: 1.024 0.256
+    User:
+      Name: User_41
+      Speed: 1.024 0.128
+    User:
+      Name: User_42
+      Speed: 0.512 0.512
+    User:
+      Name: User_43
+      Speed: 0.128 0.064
+    User:
+      Name: User_44
+      Speed: 0.256 0.128
+    User:
+      Name: User_45
+      Speed: 0.128 0.128
+    User:
+      Name: User_46
+      Speed: 0.512 0.256
+    User:
+      Name: User_47
+      Speed: 1.024 0.256
+    User:
+      Name: User_48
+      Speed: 0.512 0.512
+    User:
+      Name: User_49
+      Speed: 1.024 0.128
+    User:
+      Name: User_50
+      Speed: 0.512 0.128
+    User:
+      Name: User_51
+      Speed: 0.512 0.064
+    User:
+      Name: User_52
+      Speed: 1.024 0.256
+    User:
+      Name: User_53
+      Speed: 2.048 1.024
+    User:
+      Name: User_54
+      Speed: 0.512 0.128
+    User:
+      Name: User_55
+      Speed: 0.512 0.256
+    User:
+      Name: User_56
+      Speed: 1.024 0.256
+    User:
+      Name: User_57
+      Speed: 1.024 0.128
+    User:
+      Name: User_58
+      Speed: 0.512 0.512
+    User:
+      Name: User_59
+      Speed: 0.128 0.064
+    User:
+      Name: User_60
+      Speed: 0.256 0.128
+    User:
+      Name: User_61
+      Speed: 0.128 0.128
+    User:
+      Name: User_62
+      Speed: 0.512 0.256
+    User:
+      Name: User_63
+      Speed: 1.024 0.256
+    User:
+      Name: User_64
       Speed: 0.512 0.512

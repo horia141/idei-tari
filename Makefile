@@ -199,3 +199,6 @@ all:
 		src/Method/GeneticAlgorithm/TournamentSelection.c \
 		src/Method/GeneticAlgorithm/UniformCrossOver.c \
 		src/Problem/AccessNetwork/Problem.c
+
+runtest:
+	./dev/runtest.tcl
