@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <float.h>
+#include <limits.h>
+#include <math.h>
 
 #include "Problem.h"
 
@@ -43,20 +45,27 @@ struct ProblemParams
   Node*  Nodes;
   int    UsersCnt;
   User*  Users;
-  int    MaxNetworkNodes;
   int    MaxNetworkLevels;
+  int    MaxNetworkNodes;
 };
 
-static int  _ProblemParamsMaxNetworkNodes(
-              const ProblemParams* problemParams);
-static int  _ProblemParamsMaxNetworkLevels(
-              const ProblemParams* problemParams);
+static double  _debug_log(
+		 double x);
+static double  _debug_pow(
+                 double x,
+		 double y);
+static double _debug_ceil(
+		 double x);
 
 ProblemParams*
 ProblemParamsAlloc(
   FILE* fin)
 {
   ProblemParams*  problemParams;
+  int             minDownPortsNr;
+  int             maxUpPortsNr;
+  double          a;
+  double          r;
   int             i;
     
   problemParams = malloc(sizeof(ProblemParams));
@@ -86,10 +95,43 @@ ProblemParamsAlloc(
     fscanf(fin," Name : %as",&problemParams->Users[i].Name);
     fscanf(fin," Speed : %lf %lf",&problemParams->Users[i].Speed.Download,&problemParams->Users[i].Speed.Upload);
   }
-    
-  problemParams->MaxNetworkNodes = _ProblemParamsMaxNetworkNodes(problemParams);
-  problemParams->MaxNetworkLevels = _ProblemParamsMaxNetworkLevels(problemParams);
 
+  minDownPortsNr = INT_MAX;
+  maxUpPortsNr = INT_MIN;
+
+  for (i = 0; i < problemParams->NodesCnt; i++) {
+    if (problemParams->Nodes[i].DownPortsNr < minDownPortsNr) {
+      minDownPortsNr = problemParams->Nodes[i].DownPortsNr;
+    }
+
+    if (problemParams->Nodes[i].UpPortsNr > maxUpPortsNr) {
+      maxUpPortsNr = problemParams->Nodes[i].UpPortsNr;
+    }
+  }
+
+  if (minDownPortsNr == maxUpPortsNr) {
+    maxUpPortsNr -= 1;
+  }
+
+  a = (double)problemParams->UsersCnt / (double)minDownPortsNr;
+  r = (double)maxUpPortsNr / (double)minDownPortsNr;
+
+  /* We compute MaxNetworkLevels and MaxNetworkNodes according to the rules
+     in the presentation, taking into account how the number of nodes
+     per level decreased as we reach "root". The formula for MaxNeworkLevel is
+     extracted from the condition that the number of nodes in the last layer
+     is one (there is a small error, we assume a t is a t-1 in the computation,
+     but it just yields one or two nodes which will never be used). The formula
+     for MaxNetworkNodes is obtained from treating the sum of all the nodes
+     on each level as a geometric series, and summing accordingly.
+     Also, the "-1 *" in front of the formula for MaxNetworkLevels comes from
+     the last "_debug_log(r)" call. It used to be "_debug_log(1/r)", but, taking
+     advantage of the laws of the logarithm, I passed "-1" in front : we gain
+     some precision with this. */
+
+  problemParams->MaxNetworkLevels = (int)_debug_ceil(-1 * _debug_log(problemParams->UsersCnt) / _debug_log(r));
+  problemParams->MaxNetworkNodes = (int)_debug_ceil(a * (1 - _debug_pow(r,problemParams->MaxNetworkLevels)) / (1 - r));
+    
   return problemParams;
 }
 
@@ -132,8 +174,8 @@ ProblemParamsFree(
   (*problemParams)->Nodes = NULL;
   (*problemParams)->UsersCnt = 0;
   (*problemParams)->Users = NULL;
-  (*problemParams)->MaxNetworkNodes = 0;
   (*problemParams)->MaxNetworkLevels = 0;
+  (*problemParams)->MaxNetworkNodes = 0;
 
   free(*problemParams);
   *problemParams = NULL;
@@ -179,8 +221,8 @@ ProblemParamsPrint(
     printf("%s      Speed: %.3lf %.3lf\n",indent,problemParams->Users[i].Speed.Download,problemParams->Users[i].Speed.Upload);
   }
 
-  printf("%s  MaxNetworkNodes: %d\n",indent,problemParams->MaxNetworkNodes);
   printf("%s  MaxNetworkLevels: %d\n",indent,problemParams->MaxNetworkLevels);
+  printf("%s  MaxNetworkNodes: %d\n",indent,problemParams->MaxNetworkNodes);
 
   free(indent);
 }
@@ -247,6 +289,10 @@ ProblemParamsIsValid(
     if (problemParams->Nodes[i].UpPort.Upload <= 0.0) {
       return 0;
     }
+
+    if (problemParams->Nodes[i].UpPortsNr >= problemParams->Nodes[i].DownPortsNr) {
+      return 0;
+    }
   }
 
   if (problemParams->UsersCnt < 1) {
@@ -275,31 +321,38 @@ ProblemParamsIsValid(
     }
   }
 
-  if (problemParams->MaxNetworkNodes <= 0) {
+  if (problemParams->MaxNetworkLevels <= 0) {
     return 0;
   }
 
-  if (problemParams->MaxNetworkLevels <= 0) {
+  if (problemParams->MaxNetworkNodes <= 0) {
     return 0;
   }
 
   return 1;
 }
 
-int
-_ProblemParamsMaxNetworkNodes(
-  const ProblemParams* problemParams)
+static double
+_debug_log(
+  double x)
 {
-  return 6 + 3 + 2 + 1;
+  return log(x);
 }
 
-int
-_ProblemParamsMaxNetworkLevels(
-  const ProblemParams* problemParams)
+static double
+_debug_pow(
+  double x,
+  double y)
 {
-  return 4;
+  return pow(x,y);
 }
 
+static double
+_debug_ceil(
+  double x)
+{
+  return ceil(x);
+}
 
 struct ProblemState
 {
