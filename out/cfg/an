@@ -30,7 +30,7 @@ AccessNetworkParams:
       DownPort: 12 4
       UpPortsNr: 1
       UpPort: 40 10
-  UsersCnt: 12
+  UsersCnt: 16
   Users:
     User:
       Name: User_01
@@ -68,3 +68,15 @@ AccessNetworkParams:
     User:
       Name: User_12
       Speed: 0.256 0.128
+    User:
+      Name: User_13
+      Speed: 0.128 0.128
+    User:
+      Name: User_14
+      Speed: 0.512 0.256
+    User:
+      Name: User_15
+      Speed: 1.024 0.256
+    User:
+      Name: User_16
+      Speed: 0.512 0.512

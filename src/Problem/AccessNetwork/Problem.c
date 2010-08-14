@@ -622,6 +622,7 @@ ProblemStatePrint(
   char*  indent;
   char*  diffText;
   int    i;
+  int    printADiffChar;
 
   indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
@@ -642,12 +643,13 @@ ProblemStatePrint(
   printf("%s  TextDiff: ",indent);
 
   diffText = problemState->TextDiff;
+  printADiffChar = 0;
 
   while (*diffText) {
       switch (*diffText) {
-      case ';': printf("\n%s          - ",indent); break;
-      case ',': printf("\n%s            ",indent); break;
-      default:  printf("%c",*diffText);
+      case ';': if (printADiffChar) printf("\n%s          - ",indent); break;
+      case ',': if (printADiffChar) printf("\n%s            ",indent); break;
+      default:  printf("%c",*diffText); printADiffChar = 1; break;
       }
 
       diffText++;

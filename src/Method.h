@@ -8,7 +8,8 @@
 struct MethodParams;
 typedef struct MethodParams MethodParams;
 
-MethodParams*  MethodParamsAlloc(FILE* fin);
+MethodParams*  MethodParamsAlloc(
+                 FILE* fin);
 void           MethodParamsFree(
                  MethodParams** methodParams);
 void           MethodParamsPrint(

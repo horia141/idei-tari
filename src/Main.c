@@ -1,47 +1,29 @@
 #include <stdlib.h>
 
-#include "Problem.h"
+#include "Driver.h"
 #include "Method.h"
+#include "Problem.h"
 
 int
 main()
 {
-  MethodParams*   methodParams;
-  ProblemParams*  problemParams;
-  MethodState*    currMethodState;
-  ProblemState*   currBest;
-  MethodState*    nextMethodState;
-  ProblemState*   nextBest;
-  int             i;
+  DriverParams*   driverParams;
+  DriverState*    initialState;
+  DriverState*    finalState;
 
-  methodParams = MethodParamsAlloc(stdin);
-  problemParams = ProblemParamsAlloc(stdin);
-  currMethodState = MethodStateAlloc(methodParams,problemParams);
-  currBest = MethodStateGetBest(currMethodState,NULL);
+  driverParams = DriverParamsAlloc(stdin);
+  initialState = DriverStateAlloc(driverParams);
 
-  MethodParamsPrint(methodParams,0);
-  ProblemParamsPrint(problemParams,0);
-  MethodStatePrint(currMethodState,0);
-  ProblemStatePrint(currBest,0);
+  DriverParamsPrint(driverParams,0);
+  DriverStatePrint(initialState,0);
 
-  for (i = 0; i < 4; i++) {
-    nextMethodState = MethodStateGenNext(currMethodState,methodParams,problemParams,i + 1);
-    nextBest = MethodStateGetBest(nextMethodState,currBest);
+  finalState = DriverStateRun(initialState,driverParams);
 
-    MethodStatePrint(nextMethodState,0);
-    ProblemStatePrint(nextBest,0);
+  DriverStatePrint(finalState,0);
 
-    MethodStateFree(&currMethodState);
-    ProblemStateFree(&currBest);
-
-    currMethodState = nextMethodState;
-    currBest = nextBest;
-  }
-
-  MethodParamsFree(&methodParams);
-  ProblemParamsFree(&problemParams);
-  MethodStateFree(&currMethodState);
-  ProblemStateFree(&currBest);
+  DriverParamsFree(&driverParams);
+  DriverStateFree(&initialState);
+  DriverStateFree(&finalState);
 
   return 0;
 }
