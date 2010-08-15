@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "Driver.h"
 #include "Method.h"
 #include "Problem.h"

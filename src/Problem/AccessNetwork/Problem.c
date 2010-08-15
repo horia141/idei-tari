@@ -360,7 +360,6 @@ struct ProblemState
   int    NodeIdsCnt;
   int*   NodeIds;
   float  Cost;
-  char*  TextDiff;
 };
 
 static void    _ProblemStateFix(
@@ -391,7 +390,6 @@ ProblemStateAlloc(
   problemState->NodeIdsCnt = problemParams->MaxNetworkNodes;
   problemState->NodeIds = malloc(sizeof(int) * problemState->NodeIdsCnt);
   problemState->Cost = 0;
-  problemState->TextDiff = strdup("");
 
   for (i = 0; i < problemState->NodeIdsCnt; i++) {
     problemState->NodeIds[i] = -1;
@@ -417,7 +415,6 @@ ProblemStateCopy(
   problemState->NodeIdsCnt = sourceState->NodeIdsCnt;
   problemState->NodeIds = malloc(sizeof(int) * problemState->NodeIdsCnt);
   problemState->Cost = sourceState->Cost;
-  problemState->TextDiff = strdup(sourceState->TextDiff);
 
   for (i = 0; i < problemState->NodeIdsCnt; i++) {
     problemState->NodeIds[i] = sourceState->NodeIds[i];
@@ -435,30 +432,16 @@ ProblemStateGenNext(
   assert(ProblemParamsIsValid(problemParams));
 
   ProblemState*  problemState;
-  char           tempBuff[20480];
-  int            tempBuffSize;
   float          operation;
   int            index;
   int            oldType;
   int            changeNode;
   int            i;
-  int            j;
 
   problemState = ProblemStateCopy(previousState);
 
   operation = rand() / (float)RAND_MAX;
   index = rand() % problemState->NodeIdsUsedCnt;
-
-  free(problemState->TextDiff);
-
-  memset(tempBuff,'\0',20480);
-  tempBuffSize = 0;
-
-  tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"INIT            : ");
-
-  for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[i]].Name);
-  }
 
   if (operation < 0.20 && problemState->NodeIdsUsedCnt < problemState->NodeIdsCnt) {
     for (i = problemState->NodeIdsUsedCnt; i > index; i--) {
@@ -467,12 +450,6 @@ ProblemStateGenNext(
 
     problemState->NodeIds[index] = rand() % problemParams->NodesCnt;
     problemState->NodeIdsUsedCnt += 1;
-
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";ADD %3d [%s] : ",index+1,problemParams->Nodes[problemState->NodeIds[index]].Name);
-
-    for (j = 0; j < problemState->NodeIdsUsedCnt; j++) {
-      tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[j]].Name);
-    }
   } else if (operation < 0.40 && problemState->NodeIdsUsedCnt > 1) {
     oldType = problemState->NodeIds[index];
 
@@ -482,27 +459,13 @@ ProblemStateGenNext(
 
     problemState->NodeIds[problemState->NodeIdsUsedCnt-1] = -1;
     problemState->NodeIdsUsedCnt -= 1;
-
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";REM %3d         : ",index+1);
-
-    for (j = 0; j < problemState->NodeIdsUsedCnt; j++) {
-      tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[j]].Name);
-    }
   } else {
     do {
       changeNode = rand() % problemParams->NodesCnt;
     } while (changeNode == problemState->NodeIds[index]);
 
     problemState->NodeIds[index] = changeNode;
-
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";CHG %3d [%s] : ",index+1,problemParams->Nodes[problemState->NodeIds[index]].Name);
-
-    for (j = 0; j < problemState->NodeIdsUsedCnt; j++) {
-      tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[j]].Name);
-    }
   }
-
-  problemState->TextDiff = strdup(tempBuff);
 
   _ProblemStateFix(problemState,problemParams);
 
@@ -526,38 +489,9 @@ ProblemStateCrossOver(
      	 (crossOverMaskCnt == ProblemStateGenomeSize(parentState1) && crossOverMaskCnt >= ProblemStateGenomeSize(parentState0)));
 
   ProblemState*  problemState;
-  char           tempBuff[20480];
-  int            tempBuffSize;
   int            i;
 
   problemState = ProblemStateCopy(parentState0);
-
-  free(problemState->TextDiff);
-
-  memset(tempBuff,'\0',20480);
-  tempBuffSize = 0;
-
-  tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"PARENTS         : ");
-
-  for (i = 0; i < parentState0->NodeIdsUsedCnt; i++) {
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[parentState0->NodeIds[i]].Name);
-  }
-
-  tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,",                  ");
-
-  for (i = 0; i < parentState1->NodeIdsUsedCnt; i++) {
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[parentState1->NodeIds[i]].Name);
-  }
-
-  tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";CROSSOVER MASK  : ");
-
-  for (i = 0; i < crossOverMaskCnt; i++) {
-    if (crossOverMask[i] == 1) {
-      tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[CROSS] ");
-    } else {
-      tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[LEAVE] ");
-    }
-  }
 
   for (i = 0; i < crossOverMaskCnt; i++) {
     if (crossOverMask[i] == 1) {
@@ -578,14 +512,6 @@ ProblemStateCrossOver(
     problemState->NodeIds[i] = -1;
   }
 
-  tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";RESULT CHILD    : ");
-
-  for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
-    tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[i]].Name);
-  }
-  
-  problemState->TextDiff = strdup(tempBuff);
-
   _ProblemStateFix(problemState,problemParams);
 
   return problemState;
@@ -599,13 +525,11 @@ ProblemStateFree(
   assert(ProblemStateIsValid(*problemState));
 
   free((*problemState)->NodeIds);
-  free((*problemState)->TextDiff);
 
   (*problemState)->NodeIdsUsedCnt = 0;
   (*problemState)->NodeIdsCnt = 0;
   (*problemState)->NodeIds = NULL;
   (*problemState)->Cost = 0.0;
-  (*problemState)->TextDiff = NULL;
 
   free(*problemState);
   *problemState = NULL;
@@ -620,9 +544,7 @@ ProblemStatePrint(
   assert(indentLevel >= 0);
 
   char*  indent;
-  char*  diffText;
   int    i;
-  int    printADiffChar;
 
   indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
@@ -640,22 +562,6 @@ ProblemStatePrint(
 
   printf("\n");
   printf("%s  Cost: %.3lf\n",indent,problemState->Cost);
-/*   printf("%s  TextDiff: ",indent); */
-
-/*   diffText = problemState->TextDiff; */
-/*   printADiffChar = 0; */
-
-/*   while (*diffText) { */
-/*       switch (*diffText) { */
-/*       case ';': if (printADiffChar) printf("\n%s          - ",indent); break; */
-/*       case ',': if (printADiffChar) printf("\n%s            ",indent); break; */
-/*       default:  printf("%c",*diffText); printADiffChar = 1; break; */
-/*       } */
-
-/*       diffText++; */
-/*   } */
-
-/*   printf("\n"); */
 
   free(indent);
 }
@@ -700,10 +606,6 @@ ProblemStateIsValid(
 
   if (problemState->Cost <= 0.0) {
       return 0;
-  }
-
-  if (problemState->TextDiff == NULL) {
-    return 0;
   }
 
   return 1;
@@ -763,9 +665,6 @@ _ProblemStateFix(
     Speed    nextNodeSpeed;
     int      nodeGood;
     Speed    nodeSpeed;
-    char*    diffText;
-    char     tempBuff[20480];
-    int      tempBuffSize;
     int      i;
     int      j;
     int      k;
@@ -787,9 +686,6 @@ _ProblemStateFix(
     nextLevelUsersCnt = 0;
     nextLevelNodesAdded = 0;
     savedNodesAdded = 0;
-
-    memset(tempBuff,'\0',20480);
-    tempBuffSize = 0;
 
     for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
         nodeGood = 1;
@@ -832,12 +728,6 @@ _ProblemStateFix(
             nextLevelUsersCnt += problemParams->Nodes[nextNodeId].UpPortsNr;
 
             problemState->NodeIds[i] = nextNodeId;
-
-            tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";CHG %3d [%s] : ",i+1,problemParams->Nodes[nextNodeId].Name);
-
-            for (j = 0; j < problemState->NodeIdsUsedCnt; j++) {
-                tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[j]].Name);
-            }
         }
 
         nextLevelNodesAdded += 1;
@@ -860,12 +750,6 @@ _ProblemStateFix(
 
             problemState->NodeIdsUsedCnt = i + 1;
 
-            tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";RMX %3d         : ",i+2);
-
-            for (j = 0; j < problemState->NodeIdsUsedCnt; j++) {
-                tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[j]].Name);
-            }
-
             break;
         }
     }
@@ -887,12 +771,6 @@ _ProblemStateFix(
             problemState->NodeIds[problemState->NodeIdsUsedCnt] = nextNodeId;
             problemState->NodeIdsUsedCnt += 1;
 
-            tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,";APP     [%s] : ",problemParams->Nodes[nextNodeId].Name);
-
-            for (j = 0; j < problemState->NodeIdsUsedCnt; j++) {
-                tempBuffSize += snprintf(tempBuff+tempBuffSize,20480-tempBuffSize,"[%s] ",problemParams->Nodes[problemState->NodeIds[j]].Name);
-            }
-
             if (currLevelUser >= currLevelUsersCnt) {
                 currLevel += 1;
                 currLevelUser = 0;
@@ -910,10 +788,6 @@ _ProblemStateFix(
     for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
         problemState->Cost = problemState->Cost + problemParams->Nodes[problemState->NodeIds[i]].Cost;
     }
-
-    diffText = problemState->TextDiff;
-    asprintf(&problemState->TextDiff,"%s%s",diffText,tempBuff);
-    free(diffText);
 
     for (i = 0; i < problemParams->MaxNetworkLevels; i++) {
         free(portAllocationMatrix[i]);
