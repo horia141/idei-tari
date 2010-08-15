@@ -3,4 +3,4 @@ GeneticAlgorithmParams:
   ProblemStatesCnt: 50
   TournamentSelectionParams:
     TournamentSize: 4
-  TwoPointCrossOverParams:
+  SinglePointCrossOverParams:

@@ -2,4 +2,4 @@ GeneticAlgorithmParams:
   MutationChance: 15
   ProblemStatesCnt: 50
   RandomSelectionParams:
-  OnePointCrossOverParams:
+  SinglePointCrossOverParams:
