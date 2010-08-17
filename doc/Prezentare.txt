@@ -1,0 +1,142 @@
+Optimizarea planificarii de retele de acces folosind algoritmi genetici.
+
+1.Introducere.
+
+Realizarea de retele de acces pentru clienti este un proces de importanta pentru operatorii de astfel de retele. Realizarea lor cu costuri cat mai mici este si mai importanta. In aceasta lucrare prezint o abordare pentru optimizarea de astfel de retele folosind Algoritmi Genetici, si in general, Algoritmi Evolutivi.
+
+2.Problema.
+
+Am stabilit ca problema pe care incercam sa o rezolvam este realizarea unei retele de acces optime. Prima intrebare pe care n-o putem pune in continuare, este ce este accea o retea de acces, si, mai apoi, ce inseamna realizarea optima a acesteia. In termeni largi, o retea de acces este un sistem ce permite utilizarea unei resurse de catre un numar de utilizatori. Natura resursei si a modului de acces la aceasta este variata. De exemplu, o retea electrica permite accesul locuintelor / consumatorilor electrici la o uzina (o sursa de energie electrica). O retea de irigatii permite transmisia de apa dintr-un lac catre un consumatori agricoli. Interesant pentru noi este o retea de telecomunicatii digitala, ce permite accesul unor utilizatori la o sursa de informatie. Un utilizator este abstract asociat unui om : depinzand de granularitatea la care lucram, poate fi un dispozitiv specific (un telefon, un calculator, un televizor : concepte asociate cu un "utilizator uman", dar nu identificate cu acesta), un individ sau un punct de acces, in spatele caruia se pot afla multe dispozitive si multi indivizi. Sursa de informatie este, in general, o poarta de acces catre Internet. Reteaua propriu-zisa este o colectie de puncte de acces, noduri intermediare si legaturi, ce sunt reprezentate fizic ca echipamente de telecomunicatii: switch-uri, route-re, cabluri etc. Structura logica oglindeste strutura fizica. Natura constructiei este constransa intr-un mod complex de limitarile fizice ale echipamentelor digitale : viteze de propagare finite, distante maxime de transmisie, rate de procesare limitate etc.
+
+Avem definita notiunea oarecum intuitiva de retea de acces, pornind de la o notiune generala si reducand amploarea definitiei pana la o forma specifica si familiara. De acum incolo, cand vorbim de retea de acces ne referim special la o retea de telecomunicatii. Ce inseamna asedar, sa construim o retea de acces optima? Din punctul de vedere al organizatiei care construieste reteaua, o retea optima este acea care asigura fiecarui client accesul la Internet, in masura obligatiilor contractuale, folosind echipamente cu cel mai scazut cost. Organizatia de acces la retea semneaza un contract cu fiecare client in parte, garantand acestuia un serviciu de o anumita calitate. Acest lucru presupune garantarea unei rate de transfer (bandwidth) anume (ce determina volumul schimbului de date intre client si Internet maxim admis prin retea la un moment dat), sau garantarea unui timp de functionare intr-o anumita clasa (99.9% dintr-un an de exemplu). Nu consideram o retea valida, pe aceea care nu poate garanta aceste lucruri. Din totalitatea retelelor ce pot fi construite pentru a deservi un numar de clienti exista un numar mult mai mic ce este considerat "valid" : ce indeplineste constrangerile anterioare. Dintre acestea, trebuie sa o gasim pe aceea ce presupune un efort minim de constructie (masura efortului : cost, masura garantarii contractului : asigurarea ratei de acces). Este evident ca exista retele de cost mai mic decat optimul, dar care nu pot asigura contractul.
+
+Problema pe care o abordam noi este : avand data o lista de echipamente (de la un vanzator de echipamente / nu dintr-o selectie de echipamente de exemplu) si o lista de utilizatori cu contractele asociate, trebuie sa gasim un grup de noduri (alese din lista de echipamente) si conexiuni intre acestea astfel incat reteaua de acces construita sa fie optima. Acest lucru presupune cautarea prin spatiul posibilitatilor de constructie, eliminarea solutiilor slabe si gasirea celei mai bune.
+
+Nu este singura problema posibila. Putem de exemplu sa incepem cu un depozit de echipamente si sa incercam sa folosim un numar minim. Putem, de exemplu, sa incepem de la o retea deja existenta si sa adaugam acesteia noduri, pentru acoperirea de utilizatori in plus.
+
+3.Modelarea problemei ca problema de optimizare.
+
+Pornim de la presupunerea ca realizarea de mana a unei retele optime, este deosebit de dificila. Aceasta afirmatie pare adevarata intuitiv : pentru grupuri de chiar sute de clienti realizarea unei retele care sa acopere constrangerile de trafic este problematica. Gasirea retelei optime este mult mai dificila. Vom vedea in Anexa 1 ca, pe masura ce numarul de clienti creste, numarul de retele posibile creste exponential, asedar, gasirea unei solutii op. 
+
+* Mai intai vorbesc despre trecerea despre de la definitia informala a problemei la una formala. Spun ca e greu de gasit.
+
+In primul rand, avem de-a face cu o problema, pe scurt: gasirea retelei de acces optime. Aceasta problema are o solutie: acea retea de acces de cost minim care indeplineste constrangerile de trafic. Scopul nostru este gasirea solutiei problemei. Avem de-a face, asedar, cu o problema de cautare. Printr-un abuz de limbaj, vom numii aceasta solutie, solutia optima, iar orice retea de acces pe care o vom considera in cautarea noastra, o vom numi solutie.
+
+Pentru restul lucrarii vom avea nevoie de o definitie mai precisa a termenilor cu care operam. Momentan, am apelat la un bagaj de cunostinte ce dau un inteles intuitiv acestor concepte. Pentru a continua, insa, este necesar sa avem un inteles clar pentru termeni precum client, nod sau retea de acces. In prima instanta, vom avea nevoie de structuri care sa descrie problema, pe de-o parte, si structuri care descriu o anumita solutie, pe de alta parte. Descrierea problemei presupune specificarea clientilor si specificarea tuturor echipamentelor si a legaturilor folosibile. Descrierea solutiei presupune specificarea nodurilor folosite si a modurilor de interconectare a acestora.
+
+Pentru maxim de claritate, trebuie sa descriem structurile matematice folosite.
+
+Vom incepe cu descrierea problemei:
+
+Un client este descris de:
+
+(nume,ds,us), ds,us apartin R
+
+ds este viteza de download, iar us este viteza de upload conform cererilor contractuale ale clientului.
+
+De ce modelam asa un client : nod de acces, port de uplink, necesar de bandwidth etc.
+
+Mai departe, o nod este descris de:
+
+(nume,cost,n_d,(d_ds,d_us),n_u,(u_ds,u_us))
+unde n_d apartine N, n_u apartine N : numar de porturi download/upload
+     d_ds,d_us,u_ds,u_us apartin R: caracteristici download/upload
+     cost apartine R: costul unui nod
+
+De ce modelam asa un nod : porturi uplink, downlink, viteza upload/download, numar de porturi, reprezentare fizica etc.
+
+O problema este o multime de clienti si noduri. 
+
+(clienti,noduri)
+
+clienti = {client : client ap spatiul_clientilor} : multimea ce descrie clinetii pentru care se incearca determinarea retelei optime de acces.
+
+noduri = {nod: nod ap spatiul_nodurilor} : multimea ce descrie nodurile folosibile pentru realizarea de retele de acces.
+
+O solutie este descrisa de :
+
+(noduri)
+
+unde noduri = {(id,nod): id = 1,N, nod ap multimea nume noduri}
+
+Putem definii o functie cost, pe spatiul solutiilor
+
+cost:sp_solutiilor->R
+cost(solutie) = suma problema.noduri[nod.nod].cost for node in noduri
+
+Reprezentarea solutiei merita putina atentie. Este doar o multime ordonata de identificatori de noduri (in esenta spune care sunt nodurile ce apartin solutiei). Spuneam ca o solutie este totusi un copac, iar nimic din reprezentarea curenta nu idica vre-o organizare mai sofisticata. Totul tine insa de interpretare. Putem extrage din aceasta lista o structura arborescenta, iar pe baza acesteia putem stabilii daca sunt indeplinite constrangerile de transfer. Cum facem acest lucru? Exista un algoritm simplu : pornim cu toti clientii alinitati in nivelul 0 : nivelul de acces (echivalent, exista cate un nod asociat fiecarui client, numit nod de acces). Observam ca nivelul 1 este gol. Extragem primul nod din solutie. Acesta acopera un numar de noduri de acces, si prezinta nivelului superior un numar de noduri. Extragerea lui presupune retragerea nodurilor acoperite de pe nivelul de acces si introducerea nodului de uplink pe nivelul superior. Continuam cu al doilea nod in acest fel pana cand nivelul de acces ramane fara clienti (cu posibilitatea ca ultimul nod sa nu isi foloseasca toate porturile downlink), iar nivelul 1 este completat. Repetam algoritmul pentru nivelul 1 si nivelul 2, nivelul 2 si nivelul 3 samd, pana cand ramanem cu un singur nod in varf : nodul radacina. Este evident ca pornind de la o sceventa oarecare de noduri, putem determina daca aceasta acopera cum trebuie nodurile client, si daca poate forma un copac (exista un singur nod parinte, cu, eventual, mai multe porturi uplink spre Internet).
+
+[Grafice]
+
+De ce am folosit aceasta reprezentare, in locul uneia mai facila, poate una derivata din reprezentarea grafurilor (noduri si multime de adiacente cu constrangeri de copac, de exemplu)? Din motive de simplitate de implementare a unor operatii in sistemele de optimizare, in principiu. In special obtinerea unei solutii noi dintr-una deja existenta prin efectuarea de mici modificari si specificarea de moduri de contopire a doua solutii intr-una noua devin mult mai simple cand trebuie sa operam pe o structura liniara, in loc de una arborescenta. Reprezentarea faciliteaza, de asemenea, si codarea eficienta, lucru pe care il vom dezvolta mai tarziu, in capitolul de implementare.
+
+Dau exemplu de problema aici, ar fi indicat + solutii pentru ea.
+
+Avem asedar o problema de minimizare. Din punct de vedere algoritmic, determinarea acestui minim are o solutie clara si simpla : enumerarea tuturor solutiilor posibile, si pastrarea celei de cost minim. O astfel de abordare este insa prohibitiva computational : necesarul de timp de executie creste exponential dupa marimea problemei, conform Anexei 1 - aceasta metoda devine repede intractabila. Din fericire, exista un numar mare de algoritmi, si tehnici in general, de abordarea a acestor probleme. Se pierde precizia : acesti algoritmi nu garanteaza gasirea unui minim (decat poate, cu parcurgerea, la limita, a intreg spatiului solutiilor) - se incearca in schimb gasirea unei solutii "aproape" de minim. O discutie mai ampla a catorva dintre acesti algoritmi se afla in Anexa 2, pe cand Anexa 1 prezinta o justificare pentru folosirea lor.
+
+4.Algoritmi Genetici. Strategii Evolutive.
+
+Avem asedar o reprezentare matematica problemei noastre, si, sper, pana acum, exemple de reprezentare sunt intuitive, iar generarea de solutii naiva este usoara. Mai mult, am stabilit ca problema in sine, este intractabila pe masura ce spatiul de cautare creste.
+
+Ca exemplu pentru : [numere mici aici], avem un spatiu de cautare de [multe] elemente aici. Fireste, multe solutii sunt incorecte, spatiul de solutii ce indeplinesc constrangerile necesare fiind mult mai mic. Pentru probleme reale, dimensiunile spatiului de cautare devin imense, si, chiar daca s-ar putea enumera doar solutiile corecte (lucru improbabil, algoritmic nu putem genera usor astfel de liste de noduri intr-o secventa : nu avem un spatiu compact) tot ar fi un domeniu de cautare imens.
+
+Din fericire, exista un numar mare de rezolvare a problemelor de acest tip. Acestea se bazeaza in principiu pe un numar de euristici. Presupunerile principale definesc algoritmul, dar, in general, se presupune ca solutiile slabe si solutiile bune sunt grupate impreuna, asa ca evitarea zonelor slabe si explorarea mai intensa a zonelor cu solutii bune, sunt comune tuturor categoriilor de astfel de algoritmi.
+
+Metodele implementate in proiectul practic sunt patru la numar : doua au rol de etalon : Random Search si Hill Climbing, pe cand doua sunt cele pentru explorare : Algoritmul Genetic / Genetic Algorithm si Strategii Evolutive / Evolution Strategies. Primele doua definesc un numar de operatori pe solutii folositi si de ceilalti doi, si, istoric, au fost dezvoltate si implementate pentru a ma asigura ca implementarea operatiilor pe solutii este corecta. Ultimele doua, metode evolutive de optimizare, sunt implementate in diverse variante. In final voi prezenta si date experimentale pe probleme de test si probleme reale, care vor evidentia diferentele intre diverse implementari, si vor elucida si un castigator eventual. 
+
+In orice caz, toate metodele au cateva elemente in comun. Toate intretin un numar de solutii care represinta populatia curenta. Toate au notiunea de iteratie, care determina cuanta de evolutie a sistemului, si care presupune schimbarea populatiei curente intr-o populatie noua, cu abandonarea celei dintai, si continuarea cu cea din urma, la iteratia urmatoare. Toate pastrea un optim intalnit, separat de populatie, care stocheaza separat cel mai bun individ intalnit. Unde difera metodele este la procesul de transfer al populatiei de la iteratia curenta la cea urmatoare.
+
+[descriere + poza algoritm]
+
+[iteratia 0]          || [iteratia 1]            || [iteratia 2]            || ... || [iteratia N]            ||
+                      ||                         ||                         ||     ||                         ||
+[solutii aleatoare]   => [solutii noua derivata] => [solutii noua derivata] =>     => [solutii noua derivata] ||
+[cea mai buna din     => [cea mai buna din       => [cea mai buna din       =>     => [cea mai buna din       ||
+ solutiile aleatoare] ||  solutiile aleatoare si ||  solutiile aleatoare si ||     ||  solutiile aleatoare si ===> solutia optima gasita
+                      ||  din cea mai buna       ||  din cea mai buna       ||     ||  din cea mai buna       ||
+		      ||  anterioara]            ||  anterioara]            ||     ||  anterioara]            ||
+
+populatieCurenta <- {solutii aleatoare}
+solutieOptima <- best populatieCurenta
+
+cat timp bugetul de executie permite:
+    populatieCurenta <- next populatieCurenta
+    solutieOptima <- best poplatieCurenta U {solutieOptima}
+
+Bugetul de executie se poate exprima ca numar de iteratii efectuate (momentan este singurul model din implementarile mele) sau ca un timp maxim permis de optimizare. In situatii in care procesul de generare a unei noi populatii este foarte intens computational (cum este de exemplu, in situatii de gasire de modele optime dpdv al unei simulari fizice) se pot ajunge la timpi de executie de cateva zile : deoarece este greu de cuantificat in iteratii cat inseamna acest interval, se poate da un interval temporar, iar procesul continua atata timp cat in timpul ramas pana la terminarea intervalului mai ramane loc pentru executia unei generari noi de populatii (timpul fiind considerat ca o medie a tuturor timpilor realizati pana acum). Pentru optimizari foarte mari, aceasta ar fi o solutie si in cazul nostru.
+
+Cea mai simpla dintre metode este Random Search. Putem exprima algoritmul acesta grafic astfel:
+
+[iteratia 0]          || [iteratia 1]            || [iteratia 2]            || ... || [iteratia N]            ||
+                      ||                         ||                         ||     ||                         ||
+[solutii aleatoare]   || [solutii aleatoare]     || [solutii aleatoare]     ||     || [solutii aleatoare]     ||
+[cea mai buna din     => [cea mai buna din       => [cea mai buna din       =>     => [cea mai buna din       ||
+ solutiile aleatoare] ||  solutiile aleatoare si ||  solutiile aleatoare si ||     ||  solutiile aleatoare si ===> solutia optima gasita
+                      ||  din cea mai buna       ||  din cea mai buna       ||     ||  din cea mai buna       ||
+		      ||  anterioara]            ||  anterioara]            ||     ||  anterioara]            ||
+
+populatieCurenta <- {solutii aleatoare
+solutieOptima <- best populatieCurenta
+
+cat timp bugetul de executie permite:
+    populatieCurenta <- next {solutii aleatoare}
+    solutieOptima <- best poplatieCurenta U {solutieOptima}
+
+Metoda nu este sofisticata si presupune generarea la fiecare iteratie a N solutii aleatoare in spatiul de cautare. Cea mai buna intalnita este retinuta ca solutie optima. Aceasta metoda introduce operatorul de generare aleatoara a unei solutii. Acesta presupune construirea unei solutii noi (a unei secvente de noduri) pornind doar de la descrierea problemei. Algoritmul presupune pornirea cu o secventa initiala goala. Se selecteaza toti clientii si acestia formeaza nivelul 0 (de acces). Nivelul 1 este initial gol. Ideile sunt foarte asemanatoare descrierii de mai sus a evaluarii unei solutii. Se alege aleator un nod din multimea de noduri a problemei, astfel incat acesta sa poata acoperii constrangerile primelor noduri din nivelul 0 (numarul acestora este determinat de tipul de nod selectat). Nodurile acoperite de pe nivelul 0 sunt retrase, iar pe nivelul 1 sunt introduse un numar de noduri egal cu numarul de porturi uplink ale nodului selectat. Capacitatile de transfer per port sunt calculate ca suma capacitatilor de transfer ale nodurilor acoperite pe numarul de porturi uplink introduse. Se repeta procesul pana cand ramanem fara noduri pe nivelul 0 iar nivelul 1 este la marimea maxima. Intre procesul se repeta pentru niveul 1 si nivelul 2, nivelul 2 si nivelul 3, etc., pana cand se anjunge la un singur nod cu mai multe porturi de uplink. In final, capacitatea cumulata a acestora este capacitatea totala a clientilor si reprezinta necesarul de trafic catre Internet. Pot aparea probleme de acoperire a porturilor : nu se gaseste nici un nod care sa poata acoperii o configuratie oarecare de nivel N,N+1 si un numar de porturi acoperite pe N. Daca acest lucru se intampla la nivelul 0, inseamna ca nu exista echipamente suficient de puternice pentru anumiti clienti si deci nu se poate realiza nicio solutie. Daca nivelul este superior, exista sanse ca o solutie sa poata fi realizata prin back-tracking succesiv. In implementarea curenta, intalnirea unei situatii ca aceasta determina o terminare a aplicatiei.
+
+Aceasta metoda da rezultate pentru spatii mici de cautare, si nu este scalabila decat ca performanta la probleme mai mari (scalabilitate, usurinta de procesare etc.)
+
+Urmatoarea metoda implementata este Hill Climbing, mai precis varianta Steepest Ascent Hill Climbing.
+
+6.Implementarea unei solutii.
+
+* Vorbesc aici despre sistemul pe care l-am implementat pentru validarea ideilor. Descriu arhitectura generala.
+
+7.Date experimentale.
+
+* Experimente. Vorbesc aici despre ce am facut, cum se compara metodele etc.
+
+8.Concluzii. Directii viitoare.
+
+Anexa 1: Discutie complexitate.
+Anexa 2: Prezentarea algoritmilor.
