@@ -59,7 +59,8 @@ ProblemParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRealFunction1DParams\n",indent);
+  printf("%sRealFunction1DParams:\n",indent);
+  printf("%s  Function: x * x\n",indent);
   printf("%s  IntervalStart: %f\n",indent,problemParams->IntervalStart);
   printf("%s  IntervalEnd: %f\n",indent,problemParams->IntervalEnd);
 

@@ -50,7 +50,7 @@ all:
 		src/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		src/Problem/RealFunction1D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-opc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-opc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -58,7 +58,7 @@ all:
 		src/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		src/Problem/RealFunction1D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-tpc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-tpc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -66,7 +66,7 @@ all:
 		src/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		src/Problem/RealFunction1D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-uc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-uc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -74,7 +74,7 @@ all:
 		src/Method/GeneticAlgorithm/UniformCrossOver.c \
 		src/Problem/RealFunction1D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-spc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-spc-rf1d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -133,7 +133,7 @@ all:
 		src/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		src/Problem/RealFunction2D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-opc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-opc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -141,7 +141,7 @@ all:
 		src/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		src/Problem/RealFunction2D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-tpc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-tpc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -149,7 +149,7 @@ all:
 		src/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		src/Problem/RealFunction2D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-uc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-uc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -157,7 +157,7 @@ all:
 		src/Method/GeneticAlgorithm/UniformCrossOver.c \
 		src/Problem/RealFunction2D/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-spc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-spc-rf2d -Isrc -Isrc/Method/GeneticAlgorithm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -216,7 +216,7 @@ all:
 		src/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		src/Problem/AccessNetwork/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-opc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-opc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -224,7 +224,7 @@ all:
 		src/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		src/Problem/AccessNetwork/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-tpc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-tpc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -232,7 +232,7 @@ all:
 		src/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		src/Problem/AccessNetwork/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-uc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-uc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \
@@ -240,7 +240,7 @@ all:
 		src/Method/GeneticAlgorithm/UniformCrossOver.c \
 		src/Problem/AccessNetwork/Problem.c
 
-	gcc -g -Wall -o out/opt-st-ga-ts-spc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-spc-an -Isrc -Isrc/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/Main.c \
 		src/Driver/SingleThreaded/Driver.c \
 		src/Method/GeneticAlgorithm/Method.c \

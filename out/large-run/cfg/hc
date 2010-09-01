@@ -1,0 +1,3 @@
+HillClimbingParams:
+  ExplorationFactor: 5
+  ProblemStatesCnt: 2000
