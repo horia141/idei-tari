@@ -11,9 +11,9 @@ ProblemParams*  ProblemParamsAlloc(
 void            ProblemParamsFree(
                   ProblemParams** problemParams);
 void            ProblemParamsPrint(
-		  const ProblemParams* problemParams, int indentLevel);
+                  const ProblemParams* problemParams, int indentLevel);
 int             ProblemParamsIsValid(
-		  const ProblemParams* problemParams);
+                  const ProblemParams* problemParams);
 
 struct ProblemState;
 typedef struct ProblemState ProblemState;

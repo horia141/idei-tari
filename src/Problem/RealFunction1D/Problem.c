@@ -24,6 +24,7 @@ ProblemParamsAlloc(
   problemParams = malloc(sizeof(ProblemParams));
 
   fscanf(fin," RealFunction1DParams :");
+  fscanf(fin," Function : %*[^\n] ");
   fscanf(fin," IntervalStart : %lf",&problemParams->IntervalStart);
   fscanf(fin," IntervalEnd : %lf",&problemParams->IntervalEnd);
 

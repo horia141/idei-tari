@@ -1,0 +1,4 @@
+  RealFunction1DParams:
+    Function: x * x
+    IntervalStart: -1.0
+    IntervalEnd: 1.0
