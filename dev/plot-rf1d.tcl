@@ -27,7 +27,7 @@ namespace eval parseOptCfg {
 	    regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
 	    regexp {^\s*ProblemStates\s*:\s+(.*)$} $outputLeft - outputLeft
 
-	    lappend result(States,IterationsIds) $iteration
+	    lappend result(States,IterationIds) $iteration
 
 	    for {set i 1} {$i <= $problemStatesCnt} {incr i} {
 		lappend result(States,Iterations,$iteration,IndividualIds) $i
@@ -36,7 +36,7 @@ namespace eval parseOptCfg {
 		array set result [lindex $problemResult 1]
 	    }
 
-	    set problemResult [_parseStates-$problem best 0 0 $outputLeft]
+	    set problemResult [_parseStates-$problem best $iteration 0 $outputLeft]
 	    set outputLeft [lindex $problemResult 0]
 	    array set result [lindex $problemResult 1]
 	}
@@ -163,16 +163,116 @@ proc main {argv} {
     set config(cfgMethodPath) [file join $config(cfgDirPath) $method]
     set config(cfgProblemPath) [file join $config(cfgDirPath) rf1d]
     set config(binPath) [file join [pwd] .. out opt-$driver-$method-rf1d]
-    set config(optOutPath) [file join [pwd] output-$driver-$method-rf1d]
+    set config(scrPath) [file join [pwd] out.scr]
+    set config(datPath) [file join [pwd] out.dat]
+    set config(stepGranularity) 100
 
-    exec cat $config(cfgDriverPath) $config(cfgMethodPath) $config(cfgProblemPath) | $config(binPath) > $config(optOutPath)
+    set cfgDriver [read [open $config(cfgDriverPath) r]]
+    set cfgMethod [read [open $config(cfgMethodPath) r]]
+    set cfgProblem [read [open $config(cfgProblemPath) r]]
 
-    array set result [parseOptCfg::parseParams $driver $method rf1d [read [open $config(optOutPath)]]]
-    
-    exec rm -rf $config(optOutPath)
+    set optFid [open |$config(binPath) r+]
+
+    puts $optFid $cfgDriver
+    puts $optFid $cfgMethod
+    puts $optFid $cfgProblem
+    flush $optFid
+
+    set output [read $optFid]
+    set outputLeft $output
+
+    set paramsResult [parseOptCfg::parseParams $driver $method rf1d $outputLeft]
+    set outputLeft [lindex $paramsResult 0]
+    array set result [lindex $paramsResult 1]
+    set statesResult [parseOptCfg::parseStates $driver $method rf1d $outputLeft]
+    array set result [lindex $statesResult 1]
+
+    set scrFid [open $config(scrPath) w]
+    set datFid [open $config(datPath) w]
+
+    set xMin $result(Problem,IntervalStart)
+    set xMax $result(Problem,IntervalEnd)
+    set step [expr abs($xMax - $xMin) / $config(stepGranularity)]
+    set expression "set x \$i; expr [regsub -all {x} $result(Problem,Function) {$x}]"
+    set yMin +inf
+    set yMax -inf
+    set minimaHistory {}
+
+    puts $datFid "# Function $result(Problem,Function)"
+
+    for {set i $xMin} {$i <= $xMax} {set i [expr $i + $step]} {
+	set value [eval $expression]
+
+ 	puts $datFid "$i $value"
+
+	if {$value < $yMin} {
+	    set yMin $value
+	}
+
+	if {$value > $yMax} {
+	    set yMax $value
+	}
+    }
+
+    foreach iteration $result(States,IterationIds) {
+	puts -nonewline $datFid "\n\n"
+	puts $datFid "# Iteration $iteration Current Points"
+
+	foreach individual $result(States,Iterations,$iteration,IndividualIds) {
+	    set x $result(States,Iterations,$iteration,Individuals,$individual,Position)
+	    set y $result(States,Iterations,$iteration,Individuals,$individual,Cost)
+
+	    puts $datFid "$x $y"
+	}
+
+	puts -nonewline $datFid "\n\n"
+	puts $datFid "# Iteration $iteration Current Minimum"
+
+	set bestX $result(States,Iterations,$iteration,Best,Position)
+	set bestY $result(States,Iterations,$iteration,Best,Cost)
+
+	puts $datFid "$bestX $bestY"
+
+	lappend minimaHistory $bestX
+	lappend minimaHistory $bestY
+
+	puts -nonewline $datFid "\n\n"
+	puts $datFid "# Iteration $iteration Minima History"
+
+	foreach {minimaX minimaY} $minimaHistory {
+	    puts $datFid "$minimaX $minimaY"
+	}
+    }
+
+    puts $scrFid "set title \"Function $result(Problem,Function)\""
+    puts $scrFid "set key top left box"
+    puts $scrFid "set xrange \[$xMin:$xMax\]"
+    puts $scrFid "set yrange \[$yMin:$yMax\]"
+    puts $scrFid "plot '$config(datPath)' index 0 with lines title \"Function\""
+    puts $scrFid "pause 1"
+
+    set index 1
+
+    foreach iteration $result(States,IterationIds) {
+	puts $scrFid "set title \"Iteration $iteration\""
+	puts $scrFid "set key top left box"
+	puts $scrFid "set xrange \[$xMin:$xMax\]"
+	puts $scrFid "set yrange \[$yMin:$yMax\]"
+	puts $scrFid "plot '$config(datPath)' index 0 with lines title \"Function\", \
+                     '$config(datPath)' index [expr $index + 0] with points title \"Current Points\" pointtype 3 pointsize 2 linecolor rgb \"blue\",\
+                     '$config(datPath)' index [expr $index + 1] with points title \"Current Minimum\" pointtype 8 pointsize 4 linecolor rgb \"magenta\",\
+                     '$config(datPath)' index [expr $index + 2] with points title \"Minima History\" pointtype 7 pointsize 2 linecolor rgb \"black\""
+	puts $scrFid "pause 1"
+
+	incr index 3
+    }
+
+    close $scrFid
+    close $datFid
+
+    # check gnuplot exists in $env(PATH)
+
+    exec gnuplot -p $config(scrPath)
 }
 
-# main $argv
-set x [read [open result-st-rs-rf1d r]]
-set ab [parseOptCfg::parseParams st rs rf1d $x]
-puts [parseOptCfg::parseStates st rs rf1d [lindex $ab 0]]
+main $argv
