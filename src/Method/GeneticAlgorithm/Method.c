@@ -165,7 +165,7 @@ MethodStateGenNext(
 
     methodState = malloc(sizeof(MethodState));
 
-    methodState->Iteration = 0;
+    methodState->Iteration = iteration;
     methodState->ProblemStatesCnt = previousState->ProblemStatesCnt;
     methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
 

@@ -76,30 +76,157 @@ namespace eval parseOptCfg {
     }
 
     proc _parseParams-hc {output} {
+	set outputLeft $output
+
+	regexp {^\s*HillClimbingParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*ExplorationFactor\s*:\s*(\d+)\s+(.*)$} $outputLeft - explorationFactor outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)(\s+(.*))?$} $outputLeft - problemStatesCnt outputLeft
+
+	set result(Method,ExplorationFactor) $explorationFactor
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+
+	return [list $outputLeft [array get result]]
     }
 
     proc _parseParams-es {output} {
+	set outputLeft $output
+
+	regexp {^\s*EvolutionStrategyParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*Miu\s*:\s*(\d+)\s+(.*)$} $outputLeft - miu outputLeft
+	regexp {^\s*Lambda\s*:\s*(\d+)(\s+(.*))?$} $outputLeft - lambda outputLeft
+
+	set result(Method,Miu) $miu
+	set result(Method,Lambda) $lambda
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga {output} {
+    proc _parseParams-ga-rs-opc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*RandomSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*OnePointCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga-rs {output} {
+    proc _parseParams-ga-rs-tpc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*RandomSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*TwoPointCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga-tos {output} {
+    proc _parseParams-ga-rs-spc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*RandomSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*SinglePointCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga-opc {output} {
+    proc _parseParams-ga-rs-uc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*RandomSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*UniformCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga-tpc {output} {
+    proc _parseParams-ga-tos-opc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*TournamentSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*TournamentSize\s*:\s*(\d+)\s+(.*)$} $outputLeft - tournamentSize outputLeft
+	regexp {^\s*OnePointCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+	set result(Method,TournamentSize) $tournamentSize
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga-spc {output} {
+    proc _parseParams-ga-tos-tpc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*TournamentSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*TournamentSize\s*:\s*(\d+)\s+(.*)$} $outputLeft - tournamentSize outputLeft
+	regexp {^\s*TwoPointCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+	set result(Method,TournamentSize) $tournamentSize
+
+	return [list $outputLeft [array get result]]
     }
 
-    proc _parseParams-ga-uc {output} {
+    proc _parseParams-ga-tos-spc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*TournamentSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*TournamentSize\s*:\s*(\d+)\s+(.*)$} $outputLeft - tournamentSize outputLeft
+	regexp {^\s*SinglePointCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+	set result(Method,TournamentSize) $tournamentSize
+
+	return [list $outputLeft [array get result]]
+    }
+
+    proc _parseParams-ga-tos-uc {output} {
+	set outputLeft $output
+
+	regexp {^\s*GeneticAlgorithmParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*MutationChance\s*:\s*(\d+)\s+(.*)$} $outputLeft - mutationChance outputLeft
+	regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
+	regexp {^\s*TournamentSelectionParams\s*:\s+(.*)$} $outputLeft - outputLeft
+	regexp {^\s*TournamentSize\s*:\s*(\d+)\s+(.*)$} $outputLeft - tournamentSize outputLeft
+	regexp {^\s*UniformCrossOverParams\s*:(\s+(.*))?$} $outputLeft - outputLeft
+
+	set result(Method,MutationChance) $mutationChance
+	set result(Method,ProblemStatesCnt) $problemStatesCnt
+	set result(Method,TournamentSize) $tournamentSize
+
+	return [list $outputLeft [array get result]]
     }
 
     proc _parseParams-rf1d {output} {
@@ -273,6 +400,8 @@ proc main {argv} {
     # check gnuplot exists in $env(PATH)
 
     exec gnuplot -p $config(scrPath)
+    exec rm -f $config(scrPath)
+    exec rm -f $config(datPath)
 }
 
 main $argv

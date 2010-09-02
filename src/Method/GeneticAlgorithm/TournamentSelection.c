@@ -53,7 +53,7 @@ SelectionParamsPrint(
     memset(indent,' ',2 * indentLevel);
     indent[2 * indentLevel] = '\0';
 
-    printf("%sRandomSelectionParams:\n",indent);
+    printf("%sTournamentSelectionParams:\n",indent);
     printf("%s  TournamentSize: %d\n",indent,selectionParams->TournamentSize);
 
     free(indent);
