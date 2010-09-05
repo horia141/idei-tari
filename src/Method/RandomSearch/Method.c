@@ -82,7 +82,8 @@ MethodParamsIsValid(
 }
 
 const ProblemParams*
-MethodParamsProblemParams(const MethodParams* methodParams)
+MethodParamsProblemParams(
+  const MethodParams* methodParams)
 {
   assert(MethodParamsIsValid(methodParams));
 

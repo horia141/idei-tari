@@ -278,6 +278,21 @@ grind-st-hc-rf1d: out/opt-st-hc-rf1d
 	valgrind --leak-check=full out/opt-st-hc-rf1d < out/grind-run/tmp/cfg-st-hc-rf1d
 	rm out/grind-run/tmp/cfg-st-hc-rf1d
 
+out/opt-st-es-rf1d: src/Main.c \
+		    src/Driver/SingleThreaded/Driver.c \
+		    src/Method/EvolutionStrategy/Method.c \
+		    src/Problem/RealFunction1D/Problem.c
+	gcc -g -Wall -o out/opt-st-es-rf1d -Isrc \
+		src/Main.c \
+		src/Driver/SingleThreaded/Driver.c \
+		src/Method/EvolutionStrategy/Method.c \
+		src/Problem/RealFunction1D/Problem.c
+
+grind-st-es-rf1d: out/opt-st-es-rf1d
+	cat out/grind-run/cfg/st out/grind-run/cfg/es out/grind-run/cfg/rf1d > out/grind-run/tmp/cfg-st-es-rf1d
+	valgrind --leak-check=full out/opt-st-es-rf1d < out/grind-run/tmp/cfg-st-es-rf1d
+	rm out/grind-run/tmp/cfg-st-es-rf1d
+
 out/opt-st-rs-rf2d: src/Main.c \
 		    src/Driver/SingleThreaded/Driver.c \
 		    src/Method/RandomSearch/Method.c \
