@@ -139,8 +139,7 @@ void
 ProblemParamsFree(
   ProblemParams** problemParams)
 {
-  assert(problemParams != NULL);
-  assert(ProblemParamsIsValid(*problemParams));
+  assert(problemParams != NULL && ProblemParamsIsValid(*problemParams));
 
   int  i;
 
@@ -402,9 +401,11 @@ ProblemStateAlloc(
 
 ProblemState*
 ProblemStateCopy(
+  const ProblemParams* problemParams,
   const ProblemState* sourceState)
 {
-  assert(ProblemStateIsValid(sourceState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,sourceState));
 
   ProblemState*  problemState;
   int            i;
@@ -425,11 +426,11 @@ ProblemStateCopy(
 
 ProblemState*
 ProblemStateGenNext(
-  const ProblemState* previousState,
-  const ProblemParams* problemParams)
+  const ProblemParams* problemParams,
+  const ProblemState* previousState)
 {
-  assert(ProblemStateIsValid(previousState));
   assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,previousState));
 
   ProblemState*  problemState;
   float          operation;
@@ -438,7 +439,7 @@ ProblemStateGenNext(
   int            changeNode;
   int            i;
 
-  problemState = ProblemStateCopy(previousState);
+  problemState = ProblemStateCopy(problemParams,previousState);
 
   operation = rand() / (float)RAND_MAX;
   index = rand() % problemState->NodeIdsUsedCnt;
@@ -474,24 +475,26 @@ ProblemStateGenNext(
 
 ProblemState*
 ProblemStateCrossOver(
+  const ProblemParams* problemParams,
   const ProblemState* parentState0,
   const ProblemState* parentState1,
-  const ProblemParams* problemParams,
   int crossOverMaskCnt,
   const int* crossOverMask)
 {
-  assert(ProblemStateIsValid(parentState0));
-  assert(ProblemStateIsValid(parentState1));
   assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,parentState0));
+  assert(ProblemStateIsValid(problemParams,parentState1));
   assert(crossOverMaskCnt > 0);
   assert(crossOverMask != NULL);
-  assert((crossOverMaskCnt == ProblemStateGenomeSize(parentState0) && crossOverMaskCnt >= ProblemStateGenomeSize(parentState1)) ||
-     	 (crossOverMaskCnt == ProblemStateGenomeSize(parentState1) && crossOverMaskCnt >= ProblemStateGenomeSize(parentState0)));
+  assert((crossOverMaskCnt == ProblemStateGenomeSize(problemParams,parentState0) && 
+	  crossOverMaskCnt >= ProblemStateGenomeSize(problemParams,parentState1)) ||
+     	 (crossOverMaskCnt == ProblemStateGenomeSize(problemParams,parentState1) && 
+	  crossOverMaskCnt >= ProblemStateGenomeSize(problemParams,parentState0)));
 
   ProblemState*  problemState;
   int            i;
 
-  problemState = ProblemStateCopy(parentState0);
+  problemState = ProblemStateCopy(problemParams,parentState0);
 
   for (i = 0; i < crossOverMaskCnt; i++) {
     if (crossOverMask[i] == 1) {
@@ -519,10 +522,11 @@ ProblemStateCrossOver(
 
 void
 ProblemStateFree(
+  const ProblemParams* problemParams,
   ProblemState** problemState)
 {
-  assert(problemState != NULL);
-  assert(ProblemStateIsValid(*problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(problemState != NULL && ProblemStateIsValid(problemParams,*problemState));
 
   free((*problemState)->NodeIds);
 
@@ -537,10 +541,12 @@ ProblemStateFree(
 
 void
 ProblemStatePrint(
+  const ProblemParams* problemParams,
   const ProblemState* problemState,
   int indentLevel)
 {
-  assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
   assert(indentLevel >= 0);
 
   char*  indent;
@@ -568,23 +574,24 @@ ProblemStatePrint(
 
 int
 ProblemStateIsValid(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
+  assert(ProblemParamsIsValid(problemParams));
+
   int  i;
 
   if (problemState == NULL) {
     return 0;
   }
 
-  if (problemState->NodeIdsUsedCnt < 1) {
+  if (problemState->NodeIdsUsedCnt < 1 || 
+      problemState->NodeIdsUsedCnt > problemState->NodeIdsCnt) {
     return 0;
   }
 
-  if (problemState->NodeIdsCnt < 1) {
-    return 0;
-  }
-
-  if (problemState->NodeIdsUsedCnt > problemState->NodeIdsCnt) {
+  if (problemState->NodeIdsCnt < 1 || 
+      problemState->NodeIdsCnt > problemParams->MaxNetworkNodes) {
     return 0;
   }
 
@@ -593,7 +600,8 @@ ProblemStateIsValid(
   }
 
   for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
-    if (problemState->NodeIds[i] == -1) {
+    if (problemState->NodeIds[i] < 0 ||
+	problemState->NodeIds[i] > problemParams->NodesCnt) {
       return 0;
     }
   }
@@ -613,17 +621,17 @@ ProblemStateIsValid(
 
 int
 ProblemStateCompare(
-  const ProblemState** problemState0,
-  const ProblemState** problemState1)
+  const ProblemParams* problemParams,
+  const ProblemState* problemState0,
+  const ProblemState* problemState1)
 {
-  assert(problemState0 != NULL);
-  assert(problemState1 != NULL);
-  assert(ProblemStateIsValid(*problemState0));
-  assert(ProblemStateIsValid(*problemState1));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState0));
+  assert(ProblemStateIsValid(problemParams,problemState1));
 
-  if ((*problemState0)->Cost < (*problemState1)->Cost) {
+  if (problemState0->Cost < problemState1->Cost) {
     return -1;
-  } else if ((*problemState0)->Cost > (*problemState1)->Cost) {
+  } else if (problemState0->Cost > problemState1->Cost) {
     return 1;
   } else {
     return 0;
@@ -632,18 +640,22 @@ ProblemStateCompare(
 
 double
 ProblemStateCost(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-  assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
 
   return problemState->Cost;
 }
 
 int
 ProblemStateGenomeSize(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-  assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
 
   return problemState->NodeIdsUsedCnt;
 }
@@ -654,146 +666,146 @@ _ProblemStateFix(
   const ProblemParams* problemParams)
 {
   int      portAllocationMatrixCnt;
-    Speed**  portAllocationMatrix;
-    int      currLevel;
-    int      currLevelUser;
-    int      currLevelUsersCnt;
-    int      nextLevelUsersCnt;
-    int      nextLevelNodesAdded;
-    int      savedNodesAdded;
-    int      nextNodeId;
-    Speed    nextNodeSpeed;
-    int      nodeGood;
-    Speed    nodeSpeed;
-    int      i;
-    int      j;
-    int      k;
+  Speed**  portAllocationMatrix;
+  int      currLevel;
+  int      currLevelUser;
+  int      currLevelUsersCnt;
+  int      nextLevelUsersCnt;
+  int      nextLevelNodesAdded;
+  int      savedNodesAdded;
+  int      nextNodeId;
+  Speed    nextNodeSpeed;
+  int      nodeGood;
+  Speed    nodeSpeed;
+  int      i;
+  int      j;
+  int      k;
 
-    portAllocationMatrixCnt = problemParams->MaxNetworkLevels;
-    portAllocationMatrix = malloc(sizeof(Speed*) * portAllocationMatrixCnt);
+  portAllocationMatrixCnt = problemParams->MaxNetworkLevels;
+  portAllocationMatrix = malloc(sizeof(Speed*) * portAllocationMatrixCnt);
 
-    for (i = 0; i < problemParams->MaxNetworkLevels; i++) {
-        portAllocationMatrix[i] = malloc(sizeof(Speed) * problemParams->UsersCnt);
+  for (i = 0; i < problemParams->MaxNetworkLevels; i++) {
+    portAllocationMatrix[i] = malloc(sizeof(Speed) * problemParams->UsersCnt);
+  }
+
+  for (i = 0; i < problemParams->UsersCnt; i++) {
+    portAllocationMatrix[0][i] = problemParams->Users[i].Speed;
+  }
+
+  currLevel = 0;
+  currLevelUser = 0;
+  currLevelUsersCnt = problemParams->UsersCnt;
+  nextLevelUsersCnt = 0;
+  nextLevelNodesAdded = 0;
+  savedNodesAdded = 0;
+
+  for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
+    nodeGood = 1;
+    nodeSpeed.Download = 0;
+    nodeSpeed.Upload = 0;
+
+    /* Extract this large "for" as a function */
+
+    for (j = currLevelUser, k = 0;
+	 j < currLevelUsersCnt && k < problemParams->Nodes[problemState->NodeIds[i]].DownPortsNr && nodeGood;
+	 j++, k++) {
+      if (problemParams->Nodes[problemState->NodeIds[i]].DownPort.Download < portAllocationMatrix[currLevel][j].Download ||
+	  problemParams->Nodes[problemState->NodeIds[i]].DownPort.Upload < portAllocationMatrix[currLevel][j].Upload) {
+	nodeGood = 0;
+      }
+
+      nodeSpeed.Download += portAllocationMatrix[currLevel][j].Download;
+      nodeSpeed.Upload += portAllocationMatrix[currLevel][j].Upload;
     }
 
-    for (i = 0; i < problemParams->UsersCnt; i++) {
-        portAllocationMatrix[0][i] = problemParams->Users[i].Speed;
+    if (nodeGood &&
+	nodeSpeed.Download <= problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr * problemParams->Nodes[problemState->NodeIds[i]].UpPort.Download &&
+	nodeSpeed.Upload <= problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr * problemParams->Nodes[problemState->NodeIds[i]].UpPort.Upload) {
+      for (j = 0; j < problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr; j++) {
+	portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Download = nodeSpeed.Download / problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr;
+	portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Upload = nodeSpeed.Upload / problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr;
+      }
+
+      currLevelUser += problemParams->Nodes[problemState->NodeIds[i]].DownPortsNr;
+      nextLevelUsersCnt += problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr;
+    } else {
+      nextNodeId = _ProblemStateFindFit(problemState,problemParams,portAllocationMatrixCnt,(const Speed**)portAllocationMatrix,currLevel,currLevelUser,currLevelUsersCnt,&nextNodeSpeed);
+
+      for (j = 0; j < problemParams->Nodes[nextNodeId].UpPortsNr; j++) {
+	portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Download = nextNodeSpeed.Download / problemParams->Nodes[nextNodeId].UpPortsNr;
+	portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Upload = nextNodeSpeed.Upload / problemParams->Nodes[nextNodeId].UpPortsNr;
+      }
+
+      currLevelUser += problemParams->Nodes[nextNodeId].DownPortsNr;
+      nextLevelUsersCnt += problemParams->Nodes[nextNodeId].UpPortsNr;
+
+      problemState->NodeIds[i] = nextNodeId;
     }
 
-    currLevel = 0;
-    currLevelUser = 0;
-    currLevelUsersCnt = problemParams->UsersCnt;
-    nextLevelUsersCnt = 0;
-    nextLevelNodesAdded = 0;
-    savedNodesAdded = 0;
+    nextLevelNodesAdded += 1;
 
-    for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
-        nodeGood = 1;
-        nodeSpeed.Download = 0;
-        nodeSpeed.Upload = 0;
+    if (currLevelUser >= currLevelUsersCnt) {
+      currLevel += 1;
+      currLevelUser = 0;
+      currLevelUsersCnt = nextLevelUsersCnt;
+      nextLevelUsersCnt = 0;
 
-        /* Extract this large "for" as a function */
-
-        for (j = currLevelUser, k = 0;
-             j < currLevelUsersCnt && k < problemParams->Nodes[problemState->NodeIds[i]].DownPortsNr && nodeGood;
-             j++, k++) {
-            if (problemParams->Nodes[problemState->NodeIds[i]].DownPort.Download < portAllocationMatrix[currLevel][j].Download ||
-                problemParams->Nodes[problemState->NodeIds[i]].DownPort.Upload < portAllocationMatrix[currLevel][j].Upload) {
-                nodeGood = 0;
-            }
-
-            nodeSpeed.Download += portAllocationMatrix[currLevel][j].Download;
-            nodeSpeed.Upload += portAllocationMatrix[currLevel][j].Upload;
-        }
-
-        if (nodeGood &&
-            nodeSpeed.Download <= problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr * problemParams->Nodes[problemState->NodeIds[i]].UpPort.Download &&
-            nodeSpeed.Upload <= problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr * problemParams->Nodes[problemState->NodeIds[i]].UpPort.Upload) {
-            for (j = 0; j < problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr; j++) {
-                portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Download = nodeSpeed.Download / problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr;
-                portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Upload = nodeSpeed.Upload / problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr;
-            }
-
-            currLevelUser += problemParams->Nodes[problemState->NodeIds[i]].DownPortsNr;
-            nextLevelUsersCnt += problemParams->Nodes[problemState->NodeIds[i]].UpPortsNr;
-        } else {
-	  nextNodeId = _ProblemStateFindFit(problemState,problemParams,portAllocationMatrixCnt,(const Speed**)portAllocationMatrix,currLevel,currLevelUser,currLevelUsersCnt,&nextNodeSpeed);
-
-            for (j = 0; j < problemParams->Nodes[nextNodeId].UpPortsNr; j++) {
-                portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Download = nextNodeSpeed.Download / problemParams->Nodes[nextNodeId].UpPortsNr;
-                portAllocationMatrix[currLevel+1][nextLevelUsersCnt+j].Upload = nextNodeSpeed.Upload / problemParams->Nodes[nextNodeId].UpPortsNr;
-            }
-
-            currLevelUser += problemParams->Nodes[nextNodeId].DownPortsNr;
-            nextLevelUsersCnt += problemParams->Nodes[nextNodeId].UpPortsNr;
-
-            problemState->NodeIds[i] = nextNodeId;
-        }
-
-        nextLevelNodesAdded += 1;
-
-        if (currLevelUser >= currLevelUsersCnt) {
-            currLevel += 1;
-            currLevelUser = 0;
-            currLevelUsersCnt = nextLevelUsersCnt;
-            nextLevelUsersCnt = 0;
-
-            savedNodesAdded = nextLevelNodesAdded;
-            nextLevelNodesAdded = 0;
-        }
-
-        if (savedNodesAdded == 1 && i + 1 < problemState->NodeIdsUsedCnt) {
-            /* more nodes than needed */
-            for (j = i + 1; j < problemState->NodeIdsUsedCnt; j++) {
-                problemState->NodeIds[j] = -1;
-            }
-
-            problemState->NodeIdsUsedCnt = i + 1;
-
-            break;
-        }
+      savedNodesAdded = nextLevelNodesAdded;
+      nextLevelNodesAdded = 0;
     }
 
-    if (nextLevelNodesAdded != 1 || savedNodesAdded != 1) {
-        /* Fewer nodes than needed */
-        while (savedNodesAdded != 1) {
-	  nextNodeId = _ProblemStateFindFit(problemState,problemParams,portAllocationMatrixCnt,(const Speed**)portAllocationMatrix,currLevel,currLevelUser,currLevelUsersCnt,&nextNodeSpeed);
+    if (savedNodesAdded == 1 && i + 1 < problemState->NodeIdsUsedCnt) {
+      /* more nodes than needed */
+      for (j = i + 1; j < problemState->NodeIdsUsedCnt; j++) {
+	problemState->NodeIds[j] = -1;
+      }
 
-            for (i = 0; i < problemParams->Nodes[nextNodeId].UpPortsNr; i++) {
-                portAllocationMatrix[currLevel+1][nextLevelUsersCnt+i].Download = nextNodeSpeed.Download / problemParams->Nodes[nextNodeId].UpPortsNr;
-                portAllocationMatrix[currLevel+1][nextLevelUsersCnt+i].Upload = nextNodeSpeed.Upload / problemParams->Nodes[nextNodeId].UpPortsNr;
-            }
+      problemState->NodeIdsUsedCnt = i + 1;
 
-            currLevelUser += problemParams->Nodes[nextNodeId].DownPortsNr;
-            nextLevelUsersCnt += problemParams->Nodes[nextNodeId].UpPortsNr;
-            nextLevelNodesAdded += 1;
-
-            problemState->NodeIds[problemState->NodeIdsUsedCnt] = nextNodeId;
-            problemState->NodeIdsUsedCnt += 1;
-
-            if (currLevelUser >= currLevelUsersCnt) {
-                currLevel += 1;
-                currLevelUser = 0;
-                currLevelUsersCnt = nextLevelUsersCnt;
-                nextLevelUsersCnt = 0;
-
-                savedNodesAdded = nextLevelNodesAdded;
-                nextLevelNodesAdded = 0;
-            }
-        }
+      break;
     }
+  }
 
-    problemState->Cost = 0.0;
+  if (nextLevelNodesAdded != 1 || savedNodesAdded != 1) {
+    /* Fewer nodes than needed */
+    while (savedNodesAdded != 1) {
+      nextNodeId = _ProblemStateFindFit(problemState,problemParams,portAllocationMatrixCnt,(const Speed**)portAllocationMatrix,currLevel,currLevelUser,currLevelUsersCnt,&nextNodeSpeed);
 
-    for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
-        problemState->Cost = problemState->Cost + problemParams->Nodes[problemState->NodeIds[i]].Cost;
+      for (i = 0; i < problemParams->Nodes[nextNodeId].UpPortsNr; i++) {
+	portAllocationMatrix[currLevel+1][nextLevelUsersCnt+i].Download = nextNodeSpeed.Download / problemParams->Nodes[nextNodeId].UpPortsNr;
+	portAllocationMatrix[currLevel+1][nextLevelUsersCnt+i].Upload = nextNodeSpeed.Upload / problemParams->Nodes[nextNodeId].UpPortsNr;
+      }
+
+      currLevelUser += problemParams->Nodes[nextNodeId].DownPortsNr;
+      nextLevelUsersCnt += problemParams->Nodes[nextNodeId].UpPortsNr;
+      nextLevelNodesAdded += 1;
+
+      problemState->NodeIds[problemState->NodeIdsUsedCnt] = nextNodeId;
+      problemState->NodeIdsUsedCnt += 1;
+
+      if (currLevelUser >= currLevelUsersCnt) {
+	currLevel += 1;
+	currLevelUser = 0;
+	currLevelUsersCnt = nextLevelUsersCnt;
+	nextLevelUsersCnt = 0;
+
+	savedNodesAdded = nextLevelNodesAdded;
+	nextLevelNodesAdded = 0;
+      }
     }
+  }
 
-    for (i = 0; i < problemParams->MaxNetworkLevels; i++) {
-        free(portAllocationMatrix[i]);
-    }
+  problemState->Cost = 0.0;
 
-    free(portAllocationMatrix);
+  for (i = 0; i < problemState->NodeIdsUsedCnt; i++) {
+    problemState->Cost = problemState->Cost + problemParams->Nodes[problemState->NodeIds[i]].Cost;
+  }
+
+  for (i = 0; i < problemParams->MaxNetworkLevels; i++) {
+    free(portAllocationMatrix[i]);
+  }
+
+  free(portAllocationMatrix);
 }
 
 int
@@ -807,75 +819,75 @@ _ProblemStateFindFit(
   int currLevelUsersCnt,
   Speed* nodeSpeed)
 {
-    int     validNodeIdsCnt;
-    int*    validNodeIds;
-    int     validSpeedsCnt;
-    Speed*  validSpeeds;
-    int     nodeGood;
-    Speed   speed;
-    int     nextNodeId;
-    int     nextNode;
-    int     i;
-    int     j;
-    int     k;
+  int     validNodeIdsCnt;
+  int*    validNodeIds;
+  int     validSpeedsCnt;
+  Speed*  validSpeeds;
+  int     nodeGood;
+  Speed   speed;
+  int     nextNodeId;
+  int     nextNode;
+  int     i;
+  int     j;
+  int     k;
 
-    validNodeIdsCnt = 0;
-    validNodeIds = malloc(sizeof(int) * problemParams->NodesCnt);
+  validNodeIdsCnt = 0;
+  validNodeIds = malloc(sizeof(int) * problemParams->NodesCnt);
 
-    validSpeedsCnt = 0;
-    validSpeeds = malloc(sizeof(Speed) * problemParams->NodesCnt);
+  validSpeedsCnt = 0;
+  validSpeeds = malloc(sizeof(Speed) * problemParams->NodesCnt);
 
-    for (i = 0; i < problemParams->NodesCnt; i++) {
-        nodeGood = 1;
-        speed.Download = 0;
-        speed.Upload = 0;
+  for (i = 0; i < problemParams->NodesCnt; i++) {
+    nodeGood = 1;
+    speed.Download = 0;
+    speed.Upload = 0;
 
-        for (j = currLevelUser, k = 0;
-             j < currLevelUsersCnt && k < problemParams->Nodes[i].DownPortsNr && nodeGood;
-             j++,k++) {
-            if (problemParams->Nodes[i].DownPort.Download < portAllocationMatrix[currLevel][j].Download ||
-                problemParams->Nodes[i].DownPort.Upload < portAllocationMatrix[currLevel][j].Upload) {
-                nodeGood = 0;
-            }
+    for (j = currLevelUser, k = 0;
+	 j < currLevelUsersCnt && k < problemParams->Nodes[i].DownPortsNr && nodeGood;
+	 j++,k++) {
+      if (problemParams->Nodes[i].DownPort.Download < portAllocationMatrix[currLevel][j].Download ||
+	  problemParams->Nodes[i].DownPort.Upload < portAllocationMatrix[currLevel][j].Upload) {
+	nodeGood = 0;
+      }
 
-            speed.Download += portAllocationMatrix[currLevel][j].Download;
-            speed.Upload += portAllocationMatrix[currLevel][j].Upload;
-        }
-
-        if (nodeGood &&
-            speed.Download <= problemParams->Nodes[i].UpPortsNr * problemParams->Nodes[i].UpPort.Download &&
-            speed.Upload <= problemParams->Nodes[i].UpPortsNr * problemParams->Nodes[i].UpPort.Upload) {
-            validNodeIds[validNodeIdsCnt] = i;
-            validNodeIdsCnt += 1;
-            validSpeeds[validSpeedsCnt] = speed;
-            validSpeedsCnt += 1;
-        }
+      speed.Download += portAllocationMatrix[currLevel][j].Download;
+      speed.Upload += portAllocationMatrix[currLevel][j].Upload;
     }
 
-    if (validNodeIdsCnt > 0) {
-        nextNodeId = rand() % validNodeIdsCnt;
-        nextNode = validNodeIds[nextNodeId];
-        *nodeSpeed = validSpeeds[nextNodeId];
-
-        free(validNodeIds);
-        free(validSpeeds);
-
-        return nextNode;
-    } else {
-        /* Could not find even one node which can handle this level's traffic
-           requirements. If we're at level 0 (user access level), this should
-           prove a fatal condition : no one switch has access ports with
-           sufficient bandwith to handle certain users. If we're at upper levels,
-           the situation might be recoverable. For example, if at the lower
-           level we have big switches which aggregate a lot of users, the resulting
-           sumed bandwidth requirement might prove too great to be handled. Some
-           backtracking would be needed, though I'm not sure how to go along with
-           it. In general, favoring smaller switches at lower levels and bigger ones
-           as we go along might mitigate this problem. For now, we abort. */
-        free(validNodeIds);
-        free(validSpeeds);
-
-        printf("Could not find fit problem state!\n");
-        exit(2);
+    if (nodeGood &&
+	speed.Download <= problemParams->Nodes[i].UpPortsNr * problemParams->Nodes[i].UpPort.Download &&
+	speed.Upload <= problemParams->Nodes[i].UpPortsNr * problemParams->Nodes[i].UpPort.Upload) {
+      validNodeIds[validNodeIdsCnt] = i;
+      validNodeIdsCnt += 1;
+      validSpeeds[validSpeedsCnt] = speed;
+      validSpeedsCnt += 1;
     }
+  }
+
+  if (validNodeIdsCnt > 0) {
+    nextNodeId = rand() % validNodeIdsCnt;
+    nextNode = validNodeIds[nextNodeId];
+    *nodeSpeed = validSpeeds[nextNodeId];
+
+    free(validNodeIds);
+    free(validSpeeds);
+
+    return nextNode;
+  } else {
+    /* Could not find even one node which can handle this level's traffic
+       requirements. If we're at level 0 (user access level), this should
+       prove a fatal condition : no one switch has access ports with
+       sufficient bandwith to handle certain users. If we're at upper levels,
+       the situation might be recoverable. For example, if at the lower
+       level we have big switches which aggregate a lot of users, the resulting
+       sumed bandwidth requirement might prove too great to be handled. Some
+       backtracking would be needed, though I'm not sure how to go along with
+       it. In general, favoring smaller switches at lower levels and bigger ones
+       as we go along might mitigate this problem. For now, we abort. */
+    free(validNodeIds);
+    free(validSpeeds);
+
+    printf("Could not find fit problem state!\n");
+    exit(2);
+  }
 }

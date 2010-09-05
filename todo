@@ -1,0 +1,4 @@
+* In CrossOver Problem functions do a check of the mask to see that it contains only ones and zeros.
+* In ProblemParamsIsValid for AccessNetwork check if MaxNetworkLevels and MaxNetworkNodes have required sizes.
+* In ProblemStateIsValid for AccessNetwork do a proper check of a solution: test if it represents a valid network by building it.
+* When creating a object with *Alloc check if the created object is valid.

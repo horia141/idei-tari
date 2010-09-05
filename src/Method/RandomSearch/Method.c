@@ -8,7 +8,8 @@
 
 struct MethodParams
 {
-  int  ProblemStatesCnt;
+  int             ProblemStatesCnt;
+  ProblemParams*  ProblemParams;
 };
 
 MethodParams*
@@ -21,6 +22,7 @@ MethodParamsAlloc(
 
   fscanf(fin," RandomSearchParams :");
   fscanf(fin," ProblemStatesCnt : %d",&methodParams->ProblemStatesCnt);
+  methodParams->ProblemParams = ProblemParamsAlloc(fin);
 
   return methodParams;
 }
@@ -29,10 +31,10 @@ void
 MethodParamsFree(
   MethodParams** methodParams)
 {
-  assert(methodParams != NULL);
-  assert(MethodParamsIsValid(*methodParams));
+  assert(methodParams != NULL && MethodParamsIsValid(*methodParams));
 
   (*methodParams)->ProblemStatesCnt = 0;
+  ProblemParamsFree(&(*methodParams)->ProblemParams);
 
   free(*methodParams);
   *methodParams = NULL;
@@ -55,6 +57,7 @@ MethodParamsPrint(
 
   printf("%sRandomSearchParams:\n",indent);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
+  ProblemParamsPrint(methodParams->ProblemParams,indentLevel + 1);
 
   free(indent);
 }
@@ -71,7 +74,19 @@ MethodParamsIsValid(
     return 0;
   }
 
+  if (!ProblemParamsIsValid(methodParams->ProblemParams)) {
+    return 0;
+  }
+
   return 1;
+}
+
+const ProblemParams*
+MethodParamsProblemParams(const MethodParams* methodParams)
+{
+  assert(MethodParamsIsValid(methodParams));
+
+  return methodParams->ProblemParams;
 }
 
 
@@ -84,11 +99,9 @@ struct MethodState
 
 MethodState*
 MethodStateAlloc(
-  const MethodParams* methodParams,
-  const ProblemParams* problemParams)
+  const MethodParams* methodParams)
 {
   assert(MethodParamsIsValid(methodParams));
-  assert(ProblemParamsIsValid(problemParams));
 
   MethodState*  methodState;
   int           i;
@@ -100,7 +113,7 @@ MethodStateAlloc(
   methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
 
   for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    methodState->ProblemStates[i] = ProblemStateAlloc(problemParams);
+    methodState->ProblemStates[i] = ProblemStateAlloc(methodParams->ProblemParams);
   }
 
   return methodState;
@@ -108,19 +121,17 @@ MethodStateAlloc(
 
 MethodState*
 MethodStateGenNext(
-  const MethodState* previousState,
   const MethodParams* methodParams,
-  const ProblemParams* problemParams,
+  const MethodState* previousState,
   int iteration)
 {
-  assert(MethodStateIsValid(previousState));
   assert(MethodParamsIsValid(methodParams));
-  assert(ProblemParamsIsValid(problemParams));
-  assert(previousState->ProblemStatesCnt == methodParams->ProblemStatesCnt);
+  assert(MethodStateIsValid(methodParams,previousState));
+  assert(iteration >= 0);
 
   MethodState*  methodState;
 
-  methodState = MethodStateAlloc(methodParams,problemParams);
+  methodState = MethodStateAlloc(methodParams);
 
   methodState->Iteration = iteration;
 
@@ -129,15 +140,16 @@ MethodStateGenNext(
 
 void
 MethodStateFree(
+  const MethodParams* methodParams,
   MethodState** methodState)
 {
-  assert(methodState != NULL);
-  assert(MethodStateIsValid(*methodState));
+  assert(MethodParamsIsValid(methodParams));
+  assert(methodState != NULL && MethodStateIsValid(methodParams,*methodState));
 
   int  i;
 
   for (i = 0; i < (*methodState)->ProblemStatesCnt; i++) {
-    ProblemStateFree(&(*methodState)->ProblemStates[i]);
+    ProblemStateFree(methodParams->ProblemParams,&(*methodState)->ProblemStates[i]);
   }
 
   free((*methodState)->ProblemStates);
@@ -152,10 +164,12 @@ MethodStateFree(
 
 void
 MethodStatePrint(
+  const MethodParams* methodParams,
   const MethodState* methodState,
   int indentLevel)
 {
-  assert(MethodStateIsValid(methodState));
+  assert(MethodParamsIsValid(methodParams));
+  assert(MethodStateIsValid(methodParams,methodState));
   assert(indentLevel >= 0);
 
   char*  indent;
@@ -172,7 +186,7 @@ MethodStatePrint(
   printf("%s  ProblemStates:\n",indent);
 
   for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    ProblemStatePrint(methodState->ProblemStates[i],indentLevel + 2);
+    ProblemStatePrint(methodParams->ProblemParams,methodState->ProblemStates[i],indentLevel + 2);
   }
 
   free(indent);
@@ -180,8 +194,11 @@ MethodStatePrint(
 
 int
 MethodStateIsValid(
+  const MethodParams* methodParams,
   const MethodState* methodState)
 {
+  assert(MethodParamsIsValid(methodParams));
+
   int  i;
 
   if (methodState == NULL) {
@@ -192,7 +209,7 @@ MethodStateIsValid(
     return 0;
   }
 
-  if (methodState->ProblemStatesCnt < 1) {
+  if (methodState->ProblemStatesCnt != methodParams->ProblemStatesCnt) {
     return 0;
   }
 
@@ -201,7 +218,7 @@ MethodStateIsValid(
   }
 
   for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    if (!ProblemStateIsValid(methodState->ProblemStates[i])) {
+    if (!ProblemStateIsValid(methodParams->ProblemParams,methodState->ProblemStates[i])) {
       return 0;
     }
   }
@@ -211,11 +228,13 @@ MethodStateIsValid(
 
 ProblemState*
 MethodStateGetBest(
+  const MethodParams* methodParams,
   const MethodState* methodState,
   const ProblemState* currBest)
 {
-  assert(MethodStateIsValid(methodState));
-  assert(currBest == NULL || ProblemStateIsValid(currBest));
+  assert(MethodParamsIsValid(methodParams));
+  assert(MethodStateIsValid(methodParams,methodState));
+  assert(currBest == NULL || ProblemStateIsValid(methodParams->ProblemParams,currBest));
 
   const ProblemState*  best;
   double               bestCost;
@@ -226,7 +245,7 @@ MethodStateGetBest(
   bestCost = DBL_MAX;
 
   for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    currCost = ProblemStateCost(methodState->ProblemStates[i]);
+    currCost = ProblemStateCost(methodParams->ProblemParams,methodState->ProblemStates[i]);
 
     if (currCost < bestCost) {
       best = methodState->ProblemStates[i];
@@ -236,9 +255,9 @@ MethodStateGetBest(
 
   assert (best != NULL);
 
-  if (currBest != NULL && ProblemStateCost(currBest) < bestCost) {
-    return ProblemStateCopy(currBest);
+  if (currBest != NULL && ProblemStateCost(methodParams->ProblemParams,currBest) < bestCost) {
+    return ProblemStateCopy(methodParams->ProblemParams,currBest);
   } else {
-    return ProblemStateCopy(best);
+    return ProblemStateCopy(methodParams->ProblemParams,best);
   }
 }

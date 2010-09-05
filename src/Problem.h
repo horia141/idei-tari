@@ -11,7 +11,8 @@ ProblemParams*  ProblemParamsAlloc(
 void            ProblemParamsFree(
                   ProblemParams** problemParams);
 void            ProblemParamsPrint(
-                  const ProblemParams* problemParams, int indentLevel);
+                  const ProblemParams* problemParams,
+                  int indentLevel);
 int             ProblemParamsIsValid(
                   const ProblemParams* problemParams);
 
@@ -21,29 +22,36 @@ typedef struct ProblemState ProblemState;
 ProblemState*   ProblemStateAlloc(
                   const ProblemParams* problemParams);
 ProblemState*   ProblemStateCopy(
+                  const ProblemParams* problemParams,
                   const ProblemState* sourceState);
 ProblemState*   ProblemStateGenNext(
-                  const ProblemState* previousState,
-                  const ProblemParams* problemParams);
+                  const ProblemParams* problemParams,
+                  const ProblemState* previousState);
 ProblemState*   ProblemStateCrossOver(
+                  const ProblemParams* problemParams,
                   const ProblemState* parentState0,
                   const ProblemState* parentState1,
-                  const ProblemParams* problemParams,
                   int crossOverMaskCnt,
                   const int* crossOverMask);
 void            ProblemStateFree(
+                  const ProblemParams* problemParams,
                   ProblemState** problemState);
 void            ProblemStatePrint(
+                  const ProblemParams* problemParams,
                   const ProblemState* problemState,
                   int indentLevel);
 int             ProblemStateIsValid(
+                  const ProblemParams* problemParams,
                   const ProblemState* problemState);
 int             ProblemStateCompare(
-                  const ProblemState** problemState0,
-                  const ProblemState** problemState1);
+                  const ProblemParams* problemParams,
+                  const ProblemState* problemState0,
+                  const ProblemState* problemState1);
 double          ProblemStateCost(
+                  const ProblemParams* problemParams,
                   const ProblemState* problemState);
 int             ProblemStateGenomeSize(
+                  const ProblemParams* problemParams,
                   const ProblemState* problemState);
 
 #endif

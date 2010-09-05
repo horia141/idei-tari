@@ -13,15 +13,15 @@ main()
   initialState = DriverStateAlloc(driverParams);
 
   DriverParamsPrint(driverParams,0);
-  DriverStatePrint(initialState,0);
+  DriverStatePrint(driverParams,initialState,0);
 
-  finalState = DriverStateRun(initialState,driverParams);
+  finalState = DriverStateGenNext(driverParams,initialState);
 
-  DriverStatePrint(finalState,0);
+  DriverStatePrint(driverParams,finalState,0);
 
+  DriverStateFree(driverParams,&finalState);
+  DriverStateFree(driverParams,&initialState);
   DriverParamsFree(&driverParams);
-  DriverStateFree(&initialState);
-  DriverStateFree(&finalState);
 
   return 0;
 }

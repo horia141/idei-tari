@@ -8,10 +8,10 @@
 
 struct ProblemParams
 {
-    double  IntervalStartX;
-    double  IntervalStartY;
-    double  IntervalEndX;
-    double  IntervalEndY;
+  double  IntervalStartX;
+  double  IntervalStartY;
+  double  IntervalEndX;
+  double  IntervalEndY;
 };
 
 static double  _ProblemFunction(
@@ -22,33 +22,32 @@ ProblemParams*
 ProblemParamsAlloc(
   FILE* fin)
 {
-    ProblemParams*  problemParams;
+  ProblemParams*  problemParams;
 
-    problemParams = malloc(sizeof(ProblemParams));
+  problemParams = malloc(sizeof(ProblemParams));
 
-    fscanf(fin," RealFunction2DParams :");
-    fscanf(fin," IntervalStartX : %lf",&problemParams->IntervalStartX);
-    fscanf(fin," IntervalStartY : %lf",&problemParams->IntervalStartY);
-    fscanf(fin," IntervalEndX : %lf",&problemParams->IntervalEndX);
-    fscanf(fin," IntervalEndY : %lf",&problemParams->IntervalEndY);
+  fscanf(fin," RealFunction2DParams :");
+  fscanf(fin," IntervalStartX : %lf",&problemParams->IntervalStartX);
+  fscanf(fin," IntervalStartY : %lf",&problemParams->IntervalStartY);
+  fscanf(fin," IntervalEndX : %lf",&problemParams->IntervalEndX);
+  fscanf(fin," IntervalEndY : %lf",&problemParams->IntervalEndY);
 
-    return problemParams;
+  return problemParams;
 }
 
 void
 ProblemParamsFree(
   ProblemParams** problemParams)
 {
-    assert(problemParams != NULL);
-    assert(ProblemParamsIsValid(*problemParams));
+  assert(problemParams != NULL && ProblemParamsIsValid(*problemParams));
 
-    (*problemParams)->IntervalStartX = 0.0;
-    (*problemParams)->IntervalStartY = 0.0;
-    (*problemParams)->IntervalEndX = 0.0;
-    (*problemParams)->IntervalEndY = 0.0;
+  (*problemParams)->IntervalStartX = 0.0;
+  (*problemParams)->IntervalStartY = 0.0;
+  (*problemParams)->IntervalEndX = 0.0;
+  (*problemParams)->IntervalEndY = 0.0;
 
-    free(*problemParams);
-    *problemParams = NULL;
+  free(*problemParams);
+  *problemParams = NULL;
 }
 
 void
@@ -56,40 +55,40 @@ ProblemParamsPrint(
   const ProblemParams* problemParams,
   int indentLevel)
 {
-    assert(ProblemParamsIsValid(problemParams));
-    assert(indentLevel >= 0);
+  assert(ProblemParamsIsValid(problemParams));
+  assert(indentLevel >= 0);
 
-    char*  indent;
+  char*  indent;
 
-    indent = malloc(sizeof(char) * (2 * indentLevel + 1));
+  indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
-    memset(indent,' ',2 * indentLevel);
-    indent[2 * indentLevel] = '\0';
+  memset(indent,' ',2 * indentLevel);
+  indent[2 * indentLevel] = '\0';
 
-    printf("%sRealFunction2DParams\n",indent);
-    printf("%s  IntervalStart: (%f,%f)\n",indent,problemParams->IntervalStartX,problemParams->IntervalStartY);
-    printf("%s  IntervalEnd: (%f,%f)\n",indent,problemParams->IntervalEndX,problemParams->IntervalEndY);
+  printf("%sRealFunction2DParams\n",indent);
+  printf("%s  IntervalStart: (%f,%f)\n",indent,problemParams->IntervalStartX,problemParams->IntervalStartY);
+  printf("%s  IntervalEnd: (%f,%f)\n",indent,problemParams->IntervalEndX,problemParams->IntervalEndY);
 
-    free(indent);
+  free(indent);
 }
 
 int
 ProblemParamsIsValid(
   const ProblemParams* problemParams)
 {
-    if (problemParams == NULL) {
-        return 0;
-    }
+  if (problemParams == NULL) {
+    return 0;
+  }
 
-    if (problemParams->IntervalEndX <= problemParams->IntervalStartX) {
-        return 0;
-    }
+  if (problemParams->IntervalEndX <= problemParams->IntervalStartX) {
+    return 0;
+  }
 
-    if (problemParams->IntervalEndY <= problemParams->IntervalStartY) {
-        return 0;
-    }
+  if (problemParams->IntervalEndY <= problemParams->IntervalStartY) {
+    return 0;
+  }
 
-    return 1;
+  return 1;
 }
 
 static double
@@ -97,268 +96,290 @@ _ProblemFunction(
   double x,
   double y)
 {
-    return x * x + y * y;
+  return x * x + y * y;
 }
 
 
 struct ProblemState
 {
-    double  PositionX;
-    double  PositionY;
-    double  Cost;
+  double  PositionX;
+  double  PositionY;
+  double  Cost;
 };
 
 ProblemState*
 ProblemStateAlloc(
   const ProblemParams* problemParams)
 {
-    assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemParamsIsValid(problemParams));
 
-    ProblemState*  problemState;
+  ProblemState*  problemState;
 
-    problemState = malloc(sizeof(ProblemState));
+  problemState = malloc(sizeof(ProblemState));
 
-    problemState->PositionX = (((double)rand()) / RAND_MAX) * (problemParams->IntervalEndX - problemParams->IntervalStartX) + problemParams->IntervalStartX;
-    problemState->PositionY = (((double)rand()) / RAND_MAX) * (problemParams->IntervalEndY - problemParams->IntervalStartY) + problemParams->IntervalStartY;
-    problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
+  problemState->PositionX = (((double)rand()) / RAND_MAX) * (problemParams->IntervalEndX - problemParams->IntervalStartX) + problemParams->IntervalStartX;
+  problemState->PositionY = (((double)rand()) / RAND_MAX) * (problemParams->IntervalEndY - problemParams->IntervalStartY) + problemParams->IntervalStartY;
+  problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
 
-    return problemState;
+  return problemState;
 }
 
 ProblemState*
 ProblemStateCopy(
+  const ProblemParams* problemParams,
   const ProblemState* sourceState)
 {
-    assert(ProblemStateIsValid(sourceState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,sourceState));
 
-    ProblemState*  problemState;
+  ProblemState*  problemState;
 
-    problemState = malloc(sizeof(ProblemState));
+  problemState = malloc(sizeof(ProblemState));
 
-    problemState->PositionX = sourceState->PositionX;
-    problemState->PositionY = sourceState->PositionY;
-    problemState->Cost = sourceState->Cost;
+  problemState->PositionX = sourceState->PositionX;
+  problemState->PositionY = sourceState->PositionY;
+  problemState->Cost = sourceState->Cost;
 
-    return problemState;
+  return problemState;
 }
 
 ProblemState*
 ProblemStateGenNext(
-  const ProblemState* previousState,
-  const ProblemParams* problemParams)
+  const ProblemParams* problemParams,
+  const ProblemState* previousState)
 {
-    assert(ProblemStateIsValid(previousState));
-    assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,previousState));
 
-    ProblemState*  problemState;
-    double         newPositionX;
-    double         newPositionY;
-    double         intervalX;
-    double         intervalY;
-    double         offsetX;
-    double         offsetY;
+  ProblemState*  problemState;
+  double         newPositionX;
+  double         newPositionY;
+  double         intervalX;
+  double         intervalY;
+  double         offsetX;
+  double         offsetY;
 
-    intervalX = 0.1 * (problemParams->IntervalEndX - problemParams->IntervalStartX);
-    intervalY = 0.1 * (problemParams->IntervalEndY - problemParams->IntervalStartY);
-    offsetX = ((double)rand() / RAND_MAX) * intervalX - intervalX / 2;
-    offsetY = ((double)rand() / RAND_MAX) * intervalY - intervalY / 2;
-    newPositionX = previousState->PositionX + offsetX;
-    newPositionY = previousState->PositionY + offsetY;
+  intervalX = 0.1 * (problemParams->IntervalEndX - problemParams->IntervalStartX);
+  intervalY = 0.1 * (problemParams->IntervalEndY - problemParams->IntervalStartY);
+  offsetX = ((double)rand() / RAND_MAX) * intervalX - intervalX / 2;
+  offsetY = ((double)rand() / RAND_MAX) * intervalY - intervalY / 2;
+  newPositionX = previousState->PositionX + offsetX;
+  newPositionY = previousState->PositionY + offsetY;
 
-    if (newPositionX < problemParams->IntervalStartX) {
-        newPositionX = problemParams->IntervalStartX;
-    } else if (newPositionX > problemParams->IntervalEndX) {
-        newPositionX = problemParams->IntervalEndX;
-    }
+  if (newPositionX < problemParams->IntervalStartX) {
+    newPositionX = problemParams->IntervalStartX;
+  } else if (newPositionX > problemParams->IntervalEndX) {
+    newPositionX = problemParams->IntervalEndX;
+  }
 
-    if (newPositionY < problemParams->IntervalStartY) {
-        newPositionY = problemParams->IntervalStartY;
-    } else if (newPositionY > problemParams->IntervalEndY) {
-        newPositionY = problemParams->IntervalEndY;
-    }
+  if (newPositionY < problemParams->IntervalStartY) {
+    newPositionY = problemParams->IntervalStartY;
+  } else if (newPositionY > problemParams->IntervalEndY) {
+    newPositionY = problemParams->IntervalEndY;
+  }
 
-    problemState = malloc(sizeof(ProblemState));
+  problemState = malloc(sizeof(ProblemState));
 
-    problemState->PositionX = newPositionX;
-    problemState->PositionY = newPositionY;
-    problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
+  problemState->PositionX = newPositionX;
+  problemState->PositionY = newPositionY;
+  problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
 
-    return problemState;
+  return problemState;
 }
 
 ProblemState*
 ProblemStateCrossOver(
+  const ProblemParams* problemParams,
   const ProblemState* parentState0,
   const ProblemState* parentState1,
-  const ProblemParams* problemParams,
   int crossOverMaskCnt,
   const int* crossOverMask)
 {
-    assert(ProblemStateIsValid(parentState0));
-    assert(ProblemStateIsValid(parentState1));
-    assert(ProblemParamsIsValid(problemParams));
-    assert(crossOverMaskCnt > 0);
-    assert(crossOverMask != NULL);
-    assert(crossOverMaskCnt == ProblemStateGenomeSize(parentState0));
-    assert(crossOverMaskCnt == ProblemStateGenomeSize(parentState1));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,parentState0));
+  assert(ProblemStateIsValid(problemParams,parentState1));
+  assert(crossOverMaskCnt > 0);
+  assert(crossOverMask != NULL);
+  assert(crossOverMaskCnt == ProblemStateGenomeSize(problemParams,parentState0));
+  assert(crossOverMaskCnt == ProblemStateGenomeSize(problemParams,parentState1));
 
-    ProblemState*  problemState;
-    double         newPositionX;
-    double         newPositionY;
-    uint64_t       value0X;
-    uint64_t       value0Y;
-    uint64_t       value0MaskedX;
-    uint64_t       value0MaskedY;
-    uint64_t       value1X;
-    uint64_t       value1Y;
-    uint64_t       value1MaskedX;
-    uint64_t       value1MaskedY;
-    uint64_t       valueFinalX;
-    uint64_t       valueFinalY;
-    uint64_t       bitFlipMaskX;
-    uint64_t       bitFlipMaskY;
-    int            i;
+  ProblemState*  problemState;
+  double         newPositionX;
+  double         newPositionY;
+  uint64_t       value0X;
+  uint64_t       value0Y;
+  uint64_t       value0MaskedX;
+  uint64_t       value0MaskedY;
+  uint64_t       value1X;
+  uint64_t       value1Y;
+  uint64_t       value1MaskedX;
+  uint64_t       value1MaskedY;
+  uint64_t       valueFinalX;
+  uint64_t       valueFinalY;
+  uint64_t       bitFlipMaskX;
+  uint64_t       bitFlipMaskY;
+  int            i;
 
-    newPositionX = parentState0->PositionX;
-    bitFlipMaskX = 1;
+  newPositionX = parentState0->PositionX;
+  bitFlipMaskX = 1;
 
-    for (i = crossOverMaskCnt - 1; i >= crossOverMaskCnt / 2; i--) {
-        if (crossOverMask[i] == 1) {
-            value0X = *((uint64_t*)&newPositionX);
-            value1X = *((uint64_t*)&parentState1->PositionX);
+  for (i = crossOverMaskCnt - 1; i >= crossOverMaskCnt / 2; i--) {
+    if (crossOverMask[i] == 1) {
+      value0X = *((uint64_t*)&newPositionX);
+      value1X = *((uint64_t*)&parentState1->PositionX);
 
-            value0MaskedX = value0X & ~bitFlipMaskX;
-            value1MaskedX = value1X & bitFlipMaskX;
+      value0MaskedX = value0X & ~bitFlipMaskX;
+      value1MaskedX = value1X & bitFlipMaskX;
 
-            valueFinalX = value0MaskedX | value1MaskedX;
+      valueFinalX = value0MaskedX | value1MaskedX;
 
-            newPositionX = *((double*)&valueFinalX);
-        }
-
-        bitFlipMaskX <<= 1;
+      newPositionX = *((double*)&valueFinalX);
     }
 
-    newPositionY = parentState0->PositionY;
-    bitFlipMaskY = 1;
+    bitFlipMaskX <<= 1;
+  }
 
-    for (i = crossOverMaskCnt / 2 - 1; i >= 0; i--) {
-        if (crossOverMask[i] == 1) {
-            value0Y = *((uint64_t*)&newPositionY);
-            value1Y = *((uint64_t*)&parentState1->PositionY);
+  newPositionY = parentState0->PositionY;
+  bitFlipMaskY = 1;
 
-            value0MaskedY = value0Y & ~bitFlipMaskY;
-            value1MaskedY = value1Y & bitFlipMaskY;
+  for (i = crossOverMaskCnt / 2 - 1; i >= 0; i--) {
+    if (crossOverMask[i] == 1) {
+      value0Y = *((uint64_t*)&newPositionY);
+      value1Y = *((uint64_t*)&parentState1->PositionY);
 
-            valueFinalY = value0MaskedY | value1MaskedY;
+      value0MaskedY = value0Y & ~bitFlipMaskY;
+      value1MaskedY = value1Y & bitFlipMaskY;
 
-            newPositionY = *((double*)&valueFinalY);
-        }
+      valueFinalY = value0MaskedY | value1MaskedY;
 
-        bitFlipMaskY <<= 1;
+      newPositionY = *((double*)&valueFinalY);
     }
 
-    if (newPositionX < problemParams->IntervalStartX) {
-        newPositionX = problemParams->IntervalStartX;
-    } else if (newPositionX > problemParams->IntervalEndX) {
-        newPositionX = problemParams->IntervalEndX;
-    }
+    bitFlipMaskY <<= 1;
+  }
 
-    if (newPositionY < problemParams->IntervalStartY) {
-        newPositionY = problemParams->IntervalStartY;
-    } else if (newPositionY > problemParams->IntervalEndY) {
-        newPositionY = problemParams->IntervalEndY;
-    }
+  if (newPositionX < problemParams->IntervalStartX) {
+    newPositionX = problemParams->IntervalStartX;
+  } else if (newPositionX > problemParams->IntervalEndX) {
+    newPositionX = problemParams->IntervalEndX;
+  }
 
-    problemState = malloc(sizeof(ProblemState));
+  if (newPositionY < problemParams->IntervalStartY) {
+    newPositionY = problemParams->IntervalStartY;
+  } else if (newPositionY > problemParams->IntervalEndY) {
+    newPositionY = problemParams->IntervalEndY;
+  }
 
-    problemState->PositionX = newPositionX;
-    problemState->PositionY = newPositionY;
-    problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
+  problemState = malloc(sizeof(ProblemState));
 
-    return problemState;
+  problemState->PositionX = newPositionX;
+  problemState->PositionY = newPositionY;
+  problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
+
+  return problemState;
 }
 
 void
 ProblemStateFree(
+  const ProblemParams* problemParams,
   ProblemState** problemState)
 {
-    assert(problemState != NULL);
-    assert(ProblemStateIsValid(*problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(problemState != NULL && ProblemStateIsValid(problemParams,*problemState));
 
-    (*problemState)->PositionX = 0.0;
-    (*problemState)->PositionY = 0.0;
-    (*problemState)->Cost = 0.0;
+  (*problemState)->PositionX = 0.0;
+  (*problemState)->PositionY = 0.0;
+  (*problemState)->Cost = 0.0;
 
-    free(*problemState);
-    *problemState = NULL;
+  free(*problemState);
+  *problemState = NULL;
 }
 
 void
 ProblemStatePrint(
+  const ProblemParams* problemParams,
   const ProblemState* problemState,
   int indentLevel)
 {
-    assert(ProblemStateIsValid(problemState));
-    assert(indentLevel >= 0);
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
+  assert(indentLevel >= 0);
 
-    char*  indent;
+  char*  indent;
 
-    indent = malloc(sizeof(char) * (2 * indentLevel + 1));
+  indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
-    memset(indent,' ',2 * indentLevel);
-    indent[2 * indentLevel] = '\0';
+  memset(indent,' ',2 * indentLevel);
+  indent[2 * indentLevel] = '\0';
 
-    printf("%sRealFunction2DState:\n",indent);
-    printf("%s  Position: (%f,%f)\n",indent,problemState->PositionX,problemState->PositionY);
-    printf("%s  Cost: %f\n",indent,problemState->Cost);
+  printf("%sRealFunction2DState:\n",indent);
+  printf("%s  Position: (%f,%f)\n",indent,problemState->PositionX,problemState->PositionY);
+  printf("%s  Cost: %f\n",indent,problemState->Cost);
 
-    free(indent);
+  free(indent);
 }
 
 int
 ProblemStateIsValid(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-    if (problemState == NULL) {
-        return 0;
-    }
+  assert(ProblemParamsIsValid(problemParams));
 
-    return 1;
+  if (problemState == NULL) {
+    return 0;
+  }
+
+  if (problemState->PositionX < problemParams->IntervalStartX ||
+      problemState->PositionX > problemParams->IntervalEndX) {
+    return 0;
+  }
+
+  if (problemState->PositionY < problemParams->IntervalStartY ||
+      problemState->PositionY > problemParams->IntervalEndY) {
+    return 0;
+  }
+
+  return 1;
 }
 
 int
 ProblemStateCompare(
-  const ProblemState** problemState0,
-  const ProblemState** problemState1)
+  const ProblemParams* problemParams,
+  const ProblemState* problemState0,
+  const ProblemState* problemState1)
 {
-    assert(problemState0 != NULL);
-    assert(problemState1 != NULL);
-    assert(ProblemStateIsValid(*problemState0));
-    assert(ProblemStateIsValid(*problemState1));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState0));
+  assert(ProblemStateIsValid(problemParams,problemState1));
 
-    if ((*problemState0)->Cost < (*problemState1)->Cost) {
-        return -1;
-    } else if ((*problemState0)->Cost > (*problemState1)->Cost) {
-        return 1;
-    } else {
-        return 0;
-    }
+  if (problemState0->Cost < problemState1->Cost) {
+    return -1;
+  } else if (problemState0->Cost > problemState1->Cost) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 double
 ProblemStateCost(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-    assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
 
-    return problemState->Cost;
+  return problemState->Cost;
 }
 
 int
 ProblemStateGenomeSize(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-    assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
 
-    return sizeof(problemState->PositionX) * 8 + sizeof(problemState->PositionY) * 8;
+  return sizeof(problemState->PositionX) * 8 + sizeof(problemState->PositionY) * 8;
 }

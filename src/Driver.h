@@ -12,10 +12,10 @@ typedef struct DriverParams DriverParams;
 DriverParams*  DriverParamsAlloc(
                  FILE* fin);
 void           DriverParamsFree(
-         DriverParams** driverParams);
+                 DriverParams** driverParams);
 void           DriverParamsPrint(
                  const DriverParams* driverParams,
-         int indentLevel);
+                 int indentLevel);
 int            DriverParamsIsValid(
                  const DriverParams* driverParams);
 
@@ -24,15 +24,18 @@ typedef struct DriverState DriverState;
 
 DriverState*   DriverStateAlloc(
                  const DriverParams* driverState);
-DriverState*   DriverStateRun(
-                 const DriverState* initState,
-                 const DriverParams* driverParams);
+DriverState*   DriverStateGenNext(
+                 const DriverParams* driverParams,
+                 const DriverState* initState);
 void           DriverStateFree(
+                 const DriverParams* driverParams,
                  DriverState** driverState);
 void           DriverStatePrint(
+                 const DriverParams* driverParams,
                  const DriverState* driverState,
                  int indentLevel);
 int            DriverStateIsValid(
+                 const DriverParams* driverParams,
                  const DriverState* driverState);
 
 #endif

@@ -10,7 +10,6 @@ struct DriverParams
   int             IterationsNr;
   int             StatePrintInterval;
   MethodParams*   MethodParams;
-  ProblemParams*  ProblemParams;
 };
 
 DriverParams*
@@ -25,7 +24,6 @@ DriverParamsAlloc(
   fscanf(fin," IterationsNr : %d",&driverParams->IterationsNr);
   fscanf(fin," StatePrintInterval : %d",&driverParams->StatePrintInterval);
   driverParams->MethodParams = MethodParamsAlloc(fin);
-  driverParams->ProblemParams = ProblemParamsAlloc(fin);
 
   return driverParams;
 }
@@ -34,13 +32,11 @@ void
 DriverParamsFree(
   DriverParams** driverParams)
 {
-  assert(driverParams != NULL);
-  assert(DriverParamsIsValid(*driverParams));
+  assert(driverParams != NULL && DriverParamsIsValid(*driverParams));
 
   (*driverParams)->IterationsNr = 0;
   (*driverParams)->StatePrintInterval = 0;
   MethodParamsFree(&(*driverParams)->MethodParams);
-  ProblemParamsFree(&(*driverParams)->ProblemParams);
 
   free(*driverParams);
   *driverParams = NULL;
@@ -65,7 +61,6 @@ DriverParamsPrint(
   printf("%s  IterationsNr: %d\n",indent,driverParams->IterationsNr);
   printf("%s  StatePrintInterval: %d\n",indent,driverParams->StatePrintInterval);
   MethodParamsPrint(driverParams->MethodParams,indentLevel + 1);
-  ProblemParamsPrint(driverParams->ProblemParams,indentLevel + 1);
 
   free(indent);
 }
@@ -94,10 +89,6 @@ DriverParamsIsValid(
     return 0;
   }
 
-  if (!ProblemParamsIsValid(driverParams->ProblemParams)) {
-    return 0;
-  }
-
   return 1;
 }
 
@@ -113,24 +104,26 @@ DriverState*
 DriverStateAlloc(
   const DriverParams* driverParams)
 {
+  assert(DriverParamsIsValid(driverParams));
+
   DriverState*  driverState;
 
   driverState = malloc(sizeof(DriverState));
 
   driverState->Iteration = 0;
-  driverState->MethodState = MethodStateAlloc(driverParams->MethodParams,driverParams->ProblemParams);
-  driverState->Best = MethodStateGetBest(driverState->MethodState,NULL);
+  driverState->MethodState = MethodStateAlloc(driverParams->MethodParams);
+  driverState->Best = MethodStateGetBest(driverParams->MethodParams,driverState->MethodState,NULL);
 
   return driverState;
 }
 
 DriverState*
-DriverStateRun(
-  const DriverState* initState,
-  const DriverParams* driverParams)
+DriverStateGenNext(
+  const DriverParams* driverParams,
+  const DriverState* initState)
 {
-  assert(DriverStateIsValid(initState));
   assert(DriverParamsIsValid(driverParams));
+  assert(DriverStateIsValid(driverParams,initState));
 
   DriverState*   driverState;
   MethodState*   nextMethodState;
@@ -139,19 +132,19 @@ DriverStateRun(
   driverState = malloc(sizeof(DriverState));
 
   driverState->Iteration = 1;
-  driverState->MethodState = MethodStateGenNext(initState->MethodState,driverParams->MethodParams,driverParams->ProblemParams,driverState->Iteration);
-  driverState->Best = MethodStateGetBest(driverState->MethodState,initState->Best);
+  driverState->MethodState = MethodStateGenNext(driverParams->MethodParams,initState->MethodState,driverState->Iteration);
+  driverState->Best = MethodStateGetBest(driverParams->MethodParams,driverState->MethodState,initState->Best);
   
   for (driverState->Iteration = 1; driverState->Iteration < driverParams->IterationsNr; driverState->Iteration++) {
     if (driverState->Iteration % driverParams->StatePrintInterval == 0) {
-      DriverStatePrint(driverState,0);
+      DriverStatePrint(driverParams,driverState,0);
     }
 
-    nextMethodState = MethodStateGenNext(driverState->MethodState,driverParams->MethodParams,driverParams->ProblemParams,driverState->Iteration);
-    nextBest = MethodStateGetBest(nextMethodState,driverState->Best);
+    nextMethodState = MethodStateGenNext(driverParams->MethodParams,driverState->MethodState,driverState->Iteration);
+    nextBest = MethodStateGetBest(driverParams->MethodParams,nextMethodState,driverState->Best);
 
-    MethodStateFree(&driverState->MethodState);
-    ProblemStateFree(&driverState->Best);
+    MethodStateFree(driverParams->MethodParams,&driverState->MethodState);
+    ProblemStateFree(MethodParamsProblemParams(driverParams->MethodParams),&driverState->Best);
 
     driverState->MethodState = nextMethodState;
     driverState->Best = nextBest;
@@ -162,14 +155,15 @@ DriverStateRun(
 
 void
 DriverStateFree(
+  const DriverParams* driverParams,
   DriverState** driverState)
 {
-  assert(driverState != NULL);
-  assert(DriverStateIsValid(*driverState));
+  assert(DriverParamsIsValid(driverParams));
+  assert(driverState != NULL && DriverStateIsValid(driverParams,*driverState));
 
   (*driverState)->Iteration = -1;
-  MethodStateFree(&(*driverState)->MethodState);
-  ProblemStateFree(&(*driverState)->Best);
+  MethodStateFree(driverParams->MethodParams,&(*driverState)->MethodState);
+  ProblemStateFree(MethodParamsProblemParams(driverParams->MethodParams),&(*driverState)->Best);
 
   free(*driverState);
   *driverState = NULL;
@@ -177,10 +171,12 @@ DriverStateFree(
 
 void
 DriverStatePrint(
+  const DriverParams* driverParams,
   const DriverState* driverState,
   int indentLevel)
 {
-  assert(DriverStateIsValid(driverState));
+  assert(DriverParamsIsValid(driverParams));
+  assert(DriverStateIsValid(driverParams,driverState));
   assert(indentLevel >= 0);
 
   char*  indent;
@@ -192,16 +188,19 @@ DriverStatePrint(
 
   printf("%sSingleThreadedState:\n",indent);
   printf("%s  Iteration: %d\n",indent,driverState->Iteration);
-  MethodStatePrint(driverState->MethodState,indentLevel + 1);
-  ProblemStatePrint(driverState->Best,indentLevel + 1);
+  MethodStatePrint(driverParams->MethodParams,driverState->MethodState,indentLevel + 1);
+  ProblemStatePrint(MethodParamsProblemParams(driverParams->MethodParams),driverState->Best,indentLevel + 1);
 
   free(indent);
 }
 
 int
 DriverStateIsValid(
+  const DriverParams* driverParams,
   const DriverState* driverState)
 {
+  assert(DriverParamsIsValid(driverParams));
+
   if (driverState == NULL) {
     return 0;
   }
@@ -210,11 +209,11 @@ DriverStateIsValid(
     return 0;
   }
 
-  if (!MethodStateIsValid(driverState->MethodState)) {
+  if (!MethodStateIsValid(driverParams->MethodParams,driverState->MethodState)) {
     return 0;
   }
 
-  if (!ProblemStateIsValid(driverState->Best)) {
+  if (!ProblemStateIsValid(MethodParamsProblemParams(driverParams->MethodParams),driverState->Best)) {
     return 0;
   }
 

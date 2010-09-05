@@ -35,8 +35,7 @@ void
 ProblemParamsFree(
   ProblemParams** problemParams)
 {
-  assert(problemParams != NULL);
-  assert(ProblemParamsIsValid(*problemParams));
+  assert(problemParams != NULL && ProblemParamsIsValid(*problemParams));
 
   (*problemParams)->IntervalStart = 0.0;
   (*problemParams)->IntervalEnd = 0.0;
@@ -115,9 +114,11 @@ ProblemStateAlloc(
 
 ProblemState*
 ProblemStateCopy(
+  const ProblemParams* problemParams,
   const ProblemState* sourceState)
 {
-  assert(ProblemStateIsValid(sourceState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,sourceState));
 
   ProblemState*  problemState;
 
@@ -131,11 +132,11 @@ ProblemStateCopy(
 
 ProblemState*
 ProblemStateGenNext(
-  const ProblemState* previousState,
-  const ProblemParams* problemParams)
+  const ProblemParams* problemParams,
+  const ProblemState* previousState)
 {
-  assert(ProblemStateIsValid(previousState));
   assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,previousState));
 
   ProblemState*  problemState;
   double         newPosition;
@@ -162,19 +163,19 @@ ProblemStateGenNext(
 
 ProblemState*
 ProblemStateCrossOver(
+  const ProblemParams* problemParams,
   const ProblemState* parentState0,
   const ProblemState* parentState1,
-  const ProblemParams* problemParams,
   int crossOverMaskCnt,
   const int* crossOverMask)
 {
-  assert(ProblemStateIsValid(parentState0));
-  assert(ProblemStateIsValid(parentState1));
   assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,parentState0));
+  assert(ProblemStateIsValid(problemParams,parentState1));
   assert(crossOverMaskCnt > 0);
   assert(crossOverMask != NULL);
-  assert(crossOverMaskCnt == ProblemStateGenomeSize(parentState0));
-  assert(crossOverMaskCnt == ProblemStateGenomeSize(parentState1));
+  assert(crossOverMaskCnt == ProblemStateGenomeSize(problemParams,parentState0));
+  assert(crossOverMaskCnt == ProblemStateGenomeSize(problemParams,parentState1));
 
   ProblemState*  problemState;
   double         newPosition;
@@ -221,10 +222,11 @@ ProblemStateCrossOver(
 
 void
 ProblemStateFree(
+  const ProblemParams* problemParams,
   ProblemState** problemState)
 {
-  assert(problemState != NULL);
-  assert(ProblemStateIsValid(*problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(problemState != NULL && ProblemStateIsValid(problemParams,*problemState));
 
   (*problemState)->Position = 0.0;
   (*problemState)->Cost = 0.0;
@@ -235,9 +237,12 @@ ProblemStateFree(
 
 void
 ProblemStatePrint(
-  const ProblemState* problemState, int indentLevel)
+  const ProblemParams* problemParams,
+  const ProblemState* problemState,
+  int indentLevel)
 {
-  assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
   assert(indentLevel >= 0);
 
   char*  indent;
@@ -256,9 +261,17 @@ ProblemStatePrint(
 
 int
 ProblemStateIsValid(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
+  assert(ProblemParamsIsValid(problemParams));
+
   if (problemState == NULL) {
+    return 0;
+  }
+
+  if (problemState->Position < problemParams->IntervalStart ||
+      problemState->Position > problemParams->IntervalEnd) {
     return 0;
   }
 
@@ -267,17 +280,17 @@ ProblemStateIsValid(
 
 int
 ProblemStateCompare(
-  const ProblemState** problemState0,
-  const ProblemState** problemState1)
+  const ProblemParams* problemParams,
+  const ProblemState* problemState0,
+  const ProblemState* problemState1)
 {
-  assert(problemState0 != NULL);
-  assert(problemState1 != NULL);
-  assert(ProblemStateIsValid(*problemState0));
-  assert(ProblemStateIsValid(*problemState1));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState0));
+  assert(ProblemStateIsValid(problemParams,problemState1));
 
-  if ((*problemState0)->Cost < (*problemState1)->Cost) {
+  if (problemState0->Cost < problemState1->Cost) {
     return -1;
-  } else if ((*problemState0)->Cost > (*problemState1)->Cost) {
+  } else if (problemState0->Cost > problemState1->Cost) {
     return 1;
   } else {
     return 0;
@@ -286,18 +299,22 @@ ProblemStateCompare(
 
 double
 ProblemStateCost(
+  const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-  assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
 
   return problemState->Cost;
 }
 
 int
 ProblemStateGenomeSize(
+ const ProblemParams* problemParams,
   const ProblemState* problemState)
 {
-  assert(ProblemStateIsValid(problemState));
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,problemState));
 
   return sizeof(problemState->Position) * 8;
 }
