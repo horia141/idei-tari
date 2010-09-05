@@ -67,13 +67,13 @@ CrossOverParamsIsValid(
 
 void
 GenerateCrossOverMask(
+  const CrossOverParams* crossOverParams,
   int crossOverMaskCnt,
-  int* crossOverMask,
-  const CrossOverParams* crossOverParams)
+  int* crossOverMask)
 {
+  assert(CrossOverParamsIsValid(crossOverParams));
   assert(crossOverMaskCnt > 0);
   assert(crossOverMask != NULL);
-  assert(CrossOverParamsIsValid(crossOverParams));
 
   int  crossOverPoint;
   int  i;

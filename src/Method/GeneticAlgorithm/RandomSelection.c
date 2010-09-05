@@ -67,24 +67,26 @@ SelectionParamsIsValid(
 
 void
 GenerateSelectedStates(
+  const SelectionParams* selectionParams,
+  const ProblemParams* problemParams,
   int selectedStatesCnt,
   const ProblemState** selectedStates,
   int previousStatesCnt,
-  ProblemState** previousStates,
-  const SelectionParams* selectionParams)
+  ProblemState** previousStates)
 {
+  assert(SelectionParamsIsValid(selectionParams));
+  assert(ProblemParamsIsValid(problemParams));
   assert(selectedStatesCnt > 0);
   assert(selectedStates != NULL);
   assert(previousStatesCnt > 0);
   assert(previousStates != NULL);
-  assert(SelectionParamsIsValid(selectionParams));
   assert(selectedStatesCnt == previousStatesCnt);
 
   int  selectIndex;
   int  i;
 
   for (i = 0; i < previousStatesCnt; i++) {
-    assert(ProblemStateIsValid(previousStates[i]));
+    assert(ProblemStateIsValid(problemParams,previousStates[i]));
   }
 
   for (i = 0; i < selectedStatesCnt; i++) {

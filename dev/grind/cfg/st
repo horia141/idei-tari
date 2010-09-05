@@ -1,0 +1,3 @@
+SingleThreadedParams:
+  IterationsNr: 10
+  StatePrintInterval: 5

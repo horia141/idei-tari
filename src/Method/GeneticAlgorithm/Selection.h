@@ -19,10 +19,11 @@ int               SelectionParamsIsValid(
                     const SelectionParams* selectionParams);
 
 void              GenerateSelectedStates(
+		    const SelectionParams* selectionParams,
+		    const ProblemParams* problemParams,
                     int selectedStatesCnt,
                     const ProblemState** selectedStates,
                     int previousStatesCnt,
-                    ProblemState** previousStates,
-                    const SelectionParams* selectionParams);
+                    ProblemState** previousStates);
 
 #endif

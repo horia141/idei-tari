@@ -67,14 +67,14 @@ CrossOverParamsIsValid(
 
 void
 GenerateCrossOverMask(
+  const CrossOverParams* crossOverParams,
   int crossOverMaskCnt,
-  int* crossOverMask,
-  const CrossOverParams* crossOverParams)
+  int* crossOverMask)
 {
+  assert(CrossOverParamsIsValid(crossOverParams));
   assert(crossOverMaskCnt > 0);
   assert(crossOverMask != NULL);
-  assert(CrossOverParamsIsValid(crossOverParams));
-  assert(crossOverMaskCnt > 1);
+  assert(crossOverMaskCnt > 1); // separate test because this is TPC
 
   int  crossOverPoint0;
   int  crossOverPoint1;

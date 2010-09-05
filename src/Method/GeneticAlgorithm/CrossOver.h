@@ -17,8 +17,8 @@ int               CrossOverParamsIsValid(
                     const CrossOverParams* crossOverParams);
 
 void              GenerateCrossOverMask(
+                    const CrossOverParams* crossOverParams,
                     int crossOverMaskCnt,
-                    int* crossOverMask,
-                    const CrossOverParams* crossOverParams);
+                    int* crossOverMask);
 
 #endif
