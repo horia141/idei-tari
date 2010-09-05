@@ -323,6 +323,21 @@ grind-st-hc-rf2d: out/opt-st-hc-rf2d
 	valgrind --leak-check=full out/opt-st-hc-rf2d < out/grind-run/tmp/cfg-st-hc-rf2d
 	rm out/grind-run/tmp/cfg-st-hc-rf2d
 
+out/opt-st-es-rf2d: src/Main.c \
+		    src/Driver/SingleThreaded/Driver.c \
+		    src/Method/EvolutionStrategy/Method.c \
+		    src/Problem/RealFunction2D/Problem.c
+	gcc -g -Wall -o out/opt-st-es-rf2d -Isrc \
+		src/Main.c \
+		src/Driver/SingleThreaded/Driver.c \
+		src/Method/EvolutionStrategy/Method.c \
+		src/Problem/RealFunction2D/Problem.c
+
+grind-st-es-rf2d: out/opt-st-es-rf2d
+	cat out/grind-run/cfg/st out/grind-run/cfg/es out/grind-run/cfg/rf2d > out/grind-run/tmp/cfg-st-es-rf2d
+	valgrind --leak-check=full out/opt-st-es-rf2d < out/grind-run/tmp/cfg-st-es-rf2d
+	rm out/grind-run/tmp/cfg-st-es-rf2d
+
 out/opt-st-rs-an: src/Main.c \
 		    src/Driver/SingleThreaded/Driver.c \
 		    src/Method/RandomSearch/Method.c \
@@ -352,6 +367,21 @@ grind-st-hc-an: out/opt-st-hc-an
 	cat out/grind-run/cfg/st out/grind-run/cfg/hc out/grind-run/cfg/an > out/grind-run/tmp/cfg-st-hc-an
 	valgrind --leak-check=full out/opt-st-hc-an < out/grind-run/tmp/cfg-st-hc-an
 	rm out/grind-run/tmp/cfg-st-hc-an
+
+out/opt-st-es-an: src/Main.c \
+		    src/Driver/SingleThreaded/Driver.c \
+		    src/Method/EvolutionStrategy/Method.c \
+		    src/Problem/AccessNetwork/Problem.c
+	gcc -g -Wall -o out/opt-st-es-an -Isrc -D_GNU_SOURCE -lm \
+		src/Main.c \
+		src/Driver/SingleThreaded/Driver.c \
+		src/Method/EvolutionStrategy/Method.c \
+		src/Problem/AccessNetwork/Problem.c
+
+grind-st-es-an: out/opt-st-es-an
+	cat out/grind-run/cfg/st out/grind-run/cfg/es out/grind-run/cfg/an > out/grind-run/tmp/cfg-st-es-an
+	valgrind --leak-check=full out/opt-st-es-an < out/grind-run/tmp/cfg-st-es-an
+	rm out/grind-run/tmp/cfg-st-es-an
 
 runtest:
 	./dev/runtest.tcl
