@@ -1,11 +1,10 @@
 #!/usr/bin/env tclsh
 
 namespace eval cfg {
-    set BIN_PATH ./out
-    set WORK_PATH [file join $cfg::BIN_PATH large-run]
-    set CFG_WORK_PATH [file join $cfg::WORK_PATH cfg]
+    set BIN_PATH [file join [pwd] out]
+    set WORK_PATH [file join $cfg::BIN_PATH run-an-tests]
+    set CFG_WORK_PATH [file join $cfg::WORK_PATH cfg large-run]
     set TMP_WORK_PATH [file join $cfg::WORK_PATH tmp]
-    set RES_WORK_PATH [file join $cfg::WORK_PATH res]
     set DRIVERS {st}
     set METHODS {rs hc es ga-rs-opc ga-rs-tpc ga-rs-spc ga-rs-uc ga-tos-opc ga-tos-tpc ga-tos-spc ga-tos-uc}
     set PROBLEMS {rf1d rf2d an}
@@ -79,7 +78,7 @@ if {[llength $argv] != 1} {
 set testedProblem [lindex $argv 0]
 
 set goodDrivers st
-set goodMethods ga-tos-uc
+set goodMethods $cfg::METHODS
 
 array set result {}
 

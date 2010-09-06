@@ -280,18 +280,18 @@ namespace eval parseOptCfg {
 }
 
 proc main {argv} {
-    check [llength $argv] == 2 {Improper call syntax: should be plotrf1d [driver] [method]}
+    check [llength $argv] == 2 {Improper call syntax: should be plot-rf1d [driver] [method]}
 
     set driver [lindex $argv 0]
     set method [lindex $argv 1]
 
-    set config(cfgDirPath) [file join [pwd] cfg]
+    set config(cfgDirPath) [file join [pwd] out plot-rf1d cfg]
     set config(cfgDriverPath) [file join $config(cfgDirPath) $driver]
     set config(cfgMethodPath) [file join $config(cfgDirPath) $method]
     set config(cfgProblemPath) [file join $config(cfgDirPath) rf1d]
-    set config(binPath) [file join [pwd] .. out opt-$driver-$method-rf1d]
-    set config(scrPath) [file join [pwd] out.scr]
-    set config(datPath) [file join [pwd] out.dat]
+    set config(binPath) [file join [pwd] out opt-$driver-$method-rf1d]
+    set config(scrPath) [file join [pwd] out plot-rf1d tmp out.scr]
+    set config(datPath) [file join [pwd] out plot-rf1d tmp out.dat]
     set config(stepGranularity) 100
 
     set cfgDriver [read [open $config(cfgDriverPath) r]]

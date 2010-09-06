@@ -70,7 +70,7 @@ out/opt-st-rs-rf1d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \
 		    src/opt-fw/Method/RandomSearch/Method.c \
 		    src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-rs-rf1d -Isrc \
+	gcc -g -Wall -o out/opt-st-rs-rf1d -Isrc/opt-fw \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/RandomSearch/Method.c \
@@ -85,7 +85,7 @@ out/opt-st-hc-rf1d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \
 		    src/opt-fw/Method/HillClimbing/Method.c \
 		    src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-hc-rf1d -Isrc \
+	gcc -g -Wall -o out/opt-st-hc-rf1d -Isrc/opt-fw \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/HillClimbing/Method.c \
@@ -100,7 +100,7 @@ out/opt-st-es-rf1d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \
 		    src/opt-fw/Method/EvolutionStrategy/Method.c \
 		    src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-es-rf1d -Isrc \
+	gcc -g -Wall -o out/opt-st-es-rf1d -Isrc/opt-fw \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/EvolutionStrategy/Method.c \
@@ -117,7 +117,7 @@ out/opt-st-ga-rs-opc-rf1d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		           src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-opc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-opc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -136,7 +136,7 @@ out/opt-st-ga-rs-tpc-rf1d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		           src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-tpc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-tpc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -155,7 +155,7 @@ out/opt-st-ga-rs-spc-rf1d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		           src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-spc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-spc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -174,7 +174,7 @@ out/opt-st-ga-rs-uc-rf1d: src/opt-fw/Main.c \
 			  src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			  src/opt-fw/Method/GeneticAlgorithm/UniformCrossOver.c \
 		          src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-uc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-uc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -193,7 +193,7 @@ out/opt-st-ga-tos-opc-rf1d: src/opt-fw/Main.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			    src/opt-fw/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		            src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-opc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-opc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -212,7 +212,7 @@ out/opt-st-ga-tos-tpc-rf1d: src/opt-fw/Main.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		            src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-tpc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-tpc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -231,7 +231,7 @@ out/opt-st-ga-tos-spc-rf1d: src/opt-fw/Main.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			    src/opt-fw/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		            src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-spc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-spc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -250,7 +250,7 @@ out/opt-st-ga-tos-uc-rf1d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/UniformCrossOver.c \
 		           src/opt-fw/Problem/RealFunction1D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-uc-rf1d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-uc-rf1d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -267,7 +267,7 @@ out/opt-st-rs-rf2d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \
 		    src/opt-fw/Method/RandomSearch/Method.c \
 		    src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-rs-rf2d -Isrc \
+	gcc -g -Wall -o out/opt-st-rs-rf2d -Isrc/opt-fw \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/RandomSearch/Method.c \
@@ -282,7 +282,7 @@ out/opt-st-hc-rf2d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \
 		    src/opt-fw/Method/HillClimbing/Method.c \
 		    src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-hc-rf2d -Isrc \
+	gcc -g -Wall -o out/opt-st-hc-rf2d -Isrc/opt-fw \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/HillClimbing/Method.c \
@@ -297,7 +297,7 @@ out/opt-st-es-rf2d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \
 		    src/opt-fw/Method/EvolutionStrategy/Method.c \
 		    src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-es-rf2d -Isrc \
+	gcc -g -Wall -o out/opt-st-es-rf2d -Isrc/opt-fw \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/EvolutionStrategy/Method.c \
@@ -314,7 +314,7 @@ out/opt-st-ga-rs-opc-rf2d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		           src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-opc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-opc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -333,7 +333,7 @@ out/opt-st-ga-rs-tpc-rf2d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		           src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-tpc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-tpc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -352,7 +352,7 @@ out/opt-st-ga-rs-spc-rf2d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		           src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-spc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-spc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -371,7 +371,7 @@ out/opt-st-ga-rs-uc-rf2d: src/opt-fw/Main.c \
 			  src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			  src/opt-fw/Method/GeneticAlgorithm/UniformCrossOver.c \
 		          src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-uc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-rs-uc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -390,7 +390,7 @@ out/opt-st-ga-tos-opc-rf2d: src/opt-fw/Main.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			    src/opt-fw/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		            src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-opc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-opc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -409,7 +409,7 @@ out/opt-st-ga-tos-tpc-rf2d: src/opt-fw/Main.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		            src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-tpc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-tpc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -428,7 +428,7 @@ out/opt-st-ga-tos-spc-rf2d: src/opt-fw/Main.c \
 			    src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			    src/opt-fw/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		            src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-spc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-spc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -447,7 +447,7 @@ out/opt-st-ga-tos-uc-rf2d: src/opt-fw/Main.c \
 			   src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			   src/opt-fw/Method/GeneticAlgorithm/UniformCrossOver.c \
 		           src/opt-fw/Problem/RealFunction2D/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-uc-rf2d -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm \
+	gcc -g -Wall -o out/opt-st-ga-tos-uc-rf2d -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -464,7 +464,7 @@ out/opt-st-rs-an: src/opt-fw/Main.c \
 		  src/opt-fw/Driver/SingleThreaded/Driver.c \
 		  src/opt-fw/Method/RandomSearch/Method.c \
 		  src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-rs-an -Isrc -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-rs-an -Isrc/opt-fw -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/RandomSearch/Method.c \
@@ -479,7 +479,7 @@ out/opt-st-hc-an: src/opt-fw/Main.c \
 		  src/opt-fw/Driver/SingleThreaded/Driver.c \
 		  src/opt-fw/Method/HillClimbing/Method.c \
 		  src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-hc-an -Isrc -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-hc-an -Isrc/opt-fw -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/HillClimbing/Method.c \
@@ -494,7 +494,7 @@ out/opt-st-es-an: src/opt-fw/Main.c \
 		  src/opt-fw/Driver/SingleThreaded/Driver.c \
 		  src/opt-fw/Method/EvolutionStrategy/Method.c \
 		  src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-es-an -Isrc -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-es-an -Isrc/opt-fw -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/EvolutionStrategy/Method.c \
@@ -511,7 +511,7 @@ out/opt-st-ga-rs-opc-an: src/opt-fw/Main.c \
 			 src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			 src/opt-fw/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		         src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-opc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-rs-opc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -530,7 +530,7 @@ out/opt-st-ga-rs-tpc-an: src/opt-fw/Main.c \
 			 src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			 src/opt-fw/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		         src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-tpc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-rs-tpc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -549,7 +549,7 @@ out/opt-st-ga-rs-spc-an: src/opt-fw/Main.c \
 			 src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			 src/opt-fw/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		         src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-spc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-rs-spc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -568,7 +568,7 @@ out/opt-st-ga-rs-uc-an: src/opt-fw/Main.c \
 			src/opt-fw/Method/GeneticAlgorithm/RandomSelection.c \
 			src/opt-fw/Method/GeneticAlgorithm/UniformCrossOver.c \
 		        src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-rs-uc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-rs-uc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -587,7 +587,7 @@ out/opt-st-ga-tos-opc-an: src/opt-fw/Main.c \
 			  src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			  src/opt-fw/Method/GeneticAlgorithm/OnePointCrossOver.c \
 		          src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-opc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-opc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -606,7 +606,7 @@ out/opt-st-ga-tos-tpc-an: src/opt-fw/Main.c \
 			  src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			  src/opt-fw/Method/GeneticAlgorithm/TwoPointCrossOver.c \
 		          src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-tpc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-tpc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -625,7 +625,7 @@ out/opt-st-ga-tos-spc-an: src/opt-fw/Main.c \
 			  src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			  src/opt-fw/Method/GeneticAlgorithm/SinglePointCrossOver.c \
 		          src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-spc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-spc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -644,7 +644,7 @@ out/opt-st-ga-tos-uc-an: src/opt-fw/Main.c \
 			 src/opt-fw/Method/GeneticAlgorithm/TournamentSelection.c \
 			 src/opt-fw/Method/GeneticAlgorithm/UniformCrossOver.c \
 		         src/opt-fw/Problem/AccessNetwork/Problem.c
-	gcc -g -Wall -o out/opt-st-ga-tos-uc-an -Isrc -Isrc/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
+	gcc -g -Wall -o out/opt-st-ga-tos-uc-an -Isrc/opt-fw -Isrc/opt-fw/opt-fw/Method/GeneticAlgorithm -D_GNU_SOURCE -lm \
 		src/opt-fw/Main.c \
 		src/opt-fw/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Method/GeneticAlgorithm/Method.c \
@@ -656,3 +656,23 @@ grind-st-ga-tos-uc-an: out/opt-st-ga-tos-uc-an
 	cat dev/grind/cfg/st dev/grind/cfg/ga-tos-uc dev/grind/cfg/an > dev/grind/tmp/cfg-st-ga-tos-uc-an
 	valgrind --leak-check=full out/opt-st-ga-tos-uc-an < dev/grind/tmp/cfg-st-ga-tos-uc-an
 	rm dev/grind/tmp/cfg-st-ga-tos-uc-an
+
+out/plot-rf1d/plot-rf1d.tcl: src/plot-rf1d/plot-rf1d.tcl \
+	       		     $(wildcard src/plot-rf1d/cfg/*)
+	mkdir -p out/plot-rf1d
+	mkdir -p out/plot-rf1d/cfg
+	mkdir -p out/plot-rf1d/tmp
+
+	cp src/plot-rf1d/plot-rf1d.tcl out/plot-rf1d
+	cp -r src/plot-rf1d/cfg out/plot-rf1d
+
+out/run-an-tests/run-an-tests.tcl: src/run-an-tests/run-an-tests.tcl \
+				   $(wildcard src/run-an-tests/cfg/small-run/*) \
+				   $(wildcard src/run-an-tests/cfg/large-run/*)
+	mkdir -p out/run-an-tests
+	mkdir -p out/run-an-tests/cfg
+	mkdir -p out/run-an-tests/tmp
+
+	cp src/run-an-tests/run-an-tests.tcl out/run-an-tests
+	cp -r src/run-an-tests/cfg/small-run out/run-an-tests/cfg
+	cp -r src/run-an-tests/cfg/large-run out/run-an-tests/cfg
