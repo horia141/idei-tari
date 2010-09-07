@@ -132,7 +132,7 @@ DriverStateGenNext(
   driverState = malloc(sizeof(DriverState));
 
   driverState->Iteration = 1;
-  driverState->MethodState = MethodStateGenNext(driverParams->MethodParams,initState->MethodState,driverState->Iteration);
+  driverState->MethodState = MethodStateGenNext(driverParams->MethodParams,initState->MethodState);
   driverState->Best = MethodStateGetBest(driverParams->MethodParams,driverState->MethodState,initState->Best);
   
   for (driverState->Iteration = 1; driverState->Iteration < driverParams->IterationsNr; driverState->Iteration++) {
@@ -140,7 +140,7 @@ DriverStateGenNext(
       DriverStatePrint(driverParams,driverState,0);
     }
 
-    nextMethodState = MethodStateGenNext(driverParams->MethodParams,driverState->MethodState,driverState->Iteration);
+    nextMethodState = MethodStateGenNext(driverParams->MethodParams,driverState->MethodState);
     nextBest = MethodStateGetBest(driverParams->MethodParams,nextMethodState,driverState->Best);
 
     MethodStateFree(driverParams->MethodParams,&driverState->MethodState);

@@ -120,7 +120,6 @@ MethodParamsProblemParams(
 
 struct MethodState
 {
-  int             Iteration;
   int             ProblemStatesCnt;
   ProblemState**  ProblemStates;
 };
@@ -136,7 +135,6 @@ MethodStateAlloc(
 
   methodState = malloc(sizeof(MethodState));
 
-  methodState->Iteration = 0;
   methodState->ProblemStatesCnt = methodParams->ProblemStatesCnt;
   methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
 
@@ -150,8 +148,7 @@ MethodStateAlloc(
 MethodState*
 MethodStateGenNext(
   const MethodParams* methodParams,
-  const MethodState* previousState,
-  int iteration)
+  const MethodState* previousState)
 {
   assert(MethodParamsIsValid(methodParams));
   assert(MethodStateIsValid(methodParams,previousState));
@@ -177,7 +174,6 @@ MethodStateGenNext(
 
   methodState = malloc(sizeof(MethodState));
 
-  methodState->Iteration = iteration;
   methodState->ProblemStatesCnt = previousState->ProblemStatesCnt;
   methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
 
@@ -235,7 +231,6 @@ MethodStateFree(
 
   free((*methodState)->ProblemStates);
 
-  (*methodState)->Iteration = -1;
   (*methodState)->ProblemStatesCnt = 0;
   (*methodState)->ProblemStates = NULL;
 
@@ -262,7 +257,6 @@ MethodStatePrint(
   indent[2 * indentLevel] = '\0';
 
   printf("%sGeneticAlgorithmState:\n",indent);
-  printf("%s  Iteration: %d\n",indent,methodState->Iteration);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
   printf("%s  ProblemStates:\n",indent);
 
@@ -283,10 +277,6 @@ MethodStateIsValid(
   int  i;
 
   if (methodState == NULL) {
-    return 0;
-  }
-
-  if (methodState->Iteration < 0) {
     return 0;
   }
 

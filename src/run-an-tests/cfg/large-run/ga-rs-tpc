@@ -1,5 +1,5 @@
-GeneticAlgorithmParams:
-  MutationChance: 15
-  ProblemStatesCnt: 2000
-  RandomSelectionParams:
-  TwoPointCrossOverParams:
+  GeneticAlgorithmParams:
+    MutationChance: 15
+    ProblemStatesCnt: 2000
+    RandomSelectionParams:
+    TwoPointCrossOverParams:

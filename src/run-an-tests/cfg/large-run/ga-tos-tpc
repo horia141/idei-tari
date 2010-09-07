@@ -1,6 +1,6 @@
-GeneticAlgorithmParams:
-  MutationChance: 15
-  ProblemStatesCnt: 2000
-  TournamentSelectionParams:
-    TournamentSize: 5
-  TwoPointCrossOverParams:
+  GeneticAlgorithmParams:
+    MutationChance: 15
+    ProblemStatesCnt: 2000
+    TournamentSelectionParams:
+      TournamentSize: 5
+    TwoPointCrossOverParams:

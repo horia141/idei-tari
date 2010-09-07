@@ -1,5 +1,5 @@
-RealFunction2DParams:
-  IntervalStartX: -1.0
-  IntervalStartY: -1.0
-  IntervalEndX: 1.0
-  IntervalEndY: 1.0
+    RealFunction2DParams:
+      IntervalStartX: -1.0
+      IntervalStartY: -1.0
+      IntervalEndX: 1.0
+      IntervalEndY: 1.0

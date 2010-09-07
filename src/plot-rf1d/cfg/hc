@@ -1,3 +1,3 @@
   HillClimbingParams:
-    ExplorationFactor: 2
-    ProblemStatesCnt: 2
+    ExplorationFactor: 4
+    ProblemStatesCnt: 1

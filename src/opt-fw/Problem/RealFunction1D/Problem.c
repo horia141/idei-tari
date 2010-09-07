@@ -10,6 +10,7 @@ struct ProblemParams
 {
   double  IntervalStart;
   double  IntervalEnd;
+  double  IntervalStep;
 };
 
 static double  _ProblemFunction(
@@ -27,6 +28,7 @@ ProblemParamsAlloc(
   fscanf(fin," Function : %*[^\n] ");
   fscanf(fin," IntervalStart : %lf",&problemParams->IntervalStart);
   fscanf(fin," IntervalEnd : %lf",&problemParams->IntervalEnd);
+  fscanf(fin," IntervalStep : %lf",&problemParams->IntervalStep);
 
   return problemParams;
 }
@@ -39,6 +41,7 @@ ProblemParamsFree(
 
   (*problemParams)->IntervalStart = 0.0;
   (*problemParams)->IntervalEnd = 0.0;
+  (*problemParams)->IntervalStep = 0.0;
 
   free(*problemParams);
   *problemParams = NULL;
@@ -63,6 +66,7 @@ ProblemParamsPrint(
   printf("%s  Function: x * x\n",indent);
   printf("%s  IntervalStart: %f\n",indent,problemParams->IntervalStart);
   printf("%s  IntervalEnd: %f\n",indent,problemParams->IntervalEnd);
+  printf("%s  IntervalStep: %f\n",indent,problemParams->IntervalStep);
 
   free(indent);
 }
@@ -76,6 +80,11 @@ ProblemParamsIsValid(
   }
 
   if (problemParams->IntervalEnd <= problemParams->IntervalStart) {
+    return 0;
+  }
+  
+  if (problemParams->IntervalStep < 0 || 
+      problemParams->IntervalStep > problemParams->IntervalEnd - problemParams->IntervalStart) {
     return 0;
   }
 
@@ -215,6 +224,45 @@ ProblemStateCrossOver(
   problemState = malloc(sizeof(ProblemState));
 
   problemState->Position = newPosition;
+  problemState->Cost = _ProblemFunction(problemState->Position);
+
+  return problemState;
+}
+
+ProblemState*
+ProblemStateFirst(
+  const ProblemParams* problemParams)
+{
+  assert(ProblemParamsIsValid(problemParams));
+
+  ProblemState*  problemState;
+
+  problemState = malloc(sizeof(ProblemState));
+
+  problemState->Position = problemParams->IntervalStart;
+  problemState->Cost = _ProblemFunction(problemState->Position);
+
+  return problemState;
+}
+
+ProblemState*
+ProblemStateWalk(
+  const ProblemParams* problemParams,
+  const ProblemState* previousState)
+{
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,previousState));
+
+  ProblemState*  problemState;
+
+  problemState = malloc(sizeof(ProblemState));
+
+  problemState->Position = previousState->Position + problemParams->IntervalStep;
+
+  if (problemState->Position > problemParams->IntervalEnd) {
+    problemState->Position = problemParams->IntervalEnd;
+  }
+
   problemState->Cost = _ProblemFunction(problemState->Position);
 
   return problemState;

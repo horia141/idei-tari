@@ -8,7 +8,6 @@
 
 struct MethodParams
 {
-  int             ProblemStatesCnt;
   ProblemParams*  ProblemParams;
 };
 
@@ -20,8 +19,7 @@ MethodParamsAlloc(
 
   methodParams = malloc(sizeof(MethodParams));
 
-  fscanf(fin," RandomSearchParams :");
-  fscanf(fin," ProblemStatesCnt : %d",&methodParams->ProblemStatesCnt);
+  fscanf(fin," BruteForceSearchParams : ");
   methodParams->ProblemParams = ProblemParamsAlloc(fin);
 
   return methodParams;
@@ -33,7 +31,6 @@ MethodParamsFree(
 {
   assert(methodParams != NULL && MethodParamsIsValid(*methodParams));
 
-  (*methodParams)->ProblemStatesCnt = 0;
   ProblemParamsFree(&(*methodParams)->ProblemParams);
 
   free(*methodParams);
@@ -55,8 +52,7 @@ MethodParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearchParams:\n",indent);
-  printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
+  printf("%sBruteForceSearchParams:\n",indent);
   ProblemParamsPrint(methodParams->ProblemParams,indentLevel + 1);
 
   free(indent);
@@ -67,10 +63,6 @@ MethodParamsIsValid(
   const MethodParams* methodParams)
 {
   if (methodParams == NULL) {
-    return 0;
-  }
-
-  if (methodParams->ProblemStatesCnt < 1) {
     return 0;
   }
 
@@ -93,8 +85,7 @@ MethodParamsProblemParams(
 
 struct MethodState
 {
-  int             ProblemStatesCnt;
-  ProblemState**  ProblemStates;
+  ProblemState*  ProblemState;
 };
 
 MethodState*
@@ -104,16 +95,10 @@ MethodStateAlloc(
   assert(MethodParamsIsValid(methodParams));
 
   MethodState*  methodState;
-  int           i;
 
   methodState = malloc(sizeof(MethodState));
 
-  methodState->ProblemStatesCnt = methodParams->ProblemStatesCnt;
-  methodState->ProblemStates = malloc(sizeof(ProblemState*) * methodState->ProblemStatesCnt);
-
-  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    methodState->ProblemStates[i] = ProblemStateAlloc(methodParams->ProblemParams);
-  }
+  methodState->ProblemState = ProblemStateFirst(methodParams->ProblemParams);
 
   return methodState;
 }
@@ -128,7 +113,9 @@ MethodStateGenNext(
 
   MethodState*  methodState;
 
-  methodState = MethodStateAlloc(methodParams);
+  methodState = malloc(sizeof(MethodState));
+
+  methodState->ProblemState = ProblemStateWalk(methodParams->ProblemParams,previousState->ProblemState);
 
   return methodState;
 }
@@ -141,16 +128,7 @@ MethodStateFree(
   assert(MethodParamsIsValid(methodParams));
   assert(methodState != NULL && MethodStateIsValid(methodParams,*methodState));
 
-  int  i;
-
-  for (i = 0; i < (*methodState)->ProblemStatesCnt; i++) {
-    ProblemStateFree(methodParams->ProblemParams,&(*methodState)->ProblemStates[i]);
-  }
-
-  free((*methodState)->ProblemStates);
-
-  (*methodState)->ProblemStatesCnt = 0;
-  (*methodState)->ProblemStates = NULL;
+  ProblemStateFree(methodParams->ProblemParams,&(*methodState)->ProblemState);
 
   free(*methodState);
   *methodState = NULL;
@@ -167,20 +145,16 @@ MethodStatePrint(
   assert(indentLevel >= 0);
 
   char*  indent;
-  int    i;
 
   indent = malloc(sizeof(char) * (2 * indentLevel + 1));
 
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearchState:\n",indent);
-  printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
-  printf("%s  ProblemStates:\n",indent);
-
-  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    ProblemStatePrint(methodParams->ProblemParams,methodState->ProblemStates[i],indentLevel + 2);
-  }
+  printf("%sBruteForceSearchState:\n",indent);
+  printf("%s  ProblemStatesCnt: 1\n",indent);
+  printf("%s  ProblemStates: \n",indent);
+  ProblemStatePrint(methodParams->ProblemParams,methodState->ProblemState,indentLevel + 2);
 
   free(indent);
 }
@@ -192,24 +166,12 @@ MethodStateIsValid(
 {
   assert(MethodParamsIsValid(methodParams));
 
-  int  i;
-
   if (methodState == NULL) {
     return 0;
   }
 
-  if (methodState->ProblemStatesCnt != methodParams->ProblemStatesCnt) {
+  if (!ProblemStateIsValid(methodParams->ProblemParams,methodState->ProblemState)) {
     return 0;
-  }
-
-  if (methodState->ProblemStates == NULL) {
-    return 0;
-  }
-
-  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    if (!ProblemStateIsValid(methodParams->ProblemParams,methodState->ProblemStates[i])) {
-      return 0;
-    }
   }
 
   return 1;
@@ -227,22 +189,9 @@ MethodStateGetBest(
 
   const ProblemState*  best;
   double               bestCost;
-  double               currCost;
-  int                  i;
 
-  best = NULL;
-  bestCost = DBL_MAX;
-
-  for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    currCost = ProblemStateCost(methodParams->ProblemParams,methodState->ProblemStates[i]);
-
-    if (currCost < bestCost) {
-      best = methodState->ProblemStates[i];
-      bestCost = currCost;
-    }
-  }
-
-  assert (best != NULL);
+  best = methodState->ProblemState;
+  bestCost = ProblemStateCost(methodParams->ProblemParams,best);
 
   if (currBest != NULL && ProblemStateCost(methodParams->ProblemParams,currBest) < bestCost) {
     return ProblemStateCopy(methodParams->ProblemParams,currBest);

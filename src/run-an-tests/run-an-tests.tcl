@@ -6,7 +6,7 @@ namespace eval cfg {
     set CFG_WORK_PATH [file join $cfg::WORK_PATH cfg large-run]
     set TMP_WORK_PATH [file join $cfg::WORK_PATH tmp]
     set DRIVERS {st}
-    set METHODS {rs hc es ga-rs-opc ga-rs-tpc ga-rs-spc ga-rs-uc ga-tos-opc ga-tos-tpc ga-tos-spc ga-tos-uc}
+    set METHODS {bfs rs hc es ga-rs-opc ga-rs-tpc ga-rs-spc ga-rs-uc ga-tos-opc ga-tos-tpc ga-tos-spc ga-tos-uc}
     set PROBLEMS {rf1d rf2d an}
     set RUNS 1
 
@@ -15,6 +15,7 @@ namespace eval cfg {
     }
 
     array set METHOD_DIRECTORY {
+	bfs        {Brute Force Search}
 	rs         {Random Search}
 	hc         {Hill Climbing}
 	es         {Evolution Strategy}
@@ -78,7 +79,7 @@ if {[llength $argv] != 1} {
 set testedProblem [lindex $argv 0]
 
 set goodDrivers st
-set goodMethods $cfg::METHODS
+set goodMethods [lrange $cfg::METHODS 1 end]
 
 array set result {}
 

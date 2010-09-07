@@ -23,7 +23,6 @@ namespace eval parseOptCfg {
 	    regexp {^\s*(.+?)\s*:\s+(.*)$} $outputLeft - driverName outputLeft
 	    regexp {^\s*Iteration\s*:\s*(\d+)\s+(.*)$} $outputLeft - iteration outputLeft
 	    regexp {^\s*(.+?)\s*:\s+(.*)$} $outputLeft - methodName outputLeft
-	    regexp {^\s*Iteration\s*:\s*(\d+)\s+(.*)$} $outputLeft - iteration outputLeft
 	    regexp {^\s*ProblemStatesCnt\s*:\s*(\d+)\s+(.*)$} $outputLeft - problemStatesCnt outputLeft
 	    regexp {^\s*ProblemStates\s*:\s+(.*)$} $outputLeft - outputLeft
 
@@ -62,6 +61,14 @@ namespace eval parseOptCfg {
 	array set result [lindex $problemResult 1]
 
 	return [list $outputLeft [array get result]]
+    }
+
+    proc _parseParams-bfs {output} {
+	set outputLeft $output
+
+	regexp {^\s*BruteForceSearchParams\s*:\s+(.*)$} $outputLeft - outputLeft
+
+	return [list $outputLeft {}]
     }
 
     proc _parseParams-rs {output} {
@@ -235,11 +242,13 @@ namespace eval parseOptCfg {
 	regexp {^\s*RealFunction1DParams\s*:\s+(.*)$} $outputLeft - outputLeft
 	regexp {^\s*Function\s*:\s*(.+?)\n\s*(.*)$} $outputLeft - function outputLeft
 	regexp {^\s*IntervalStart\s*:\s*(.+?)\n\s*(.*)$} $outputLeft - intervalStart outputLeft
-	regexp {^\s*IntervalEnd\s*:\s*(.+?)(\n\s*(.*))?$} $outputLeft - intervalEnd outputLeft
+	regexp {^\s*IntervalEnd\s*:\s*(.+?)\n\s*(.*)$} $outputLeft - intervalEnd outputLeft
+	regexp {^\s*IntervalStep\s*:\s*(.+?)(\s\s*(.*))?$} $outputLeft - intervalStep outputLeft
 
 	set result(Problem,Function) $function
 	set result(Problem,IntervalStart) $intervalStart
 	set result(Problem,IntervalEnd) $intervalEnd
+	set result(Problem,IntervalStep) $intervalStep
 
 	return [list $outputLeft [array get result]]
     }

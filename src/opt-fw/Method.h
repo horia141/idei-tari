@@ -27,8 +27,7 @@ MethodState*          MethodStateAlloc(
                         const MethodParams* methodParams);
 MethodState*          MethodStateGenNext(
                         const MethodParams* methodParams,
-                        const MethodState* previousState,
-                        int iteration);
+                        const MethodState* previousState);
 void                  MethodStateFree(
                         const MethodParams* methodParams,
                         MethodState** methodState);

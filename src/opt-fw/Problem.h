@@ -33,6 +33,11 @@ ProblemState*   ProblemStateCrossOver(
                   const ProblemState* parentState1,
                   int crossOverMaskCnt,
                   const int* crossOverMask);
+ProblemState*   ProblemStateFirst(
+                  const ProblemParams* problemParams);
+ProblemState*   ProblemStateWalk(
+                  const ProblemParams* problemParams,
+                  const ProblemState* previousState);
 void            ProblemStateFree(
                   const ProblemParams* problemParams,
                   ProblemState** problemState);
