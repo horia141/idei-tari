@@ -10,6 +10,7 @@ out: out/opt-st-bfs-rf1d \
      out/opt-st-ga-tos-tpc-rf1d \
      out/opt-st-ga-tos-spc-rf1d \
      out/opt-st-ga-tos-uc-rf1d \
+     out/opt-st-bfs-rf2d \
      out/opt-st-rs-rf2d \
      out/opt-st-hc-rf2d \
      out/opt-st-es-rf2d \
@@ -45,6 +46,7 @@ grind: grind-st-bfs-rf1d \
        grind-st-ga-tos-tpc-rf1d \
        grind-st-ga-tos-spc-rf1d \
        grind-st-ga-tos-uc-rf1d \
+       grind-st-bfs-rf2d \
        grind-st-rs-rf2d \
        grind-st-hc-rf2d \
        grind-st-es-rf2d \
@@ -279,6 +281,21 @@ grind-st-ga-tos-uc-rf1d: out/opt-st-ga-tos-uc-rf1d
 	cat dev/grind/cfg/st dev/grind/cfg/ga-tos-uc dev/grind/cfg/rf1d > dev/grind/tmp/cfg-st-ga-tos-uc-rf1d
 	valgrind --leak-check=full out/opt-st-ga-tos-uc-rf1d < dev/grind/tmp/cfg-st-ga-tos-uc-rf1d
 	rm dev/grind/tmp/cfg-st-ga-tos-uc-rf1d
+
+out/opt-st-bfs-rf2d: src/opt-fw/Main.c \
+		     src/opt-fw/Driver/SingleThreaded/Driver.c \
+		     src/opt-fw/Method/BruteForceSearch/Method.c \
+		     src/opt-fw/Problem/RealFunction2D/Problem.c
+	gcc -g -Wall -o out/opt-st-bfs-rf2d -Isrc/opt-fw \
+	        src/opt-fw/Main.c \
+		src/opt-fw/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Method/BruteForceSearch/Method.c \
+		src/opt-fw/Problem/RealFunction2D/Problem.c
+
+grind-st-bfs-rf2d: out/opt-st-bfs-rf2d
+	cat dev/grind/cfg/stbfs dev/grind/cfg/bfs dev/grind/cfg/rf2d > dev/grind/tmp/cfg-st-bfs-rf2d
+	valgrind --leak-check=full out/opt-st-bfs-rf2d < dev/grind/tmp/cfg-st-bfs-rf2d
+	rm dev/grind/tmp/cfg-st-bfs-rf2d
 
 out/opt-st-rs-rf2d: src/opt-fw/Main.c \
 		    src/opt-fw/Driver/SingleThreaded/Driver.c \

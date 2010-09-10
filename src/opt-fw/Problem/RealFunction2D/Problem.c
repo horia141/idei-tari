@@ -12,6 +12,7 @@ struct ProblemParams
   double  IntervalStartY;
   double  IntervalEndX;
   double  IntervalEndY;
+  double  IntervalStep;
 };
 
 static double  _ProblemFunction(
@@ -27,10 +28,12 @@ ProblemParamsAlloc(
   problemParams = malloc(sizeof(ProblemParams));
 
   fscanf(fin," RealFunction2DParams :");
+  fscanf(fin," Function : %*[^\n] ");
   fscanf(fin," IntervalStartX : %lf",&problemParams->IntervalStartX);
   fscanf(fin," IntervalStartY : %lf",&problemParams->IntervalStartY);
   fscanf(fin," IntervalEndX : %lf",&problemParams->IntervalEndX);
   fscanf(fin," IntervalEndY : %lf",&problemParams->IntervalEndY);
+  fscanf(fin," IntervalStep : %lf",&problemParams->IntervalStep);
 
   return problemParams;
 }
@@ -45,6 +48,7 @@ ProblemParamsFree(
   (*problemParams)->IntervalStartY = 0.0;
   (*problemParams)->IntervalEndX = 0.0;
   (*problemParams)->IntervalEndY = 0.0;
+  (*problemParams)->IntervalStep = 0.0;
 
   free(*problemParams);
   *problemParams = NULL;
@@ -65,9 +69,11 @@ ProblemParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRealFunction2DParams\n",indent);
+  printf("%sRealFunction2DParams:\n",indent);
+  printf("%s  Function: x * x + y * y\n",indent);
   printf("%s  IntervalStart: (%f,%f)\n",indent,problemParams->IntervalStartX,problemParams->IntervalStartY);
   printf("%s  IntervalEnd: (%f,%f)\n",indent,problemParams->IntervalEndX,problemParams->IntervalEndY);
+  printf("%s  IntervalStep: %f\n",indent,problemParams->IntervalStep);
 
   free(indent);
 }
@@ -85,6 +91,12 @@ ProblemParamsIsValid(
   }
 
   if (problemParams->IntervalEndY <= problemParams->IntervalStartY) {
+    return 0;
+  }
+
+  if (problemParams->IntervalStep < 0 ||
+      problemParams->IntervalStep > problemParams->IntervalEndX - problemParams->IntervalStartX ||
+      problemParams->IntervalStep > problemParams->IntervalEndY - problemParams->IntervalStartY) {
     return 0;
   }
 
@@ -274,6 +286,53 @@ ProblemStateCrossOver(
 
   problemState->PositionX = newPositionX;
   problemState->PositionY = newPositionY;
+  problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
+
+  return problemState;
+}
+
+ProblemState*
+ProblemStateFirst(
+  const ProblemParams* problemParams)
+{
+  assert(ProblemParamsIsValid(problemParams));
+
+  ProblemState*  problemState;
+
+  problemState = malloc(sizeof(ProblemState));
+
+  problemState->PositionX = problemParams->IntervalStartX;
+  problemState->PositionY = problemParams->IntervalStartY;
+  problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
+
+  return problemState;
+}
+
+ProblemState*
+ProblemStateWalk(
+  const ProblemParams* problemParams,
+  const ProblemState* previousState)
+{
+  assert(ProblemParamsIsValid(problemParams));
+  assert(ProblemStateIsValid(problemParams,previousState));
+
+  ProblemState*  problemState;
+
+  problemState = malloc(sizeof(ProblemState));
+
+  problemState->PositionX = previousState->PositionX + problemParams->IntervalStep;
+  problemState->PositionY = previousState->PositionY;
+
+  if (problemState->PositionX > problemParams->IntervalEndX) {
+    problemState->PositionX = problemParams->IntervalStartX;
+    problemState->PositionY = previousState->PositionY + problemParams->IntervalStep;
+
+    if (problemState->PositionY > problemParams->IntervalEndY) {
+      problemState->PositionX = problemParams->IntervalEndX;
+      problemState->PositionY = problemParams->IntervalEndY;
+    }
+  }
+
   problemState->Cost = _ProblemFunction(problemState->PositionX,problemState->PositionY);
 
   return problemState;
