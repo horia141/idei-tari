@@ -18,13 +18,14 @@ static double  _ProblemFunction(
 
 ProblemParams*
 ProblemParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   ProblemParams*  problemParams;
 
   problemParams = malloc(sizeof(ProblemParams));
 
-  fscanf(fin," RealFunction1DParams :");
+  fscanf(fin," %*s [ RealFunction1DParams ] :");
   fscanf(fin," Function : %*[^\n] ");
   fscanf(fin," IntervalStart : %lf",&problemParams->IntervalStart);
   fscanf(fin," IntervalEnd : %lf",&problemParams->IntervalEnd);
@@ -50,6 +51,7 @@ ProblemParamsFree(
 void
 ProblemParamsPrint(
   const ProblemParams* problemParams,
+  const char* name,
   int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
@@ -62,7 +64,7 @@ ProblemParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRealFunction1DParams:\n",indent);
+  printf("%s%s[RealFunction1DParams]:\n",indent,name);
   printf("%s  Function: x * x\n",indent);
   printf("%s  IntervalStart: %f\n",indent,problemParams->IntervalStart);
   printf("%s  IntervalEnd: %f\n",indent,problemParams->IntervalEnd);
@@ -260,12 +262,14 @@ ProblemStateWalk(
   problemState->Position = previousState->Position + problemParams->IntervalStep;
 
   if (problemState->Position > problemParams->IntervalEnd) {
-    problemState->Position = problemParams->IntervalEnd;
+    free(problemState);
+    
+    return NULL;
+  } else {
+    problemState->Cost = _ProblemFunction(problemState->Position);
+
+    return problemState;
   }
-
-  problemState->Cost = _ProblemFunction(problemState->Position);
-
-  return problemState;
 }
 
 void
@@ -287,6 +291,7 @@ void
 ProblemStatePrint(
   const ProblemParams* problemParams,
   const ProblemState* problemState,
+  const char* name,
   int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
@@ -300,7 +305,7 @@ ProblemStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRealFunction1DState:\n",indent);
+  printf("%s%s[RealFunction1DState]:\n",indent,name);
   printf("%s  Position: %f\n",indent,problemState->Position);
   printf("%s  Cost: %f\n",indent,problemState->Cost);
 

@@ -7,11 +7,13 @@ struct ProblemParams;
 typedef struct ProblemParams ProblemParams;
 
 ProblemParams*  ProblemParamsAlloc(
-                  FILE* fin);
+		  FILE* fin,
+		  const char* name);
 void            ProblemParamsFree(
                   ProblemParams** problemParams);
 void            ProblemParamsPrint(
                   const ProblemParams* problemParams,
+		  const char* name,
                   int indentLevel);
 int             ProblemParamsIsValid(
                   const ProblemParams* problemParams);
@@ -44,6 +46,7 @@ void            ProblemStateFree(
 void            ProblemStatePrint(
                   const ProblemParams* problemParams,
                   const ProblemState* problemState,
+		  const char* name,
                   int indentLevel);
 int             ProblemStateIsValid(
                   const ProblemParams* problemParams,

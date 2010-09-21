@@ -1,13 +1,13 @@
-#include "Driver.h"
-#include "Method.h"
+#include "Opt/Driver.h"
+#include "Opt/Method.h"
 #include "Problem.h"
 
 int
 main()
 {
-  DriverParams*   driverParams;
-  DriverState*    initialState;
-  DriverState*    finalState;
+  DriverParams*  driverParams;
+  DriverState*   initialState;
+  DriverState*   finalState;
 
   driverParams = DriverParamsAlloc(stdin);
   initialState = DriverStateAlloc(driverParams);
