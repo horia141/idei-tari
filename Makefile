@@ -6,6 +6,14 @@ out/bfs-st-rf1d: src/opt-fw/MainBfs.c \
 		src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
 		src/opt-fw/Problem/RealFunction1D/Problem.c
 
+out/bfs-st-rf2d: src/opt-fw/MainBfs.c \
+	         src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
+	         src/opt-fw/Problem/RealFunction2D/Problem.c
+	gcc -g -Wall -o out/bfs-st-rf2d -Isrc/opt-fw \
+		src/opt-fw/MainBfs.c \
+		src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
+		src/opt-fw/Problem/RealFunction2D/Problem.c
+
 # out: out/opt-st-bfs-rf1d \
 #      out/opt-st-rs-rf1d \
 #      out/opt-st-hc-rf1d \

@@ -263,13 +263,12 @@ ProblemStateWalk(
 
   if (problemState->Position > problemParams->IntervalEnd) {
     free(problemState);
-    
     return NULL;
-  } else {
-    problemState->Cost = _ProblemFunction(problemState->Position);
-
-    return problemState;
   }
+  
+  problemState->Cost = _ProblemFunction(problemState->Position);
+
+  return problemState;
 }
 
 void

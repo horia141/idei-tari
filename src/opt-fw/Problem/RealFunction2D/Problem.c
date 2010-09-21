@@ -21,18 +21,17 @@ static double  _ProblemFunction(
 
 ProblemParams*
 ProblemParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   ProblemParams*  problemParams;
 
   problemParams = malloc(sizeof(ProblemParams));
 
-  fscanf(fin," RealFunction2DParams :");
+  fscanf(fin," %*s [ RealFunction2DParams ] :");
   fscanf(fin," Function : %*[^\n] ");
-  fscanf(fin," IntervalStartX : %lf",&problemParams->IntervalStartX);
-  fscanf(fin," IntervalStartY : %lf",&problemParams->IntervalStartY);
-  fscanf(fin," IntervalEndX : %lf",&problemParams->IntervalEndX);
-  fscanf(fin," IntervalEndY : %lf",&problemParams->IntervalEndY);
+  fscanf(fin," IntervalStart : ( %lf , %lf )",&problemParams->IntervalStartX,&problemParams->IntervalStartY);
+  fscanf(fin," IntervalEnd : ( %lf , %lf )",&problemParams->IntervalEndX,&problemParams->IntervalEndY);
   fscanf(fin," IntervalStep : %lf",&problemParams->IntervalStep);
 
   return problemParams;
@@ -57,6 +56,7 @@ ProblemParamsFree(
 void
 ProblemParamsPrint(
   const ProblemParams* problemParams,
+  const char* name,
   int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
@@ -69,7 +69,7 @@ ProblemParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRealFunction2DParams:\n",indent);
+  printf("%s%s[RealFunction2DParams]:\n",indent,name);
   printf("%s  Function: x * x + y * y\n",indent);
   printf("%s  IntervalStart: (%f,%f)\n",indent,problemParams->IntervalStartX,problemParams->IntervalStartY);
   printf("%s  IntervalEnd: (%f,%f)\n",indent,problemParams->IntervalEndX,problemParams->IntervalEndY);
@@ -328,8 +328,8 @@ ProblemStateWalk(
     problemState->PositionY = previousState->PositionY + problemParams->IntervalStep;
 
     if (problemState->PositionY > problemParams->IntervalEndY) {
-      problemState->PositionX = problemParams->IntervalEndX;
-      problemState->PositionY = problemParams->IntervalEndY;
+      free(problemState);
+      return NULL;
     }
   }
 
@@ -358,6 +358,7 @@ void
 ProblemStatePrint(
   const ProblemParams* problemParams,
   const ProblemState* problemState,
+  const char* name,
   int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
@@ -371,7 +372,7 @@ ProblemStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRealFunction2DState:\n",indent);
+  printf("%s%s[RealFunction2DState]:\n",indent,name);
   printf("%s  Position: (%f,%f)\n",indent,problemState->PositionX,problemState->PositionY);
   printf("%s  Cost: %f\n",indent,problemState->Cost);
 
