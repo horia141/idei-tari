@@ -9,15 +9,15 @@ main()
   DriverState*   initialState;
   DriverState*   finalState;
 
-  driverParams = DriverParamsAlloc(stdin);
+  driverParams = DriverParamsAlloc(stdin,"driverParams");
   initialState = DriverStateAlloc(driverParams);
 
-  DriverParamsPrint(driverParams,0);
-  DriverStatePrint(driverParams,initialState,0);
+  DriverParamsPrint(driverParams,"driverParams",0);
+  DriverStatePrint(driverParams,initialState,"initialState",0);
 
   finalState = DriverStateGenNext(driverParams,initialState);
 
-  DriverStatePrint(driverParams,finalState,0);
+  DriverStatePrint(driverParams,finalState,"finalState",0);
 
   DriverStateFree(driverParams,&finalState);
   DriverStateFree(driverParams,&initialState);

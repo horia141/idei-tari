@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <float.h>
 
-#include "Method.h"
+#include "Opt/Method.h"
 
 struct MethodParams
 {
@@ -14,15 +14,16 @@ struct MethodParams
 
 MethodParams*
 MethodParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   MethodParams*  methodParams;
 
   methodParams = malloc(sizeof(MethodParams));
 
-  fscanf(fin," RandomSearchParams :");
+  fscanf(fin," %*s [ RandomSearchParams ] :");
   fscanf(fin," ProblemStatesCnt : %d",&methodParams->ProblemStatesCnt);
-  methodParams->ProblemParams = ProblemParamsAlloc(fin);
+  methodParams->ProblemParams = ProblemParamsAlloc(fin,"ProblemParams");
 
   return methodParams;
 }
@@ -43,6 +44,7 @@ MethodParamsFree(
 void
 MethodParamsPrint(
   const MethodParams* methodParams,
+  const char* name,
   int indentLevel)
 {
   assert(MethodParamsIsValid(methodParams));
@@ -55,9 +57,9 @@ MethodParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearchParams:\n",indent);
+  printf("%s%s[RandomSearchParams]:\n",indent,name);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodParams->ProblemStatesCnt);
-  ProblemParamsPrint(methodParams->ProblemParams,indentLevel + 1);
+  ProblemParamsPrint(methodParams->ProblemParams,"ProblemParams",indentLevel + 1);
 
   free(indent);
 }
@@ -160,6 +162,7 @@ void
 MethodStatePrint(
   const MethodParams* methodParams,
   const MethodState* methodState,
+  const char* name,
   int indentLevel)
 {
   assert(MethodParamsIsValid(methodParams));
@@ -167,22 +170,28 @@ MethodStatePrint(
   assert(indentLevel >= 0);
 
   char*  indent;
+  int    nameBufferCnt;
+  char*  nameBuffer;
   int    i;
 
   indent = malloc(sizeof(char) * (2 * indentLevel + 1));
+  nameBufferCnt = strlen("ProblemStates") + sizeof(methodState->ProblemStatesCnt) * 4 + 1;
+  nameBuffer = malloc(sizeof(char) * nameBufferCnt);
 
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSearchState:\n",indent);
+  printf("%s%s[RandomSearchState]:\n",indent,name);
   printf("%s  ProblemStatesCnt: %d\n",indent,methodState->ProblemStatesCnt);
   printf("%s  ProblemStates:\n",indent);
 
   for (i = 0; i < methodState->ProblemStatesCnt; i++) {
-    ProblemStatePrint(methodParams->ProblemParams,methodState->ProblemStates[i],indentLevel + 2);
+    snprintf(nameBuffer,nameBufferCnt,"ProblemState%d",i);
+    ProblemStatePrint(methodParams->ProblemParams,methodState->ProblemStates[i],nameBuffer,indentLevel + 2);
   }
 
   free(indent);
+  free(nameBuffer);
 }
 
 int

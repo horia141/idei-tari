@@ -1,18 +1,149 @@
 out/bfs-st-rf1d: src/opt-fw/MainBfs.c \
-	         src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
+		 src/opt-fw/Bfs/Driver.h \
+	         src/opt-fw/Bfs/Driver/SingleThreaded/Driver.c \
+		 src/opt-fw/Problem.h \
 	         src/opt-fw/Problem/RealFunction1D/Problem.c
 	gcc -g -Wall -o out/bfs-st-rf1d -Isrc/opt-fw \
 		src/opt-fw/MainBfs.c \
-		src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
+		src/opt-fw/Bfs/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Problem/RealFunction1D/Problem.c
 
 out/bfs-st-rf2d: src/opt-fw/MainBfs.c \
-	         src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
+		 src/opt-fw/Bfs/Driver.h \
+	         src/opt-fw/Bfs/Driver/SingleThreaded/Driver.c \
+		 src/opt-fw/Problem.h \
 	         src/opt-fw/Problem/RealFunction2D/Problem.c
 	gcc -g -Wall -o out/bfs-st-rf2d -Isrc/opt-fw \
 		src/opt-fw/MainBfs.c \
-		src/opt-fw/Bfs/Driver/SingleThreadedDriver/Driver.c \
+		src/opt-fw/Bfs/Driver/SingleThreaded/Driver.c \
 		src/opt-fw/Problem/RealFunction2D/Problem.c
+
+out/bfs-st-an: src/opt-fw/MainBfs.c \
+	       src/opt-fw/Bfs/Driver.h \
+	       src/opt-fw/Bfs/Driver/SingleThreaded/Driver.c \
+	       src/opt-fw/Problem.h \
+	       src/opt-fw/Problem/AccessNetwork/Problem.c
+	gcc -g -Wall -o out/bfs-st-an -Isrc/opt-fw -D_GNU_SOURCE -lm -DHACK \
+		src/opt-fw/MainBfs.c \
+		src/opt-fw/Bfs/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Problem/AccessNetwork/Problem.c
+
+out/opt-st-rs-rf1d: src/opt-fw/MainOpt.c \
+		    src/opt-fw/Opt/Driver.h \
+		    src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		    src/opt-fw/Opt/Method.h \
+		    src/opt-fw/Opt/Method/RandomSearch/Method.c \
+		    src/opt-fw/Problem.h \
+		    src/opt-fw/Problem/RealFunction1D/Problem.c
+	gcc -g -Wall -o out/opt-st-rs-rf1d -Isrc/opt-fw \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/RandomSearch/Method.c \
+		src/opt-fw/Problem/RealFunction1D/Problem.c
+
+out/opt-st-rs-rf2d: src/opt-fw/MainOpt.c \
+		    src/opt-fw/Opt/Driver.h \
+		    src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		    src/opt-fw/Opt/Method.h \
+		    src/opt-fw/Opt/Method/RandomSearch/Method.c \
+		    src/opt-fw/Problem.h \
+		    src/opt-fw/Problem/RealFunction2D/Problem.c
+	gcc -g -Wall -o out/opt-st-rs-rf2d -Isrc/opt-fw \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/RandomSearch/Method.c \
+		src/opt-fw/Problem/RealFunction2D/Problem.c
+
+out/opt-st-rs-an: src/opt-fw/MainOpt.c \
+		  src/opt-fw/Opt/Driver.h \
+		  src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		  src/opt-fw/Opt/Method.h \
+		  src/opt-fw/Opt/Method/RandomSearch/Method.c \
+		  src/opt-fw/Problem.h \
+		  src/opt-fw/Problem/AccessNetwork/Problem.c
+	gcc -g -Wall -o out/opt-st-rs-an -Isrc/opt-fw -D_GNU_SOURCE -lm \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/RandomSearch/Method.c \
+		src/opt-fw/Problem/AccessNetwork/Problem.c
+
+out/opt-st-hc-rf1d: src/opt-fw/MainOpt.c \
+		    src/opt-fw/Opt/Driver.h \
+		    src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		    src/opt-fw/Opt/Method.h \
+		    src/opt-fw/Opt/Method/HillClimbing/Method.c \
+		    src/opt-fw/Problem.h \
+		    src/opt-fw/Problem/RealFunction1D/Problem.c
+	gcc -g -Wall -o out/opt-st-hc-rf1d -Isrc/opt-fw \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/HillClimbing/Method.c \
+		src/opt-fw/Problem/RealFunction1D/Problem.c
+
+out/opt-st-hc-rf2d: src/opt-fw/MainOpt.c \
+		    src/opt-fw/Opt/Driver.h \
+		    src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		    src/opt-fw/Opt/Method.h \
+		    src/opt-fw/Opt/Method/HillClimbing/Method.c \
+		    src/opt-fw/Problem.h \
+		    src/opt-fw/Problem/RealFunction2D/Problem.c
+	gcc -g -Wall -o out/opt-st-hc-rf2d -Isrc/opt-fw \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/HillClimbing/Method.c \
+		src/opt-fw/Problem/RealFunction2D/Problem.c
+
+out/opt-st-hc-an: src/opt-fw/MainOpt.c \
+		  src/opt-fw/Opt/Driver.h \
+		  src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		  src/opt-fw/Opt/Method.h \
+		  src/opt-fw/Opt/Method/HillClimbing/Method.c \
+		  src/opt-fw/Problem.h \
+		  src/opt-fw/Problem/AccessNetwork/Problem.c
+	gcc -g -Wall -o out/opt-st-hc-an -Isrc/opt-fw -D_GNU_SOURCE -lm \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/HillClimbing/Method.c \
+		src/opt-fw/Problem/AccessNetwork/Problem.c
+
+out/opt-st-es-rf1d: src/opt-fw/MainOpt.c \
+		    src/opt-fw/Opt/Driver.h \
+		    src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		    src/opt-fw/Opt/Method.h \
+		    src/opt-fw/Opt/Method/EvolutionStrategy/Method.c \
+		    src/opt-fw/Problem.h \
+		    src/opt-fw/Problem/RealFunction1D/Problem.c
+	gcc -g -Wall -o out/opt-st-es-rf1d -Isrc/opt-fw \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/EvolutionStrategy/Method.c \
+		src/opt-fw/Problem/RealFunction1D/Problem.c
+
+out/opt-st-es-rf2d: src/opt-fw/MainOpt.c \
+		    src/opt-fw/Opt/Driver.h \
+		    src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		    src/opt-fw/Opt/Method.h \
+		    src/opt-fw/Opt/Method/EvolutionStrategy/Method.c \
+		    src/opt-fw/Problem.h \
+		    src/opt-fw/Problem/RealFunction2D/Problem.c
+	gcc -g -Wall -o out/opt-st-es-rf2d -Isrc/opt-fw \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/EvolutionStrategy/Method.c \
+		src/opt-fw/Problem/RealFunction2D/Problem.c
+
+out/opt-st-es-an: src/opt-fw/MainOpt.c \
+		  src/opt-fw/Opt/Driver.h \
+		  src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		  src/opt-fw/Opt/Method.h \
+		  src/opt-fw/Opt/Method/EvolutionStrategy/Method.c \
+		  src/opt-fw/Problem.h \
+		  src/opt-fw/Problem/AccessNetwork/Problem.c
+	gcc -g -Wall -o out/opt-st-es-an -Isrc/opt-fw -D_GNU_SOURCE -lm \
+		src/opt-fw/MainOpt.c \
+		src/opt-fw/Opt/Driver/SingleThreaded/Driver.c \
+		src/opt-fw/Opt/Method/EvolutionStrategy/Method.c \
+		src/opt-fw/Problem/AccessNetwork/Problem.c
 
 # out: out/opt-st-bfs-rf1d \
 #      out/opt-st-rs-rf1d \

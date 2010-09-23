@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "Driver.h"
+#include "Opt/Driver.h"
 
 struct DriverParams
 {
@@ -14,16 +14,17 @@ struct DriverParams
 
 DriverParams*
 DriverParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   DriverParams*  driverParams;
 
   driverParams = malloc(sizeof(DriverParams));
 
-  fscanf(fin," SingleThreadedParams :");
+  fscanf(fin," %*s [ SingleThreadedParams ] :");
   fscanf(fin," IterationsNr : %d",&driverParams->IterationsNr);
   fscanf(fin," StatePrintInterval : %d",&driverParams->StatePrintInterval);
-  driverParams->MethodParams = MethodParamsAlloc(fin);
+  driverParams->MethodParams = MethodParamsAlloc(fin,"MethodParams");
 
   return driverParams;
 }
@@ -45,6 +46,7 @@ DriverParamsFree(
 void
 DriverParamsPrint(
   const DriverParams* driverParams,
+  const char* name,
   int indentLevel)
 {
   assert(DriverParamsIsValid(driverParams));
@@ -57,10 +59,10 @@ DriverParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sSingleThreadedParams:\n",indent);
+  printf("%s%s[SingleThreadedParams]:\n",indent,name);
   printf("%s  IterationsNr: %d\n",indent,driverParams->IterationsNr);
   printf("%s  StatePrintInterval: %d\n",indent,driverParams->StatePrintInterval);
-  MethodParamsPrint(driverParams->MethodParams,indentLevel + 1);
+  MethodParamsPrint(driverParams->MethodParams,"MethodParams",indentLevel + 1);
 
   free(indent);
 }
@@ -137,7 +139,7 @@ DriverStateGenNext(
   
   for (driverState->Iteration = 1; driverState->Iteration < driverParams->IterationsNr; driverState->Iteration++) {
     if (driverState->Iteration % driverParams->StatePrintInterval == 0) {
-      DriverStatePrint(driverParams,driverState,0);
+      DriverStatePrint(driverParams,driverState,"currentState",0);
     }
 
     nextMethodState = MethodStateGenNext(driverParams->MethodParams,driverState->MethodState);
@@ -173,6 +175,7 @@ void
 DriverStatePrint(
   const DriverParams* driverParams,
   const DriverState* driverState,
+  const char* name,
   int indentLevel)
 {
   assert(DriverParamsIsValid(driverParams));
@@ -186,10 +189,10 @@ DriverStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sSingleThreadedState:\n",indent);
+  printf("%s%s[SingleThreadedState]:\n",indent,name);
   printf("%s  Iteration: %d\n",indent,driverState->Iteration);
-  MethodStatePrint(driverParams->MethodParams,driverState->MethodState,indentLevel + 1);
-  ProblemStatePrint(MethodParamsProblemParams(driverParams->MethodParams),driverState->Best,indentLevel + 1);
+  MethodStatePrint(driverParams->MethodParams,driverState->MethodState,"MethodState",indentLevel + 1);
+  ProblemStatePrint(MethodParamsProblemParams(driverParams->MethodParams),driverState->Best,"Best",indentLevel + 1);
 
   free(indent);
 }

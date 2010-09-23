@@ -59,7 +59,8 @@ static double _debug_ceil(
 
 ProblemParams*
 ProblemParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   ProblemParams*  problemParams;
   int             minDownPortsNr;
@@ -70,7 +71,7 @@ ProblemParamsAlloc(
     
   problemParams = malloc(sizeof(ProblemParams));
 
-  fscanf(fin," AccessNetworkParams :");
+  fscanf(fin," %*s AccessNetworkParams :");
   fscanf(fin," Name : %as",&problemParams->Name);
   fscanf(fin," NodesCnt : %d",&problemParams->NodesCnt);
   fscanf(fin," Nodes :");
@@ -131,7 +132,18 @@ ProblemParamsAlloc(
 
   problemParams->MaxNetworkLevels = (int)_debug_ceil(-1 * _debug_log(problemParams->UsersCnt) / _debug_log(r));
   problemParams->MaxNetworkNodes = (int)_debug_ceil(a * (1 - _debug_pow(r,problemParams->MaxNetworkLevels)) / (1 - r));
-    
+
+#ifdef HACK
+  /* This is a massive HACK. We employ it here for ProblemStateWalk which,
+     when generating larger solutions, causes _ProblemStateFix to acces
+     it's portAllocationMatrix array out of bounds. This is because, with
+     larger networks, all users are handled by the first nodes, while the
+     last just form a linear structure. This structure is very long and
+     tends to be larger than MaxNetworkLevels. */
+
+  problemParams->MaxNetworkLevels *= 4;
+#endif
+
   return problemParams;
 }
 
@@ -183,6 +195,7 @@ ProblemParamsFree(
 void
 ProblemParamsPrint(
   const ProblemParams* problemParams,
+  const char* name,
   int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
@@ -196,7 +209,7 @@ ProblemParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sAccessNetworkParams:\n",indent);
+  printf("%s%s[AccessNetworkParams]:\n",indent,name);
   printf("%s  Name: %s\n",indent,problemParams->Name);
   printf("%s  NodesCnt: %d\n",indent,problemParams->NodesCnt);
   printf("%s  Nodes:\n",indent);
@@ -361,27 +374,27 @@ struct ProblemState
   float  Cost;
 };
 
-static void    _ProblemStateFix(
-                 ProblemState* problemState,
-                 const ProblemParams* problemParams);
-static int     _ProblemStateFindFit(
-                 const ProblemState* problemState,
-                 const ProblemParams* problemParams,
-                 int portAllocationMatrixCnt,
-                 const Speed** portAllocationMatrix,
-                 int currLevel,
-                 int currLevelUser,
-                 int currLevelUserCnt,
-                 Speed* nodeSpeed);
-static void    _ProblemStateEmpty(
-		 ProblemState* problemState,
-		 const ProblemParams* problemParams);
-static void    _ProblemStateWalkToValid(
-		 ProblemState* problemState,
-		 const ProblemParams* problemParams);
-static double  _ProblemStateCalcCost(
-		 ProblemState* problemState,
-		 const ProblemParams* problemParams);
+static void          _ProblemStateFix(
+                       ProblemState* problemState,
+                       const ProblemParams* problemParams);
+static int           _ProblemStateFindFit(
+                       const ProblemState* problemState,
+		       const ProblemParams* problemParams,
+		       int portAllocationMatrixCnt,
+		       const Speed** portAllocationMatrix,
+		       int currLevel,
+		       int currLevelUser,
+		       int currLevelUserCnt,
+		       Speed* nodeSpeed);
+static void          _ProblemStateEmpty(
+   		       ProblemState* problemState,
+		       const ProblemParams* problemParams);
+static ProblemState* _ProblemStateWalkToValid(
+		       ProblemState* problemState,
+		       const ProblemParams* problemParams);
+static double        _ProblemStateCalcCost(
+		       ProblemState* problemState,
+		       const ProblemParams* problemParams);
 
 ProblemState*
 ProblemStateAlloc(
@@ -529,9 +542,9 @@ ProblemStateFirst(
   ProblemState*  problemState;
 
   problemState = malloc(sizeof(ProblemState));
-
+  
   _ProblemStateEmpty(problemState,problemParams);
-  _ProblemStateWalkToValid(problemState,problemParams);
+  problemState = _ProblemStateWalkToValid(problemState,problemParams);
 
   return problemState;
 }
@@ -547,8 +560,7 @@ ProblemStateWalk(
   ProblemState*  problemState;
 
   problemState = ProblemStateCopy(problemParams,previousState);
-
-  _ProblemStateWalkToValid(problemState,problemParams);
+  problemState = _ProblemStateWalkToValid(problemState,problemParams);
 
   return problemState;
 }
@@ -576,6 +588,7 @@ void
 ProblemStatePrint(
   const ProblemParams* problemParams,
   const ProblemState* problemState,
+  const char* name,
   int indentLevel)
 {
   assert(ProblemParamsIsValid(problemParams));
@@ -590,7 +603,7 @@ ProblemStatePrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sAccessNetworkState:\n",indent);
+  printf("%s%s[AccessNetworkState]:\n",indent,name);
   printf("%s  NodeIdsUsedCnt: %d\n",indent,problemState->NodeIdsUsedCnt);
   printf("%s  NodeIdsCnt: %d\n",indent,problemState->NodeIdsCnt);
   printf("%s  NodesIds: ",indent);
@@ -665,7 +678,6 @@ ProblemStateIsValid(
       return 0;
   }
 
-#define HACK
 #ifdef HACK
   {
     /* SHORT HACK */
@@ -1095,13 +1107,15 @@ _ProblemStateEmpty(
   }
 }
 
-static void
+static ProblemState*
 _ProblemStateWalkToValid(
   ProblemState* problemState,
   const ProblemParams* problemParams)
 {
   int  addIndex;
   int  doIncrement;
+  int  lastOne;
+  int  i;
 
   do {
     addIndex = 0;
@@ -1119,8 +1133,26 @@ _ProblemStateWalkToValid(
     }
 
     problemState->NodeIdsUsedCnt += addIndex == problemState->NodeIdsUsedCnt ? 1 : 0;
+
+    lastOne = 1;
+
+    for (i = 0; i < problemState->NodeIdsCnt && lastOne; i++) {
+      if (problemState->NodeIds[i] != problemParams->NodesCnt - 1) {
+	lastOne = 0;
+      }
+    }
+
+    if (lastOne) {
+      free(problemState->NodeIds);
+      free(problemState);
+
+      return NULL;
+    }
+
     problemState->Cost = _ProblemStateCalcCost(problemState,problemParams);
   } while (!ProblemStateIsValid(problemParams,problemState));
+
+  return problemState;
 }
 
 static double

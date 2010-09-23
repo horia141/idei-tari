@@ -3,18 +3,20 @@
 
 #include <stdio.h>
 
+#include "Opt/Method.h"
 #include "Problem.h"
-#include "Method.h"
 
 struct DriverParams;
 typedef struct DriverParams DriverParams;
 
 DriverParams*  DriverParamsAlloc(
-                 FILE* fin);
+		 FILE* fin,
+		 const char* name);
 void           DriverParamsFree(
                  DriverParams** driverParams);
 void           DriverParamsPrint(
                  const DriverParams* driverParams,
+		 const char* name,
                  int indentLevel);
 int            DriverParamsIsValid(
                  const DriverParams* driverParams);
@@ -33,6 +35,7 @@ void           DriverStateFree(
 void           DriverStatePrint(
                  const DriverParams* driverParams,
                  const DriverState* driverState,
+		 const char* name,
                  int indentLevel);
 int            DriverStateIsValid(
                  const DriverParams* driverParams,

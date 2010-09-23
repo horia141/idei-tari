@@ -9,11 +9,13 @@ struct MethodParams;
 typedef struct MethodParams MethodParams;
 
 MethodParams*         MethodParamsAlloc(
-                        FILE* fin);
+			FILE* fin,
+			const char* name);
 void                  MethodParamsFree(
                         MethodParams** methodParams);
 void                  MethodParamsPrint(
                         const MethodParams* methodParams,
+			const char* name,
                         int indentLevel);
 int                   MethodParamsIsValid(
                         const MethodParams* methodParams);
@@ -34,6 +36,7 @@ void                  MethodStateFree(
 void                  MethodStatePrint(
                         const MethodParams* methodParams,
                         const MethodState* methodState,
+			const char* name,
                         int indentLevel);
 int                   MethodStateIsValid(
                         const MethodParams* methodParams,
