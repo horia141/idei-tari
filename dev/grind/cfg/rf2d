@@ -1,7 +1,0 @@
-    RealFunction2DParams:
-      Function: x * x + y * y
-      IntervalStartX: -1.0
-      IntervalStartY: -1.0
-      IntervalEndX: 1.0
-      IntervalEndY: 1.0
-      IntervalStep: 0.1

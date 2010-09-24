@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "Selection.h"
+#include "Opt/Method/GeneticAlgorithm/Selection.h"
 
 struct SelectionParams
 {
@@ -11,13 +11,14 @@ struct SelectionParams
 
 SelectionParams*
 SelectionParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   SelectionParams*  selectionParams;
 
   selectionParams = malloc(sizeof(SelectionParams));
 
-  fscanf(fin," RandomSelectionParams :");
+  fscanf(fin," %*s [ RandomSelectionParams ] :");
 
   return selectionParams;
 }
@@ -36,6 +37,7 @@ SelectionParamsFree(
 void
 SelectionParamsPrint(
   const SelectionParams* selectionParams,
+  const char* name,
   int indentLevel)
 {
   assert(SelectionParamsIsValid(selectionParams));
@@ -48,7 +50,7 @@ SelectionParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sRandomSelectionParams:\n",indent);
+  printf("%s%s[RandomSelectionParams]:\n",indent,name);
 
   free(indent);
 }

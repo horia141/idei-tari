@@ -9,11 +9,13 @@ struct SelectionParams;
 typedef struct SelectionParams SelectionParams;
 
 SelectionParams*  SelectionParamsAlloc(
-                    FILE* fin);
+                    FILE* fin,
+                    const char* name);
 void              SelectionParamsFree(
                     SelectionParams** selectionParams);
 void              SelectionParamsPrint(
                     const SelectionParams* selectionParams,
+                    const char* name,
                     int indentLevel);
 int               SelectionParamsIsValid(
                     const SelectionParams* selectionParams);

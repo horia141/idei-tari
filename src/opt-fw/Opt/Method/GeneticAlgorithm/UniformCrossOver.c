@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "CrossOver.h"
+#include "Opt/Method/GeneticAlgorithm/CrossOver.h"
 
 struct CrossOverParams
 {
@@ -11,13 +11,14 @@ struct CrossOverParams
 
 CrossOverParams*
 CrossOverParamsAlloc(
-  FILE* fin)
+  FILE* fin,
+  const char* name)
 {
   CrossOverParams*  crossOverParams;
 
   crossOverParams = malloc(sizeof(CrossOverParams));
 
-  fscanf(fin," UniformCrossOverParams :");
+  fscanf(fin," %*s [ UniformCrossOverParams ] :");
 
   return crossOverParams;
 }
@@ -36,6 +37,7 @@ CrossOverParamsFree(
 void
 CrossOverParamsPrint(
   const CrossOverParams* crossOverParams,
+  const char* name,
   int indentLevel)
 {
   assert(CrossOverParamsIsValid(crossOverParams));
@@ -48,7 +50,7 @@ CrossOverParamsPrint(
   memset(indent,' ',2 * indentLevel);
   indent[2 * indentLevel] = '\0';
 
-  printf("%sUniformCrossOverParams:\n",indent);
+  printf("%s%s[UniformCrossOverParams]:\n",indent,name);
 
   free(indent);
 }

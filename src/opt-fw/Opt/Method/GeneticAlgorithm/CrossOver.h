@@ -7,11 +7,13 @@ struct CrossOverParams;
 typedef struct CrossOverParams CrossOverParams;
 
 CrossOverParams*  CrossOverParamsAlloc(
-                    FILE* fin);
+                    FILE* fin,
+                    const char* name);
 void              CrossOverParamsFree(
                     CrossOverParams** crossOverParams);
 void              CrossOverParamsPrint(
                     const CrossOverParams* crossOverParams,
+                    const char* name,
                     int indentLevel);
 int               CrossOverParamsIsValid(
                     const CrossOverParams* crossOverParams);
