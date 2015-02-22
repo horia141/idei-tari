@@ -140,7 +140,7 @@ Descrierea utilizatorilor și descrierea nodurilor sunt mulțimi de descriptori 
          ni:u:dl : bandwidth-ul maxim pentru download pe portul de uplink.
          ni:u:ul : bandwidth-ul maxim pentru upload pe porturile de uplink.
 
-         ni:c ap R+
+a         ni:c ap R+
          ni:nrd ap N+
          ni:d:dl ap R+
          ni:d:ul ap R+

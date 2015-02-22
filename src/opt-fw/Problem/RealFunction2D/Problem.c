@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
+#include <math.h>
 
 #include "Problem.h"
 
@@ -70,7 +71,7 @@ ProblemParamsPrint(
   indent[2 * indentLevel] = '\0';
 
   printf("%s%s[RealFunction2DParams]:\n",indent,name);
-  printf("%s  Function: x * x + y * y\n",indent);
+  printf("%s  Function: 1/4 * sqrt(30 * (30 - x) * (30 - y) * (x + y))\n",indent);
   printf("%s  IntervalStart: (%f,%f)\n",indent,problemParams->IntervalStartX,problemParams->IntervalStartY);
   printf("%s  IntervalEnd: (%f,%f)\n",indent,problemParams->IntervalEndX,problemParams->IntervalEndY);
   printf("%s  IntervalStep: %f\n",indent,problemParams->IntervalStep);
@@ -108,7 +109,7 @@ _ProblemFunction(
   double x,
   double y)
 {
-  return x * x + y * y;
+  return 1/4 * sqrt(30 * (30 - x) * (30 - y) * (x + y));
 }
 
 
