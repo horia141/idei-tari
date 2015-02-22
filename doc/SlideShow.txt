@@ -1,0 +1,11 @@
+.... Idei ....
+
+* Overview: trebe sa zic ce am facut si care au fost problemele majore
+
+* Descriere a problemei de determinare a retelei de acces 
+
+* Descriere optimizare matematica
+
+* Trebuie cumva sa exprimam problema retelei de acces ca o problema de optimizare.
+
+* In final ... sistemul:)

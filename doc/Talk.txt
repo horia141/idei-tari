@@ -1,0 +1,53 @@
+Structura prezentare:
+
+* Vom vorbii despre retele de telecomunicatii. Mai precis, cum sa construim o retea ce permite accesul unui numar de utilizatori la Internet (o retea de acces) cat mai ieftina.
+
+* Discutia va avea trei parti:
+  * In prima, voi descrie problema pe care dorim s-o rezolvam, voi da o formulare matematica pentru aceasta si o metoda de gasire garantata a retelei optime, ce este intuitiva si care se preteaza la o implementare usoara. Voi discuta apoi de ce aceasta metoda nu este fezabila. Finalul primei parti se va ocupa de un numar de metode matematice cunoscute pentru gasirea unei retele. Aceasta nu va mai fi nici garantat optima, metodele nu vor fi asa intuitive, implementarea va fi mai laborioasa, dar timpul de executie (criteriul de fezabilitate) va fi tolerabil. 
+  * In a doua, voi vorbii putin despre sistemul construit pentru gasirea de retele de acces optime, ce implementeaza metodele matematice din prima parte.
+  * In final, voi descrie mai in detaliu, si in limita timpului, cativa algoritmi mai interesanti folositi. Vom vorbii despre algoritmi ce vizeaza retele de acces, cat si, mai in detaliu, despre algoritmii din spatele metodelor matematice.
+
+* Partea I:
+  * Utilizatori -> Resursa
+  * Ce inseamna o retea de acces? Permitem accesul U la R. Solutie simpla + Solutie reala.
+  * Ce presupune construirea unei retele? Legaturi + Noduri. Legaturile trebuie doar sa existe. Nodurile au rol de agregare a traficului + Cost + Conexiuni Downlink / Uplink + definirea lor.
+  * Ce presupune construirea unei retele valide? Indeplinirea cerintelor de trafic. Definirea cerintelor ca necesar de volum de trafic pe secunda : Download + Upload. Reteaua valida este cea care permite tuturor utilizatorilor sa poata comunica cu R la volum maxim, in acelasi timp. Cerintele sunt CIR, defapt.
+  * In acest scop, Nodul are un numar de caracteristi in plus: Volum maxim trafic Download/Upload pe Downlink si pe Uplink. Volumul pe Uplink ca functie de suma Downlink.
+  * Asedar, o descriere de problema este alcatuita din: un numar de utilizatori ce trebuiesc definiti + un numar de noduri folosibile in constructia retelei.
+  * Descrierea matematica a unei retele este o lista de noduri din descrierea de problema. De observat ca nu este o structura arborescenta. Repercursiuni benefice pentru sistemul real si pentru modelarea ce urmeaza.
+  * Descrierea determina un spatiu de retele construibile. Acest spatiu este finit + discret.
+  * Gasirea retelei de cost minim este procesul de cautare a spatiului determinat de o descriere de problema pentru reteaua cu functia cost minima.
+  * Descriere algoritm Brute Force Search : intuitiv, gaseste optimul, usor de implementat.
+  * De ce nu e bun? Spatiu de cautare prea mare : nu avem resurse.
+  * Optimizarea matematica ne salveaza. Tehnici matematice care : nu gasesc optimul garantat, neintuitive, mai greu de implementat, DAR fezabile.
+  * In final, am ales patru dintre aceste tehnic: RandomSearch, HillClimbing, EvolutionStrategy si GeneticAlgorithm pentru implementare.
+  * Toti acesti algoritmi sunt exprimati in functie de un vocabular comun: Pentru RS si HC acesta a fost fortat, acestia nefiind in general algoritmi evolutivi.
+  * Vorbesc despre populatie, individ. iteratie + procesul de evolutie. Operatori pe individ: generare, mutatie, incrucisare. Operatori pe populatie: selectia. Fiecare metoda se foloseste treptat de cativa, culminand cu GA care ii foloseste pe toti (operatorii).
+
+* Partea II:
+  * Am implementat un sistem real de optimizare.
+  * Pornim de la o descriere a problemei (reprezentare a descriptorului de problema) si obtinem o retea optima.
+  * Structura sistemului: Optimizator + Software de control + Software de prelucrare a iesirilor.
+  * In final, sistemul trebuie sa arate asa: Interfata Web (Software de control + prelucrare a iesirlor) + optimizator.
+  * Optimizatoare: BFS/OPT. Serii de programe BFS/OPT. Putem invoca manual sau putem invoca prin controlor.
+  * BFS = Driver + Problema
+  * OPT = Driver + Metoda + Problema.
+  * Driver: conduce executia programului la nivel inalt. SingleThreaded
+  * Metoda: defineste modul de rezolvare. RandomSerch, HillClimbing, EvolutionStrategy si GeneticAlgorithm + variate. Defineste detalii de reprezentare pentru populatie + aloritmii specifici solutiei (algoritmul de evolutie + algoritmul de selectie).
+  * Problema: defineste detalii de reprezentare pentru problema + algoritmii specifici solutiei (operatorii genetici pe indivi).
+  * Avem aceste trei concepte separate si ortogonale : putem combina orice Driver, cu orice Metoda si Problema si obtine diverse variante de optimizator. Efortul nu se duplifica si dezvoltarea merge mai usor (Metoda nu trebuie sa aiba cunostinte de Problema de exemplu).
+  * Programe in linie de comanda. Consuma text si produc text. Textul, sub forma de fisiere de configurare, descrie configurarea unui anume optimizator [Exemplu].
+  * Exemple de ce am facut.
+
+* Partea III:
+  * Discutie algoritmi mai interesanti.
+  * Reprezentarea ca lista de noduri: cum se impaca cu reprezentarea intuitiva de arbore. Algoritmul de trecere din lista in copac. Discutie avantajele si dezavantajele reprezentarii.
+  * Algoritmul de generare de solutie.
+  * Algoritmul de mutatie.
+  * Algoritmul de incrucisare.
+  * Prezentare optimizare ES.
+  * Prezentare optimizare GA.
+
+* Final:
+  * Directii viitoare de dezvoltare: paralelism + interfata web + unelte de vizualizare + extindere problema.
+
